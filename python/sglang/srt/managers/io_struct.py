@@ -266,6 +266,10 @@ class GenerateReqInput(BaseReq):
     external_trace_header: Optional[Dict] = None
     received_time: Optional[float] = None
 
+    # External workload id for trace-level analysis. This is intentionally
+    # separate from rid because router/parallel-sampling paths may rewrite rid.
+    trace_rid: Optional[Union[List[str], str]] = None
+
     # For EPD-disaggregated inference
     need_wait_for_mm_inputs: Optional[bool] = None
     num_items_assigned: Optional[Dict[Modality, List[int]]] = None
@@ -400,6 +404,8 @@ class GenerateReqInput(BaseReq):
             self.sampling_params = {}
         if self.rid is None:
             self.rid = uuid.uuid4().hex
+        if self.trace_rid is None:
+            self.trace_rid = self.rid
         if self.return_logprob is None:
             self.return_logprob = False
         if self.logprob_start_len is None:
@@ -421,6 +427,7 @@ class GenerateReqInput(BaseReq):
         # Expand input based on type
         self._expand_inputs(num)
         self._normalize_rid(num)
+        self._normalize_trace_rid(num)
         self._normalize_lora_paths(num)
         self._normalize_image_data(num)
         self._normalize_video_data(num)
@@ -545,6 +552,21 @@ class GenerateReqInput(BaseReq):
                 )
         else:
             raise ValueError("The rid should be a string or a list of strings.")
+
+    def _normalize_trace_rid(self, num):
+        """Normalize external trace IDs for batch processing."""
+        if self.trace_rid is None:
+            self.trace_rid = list(self.rid)
+        elif isinstance(self.trace_rid, str):
+            self.trace_rid = [f"{self.trace_rid}_{i}" for i in range(num)]
+        elif isinstance(self.trace_rid, list):
+            if len(self.trace_rid) != self.batch_size:
+                raise ValueError(
+                    "The specified trace_rids length mismatch with the batch_size for batch processing."
+                )
+            self.trace_rid = self.trace_rid * self.parallel_sample_num
+        else:
+            raise ValueError("The trace_rid should be a string or a list of strings.")
 
     def _normalize_logprob_params(self, num):
         """Normalize logprob-related parameters for batch processing."""
@@ -738,6 +760,7 @@ class GenerateReqInput(BaseReq):
             external_trace_header=self.external_trace_header,
             http_worker_ipc=self.http_worker_ipc,
             received_time=self.received_time,
+            trace_rid=self.trace_rid[i] if self.trace_rid is not None else None,
             multi_item_delimiter_indices=(
                 self.multi_item_delimiter_indices[i]
                 if self.multi_item_delimiter_indices is not None
@@ -844,6 +867,9 @@ class TokenizedGenerateReqInput(BaseReq):
 
     # For observability
     time_stats: Optional[Union[APIServerReqTimeStats, DPControllerReqTimeStats]] = None
+
+    # External workload id for trace-level analysis.
+    trace_rid: Optional[str] = None
 
 
 @dataclass

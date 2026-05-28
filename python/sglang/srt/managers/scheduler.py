@@ -15,6 +15,7 @@
 
 import dataclasses
 import faulthandler
+import json
 import logging
 import os
 import signal
@@ -284,6 +285,7 @@ logger = logging.getLogger(__name__)
 TEST_RETRACT = envs.SGLANG_TEST_RETRACT.get()
 TEST_RETRACT_INTERVAL = envs.SGLANG_TEST_RETRACT_INTERVAL.get()
 TEST_RETRACT_NO_PREFILL_BS = envs.SGLANG_TEST_RETRACT_NO_PREFILL_BS.get()
+SGLANG_LOG_BATCH_COMPOSITION = get_bool_env_var("SGLANG_LOG_BATCH_COMPOSITION")
 
 _is_npu = is_npu()
 
@@ -2018,6 +2020,7 @@ class Scheduler(
                 dllm_config=self.dllm_config,
                 time_stats=recv_req.time_stats,
                 multi_item_delimiter_indices=recv_req.multi_item_delimiter_indices,
+                trace_rid=recv_req.trace_rid,
             )
             req.tokenizer = self.tokenizer
 
@@ -2074,6 +2077,7 @@ class Scheduler(
                 recv_req.sampling_params,
                 vocab_size=self.model_config.vocab_size,
                 http_worker_ipc=recv_req.http_worker_ipc,
+                trace_rid=recv_req.trace_rid,
             )
             req.tokenizer = self.tokenizer
             req.set_finish_with_abort(error_msg)
@@ -2366,6 +2370,7 @@ class Scheduler(
             time_stats=recv_req.time_stats,
             return_pooled_hidden_states=recv_req.return_pooled_hidden_states,
             multi_item_delimiter_indices=recv_req.multi_item_delimiter_indices,
+            trace_rid=getattr(recv_req, "trace_rid", recv_req.rid),
         )
         req.tokenizer = self.tokenizer
 
@@ -2639,7 +2644,7 @@ class Scheduler(
         ret = self._maybe_prepare_ngram_embedding(ret)
 
         if ret:
-            set_schedule_time_batch(ret)
+            set_schedule_time_batch(ret, batch_id=self.forward_ct + 1)
             if self.enable_fpm:
                 ret.fpm_start_time = self._fpm_batch_t0
 
@@ -3030,6 +3035,38 @@ class Scheduler(
                     f", #new_token_ratio: {old_ratio:.4f} -> {new_token_ratio:.4f}"
                 )
             logger.warning(msg_prefix + msg_details)
+            if SGLANG_LOG_BATCH_COMPOSITION and retracted_reqs:
+                logger.warning(
+                    "Retract Decode Stats: %s",
+                    json.dumps(
+                        {
+                            "time": time.perf_counter(),
+                            "batch_id": self.forward_ct,
+                            "reason": "kv_cache_full"
+                            if kv_full_retract_flag
+                            else "test_retract",
+                            "old_available_tokens": old_available_tokens,
+                            "new_available_tokens": new_available_tokens,
+                            "new_token_gained": new_token_gained,
+                            "old_new_token_ratio": old_ratio,
+                            "new_token_ratio": new_token_ratio,
+                            "retracted_req_stats": [
+                                {
+                                    "rid": req.rid,
+                                    "trace_rid": getattr(req, "trace_rid", req.rid),
+                                    "input_len": len(req.origin_input_ids),
+                                    "output_len": len(req.output_ids),
+                                    "cached_tokens": int(
+                                        getattr(req, "cached_tokens", 0) or 0
+                                    ),
+                                    "retraction_count": req.retraction_count,
+                                }
+                                for req in retracted_reqs
+                            ],
+                        },
+                        separators=(",", ":"),
+                    ),
+                )
 
             for req in retracted_reqs:
                 self._add_request_to_queue(req, is_retracted=True)
@@ -3060,6 +3097,106 @@ class Scheduler(
         # List (not tuple) so that workers can register additional refs via
         # GenerationBatchResult.extra_keep_alive_refs after forward returns.
         self.batch_record_buf[self.batch_record_ct] = [batch, attr_snapshot]
+
+    @staticmethod
+    def _get_req_batch_stats(req, extend_len: Optional[int] = None) -> dict:
+        input_len = len(getattr(req, "origin_input_ids", []) or [])
+        output_len = len(getattr(req, "output_ids", []) or [])
+        cached_tokens = int(getattr(req, "cached_tokens", 0) or 0)
+        ret = {
+            "rid": req.rid,
+            "trace_rid": getattr(req, "trace_rid", req.rid),
+            "input_len": input_len,
+            "output_len": output_len,
+            "cached_tokens": cached_tokens,
+            "prefill_new_tokens": max(0, input_len - cached_tokens),
+            "cache_hit_rate": cached_tokens / input_len if input_len else 0.0,
+            "cached_tokens_device": int(
+                getattr(req, "cached_tokens_device", 0) or 0
+            ),
+            "cached_tokens_host": int(getattr(req, "cached_tokens_host", 0) or 0),
+            "cached_tokens_storage": int(
+                getattr(req, "cached_tokens_storage", 0) or 0
+            ),
+        }
+        if extend_len is not None:
+            ret["extend_len"] = int(extend_len)
+        return ret
+
+    def _get_batch_composition_stats(
+        self, batch: ScheduleBatch, start_time: float
+    ) -> Optional[dict]:
+        if not SGLANG_LOG_BATCH_COMPOSITION:
+            return None
+
+        prefill_rids = []
+        decode_rids = []
+        prefill_req_stats = []
+        decode_req_stats = []
+        prefill_tokens = 0
+        decode_tokens = 0
+
+        if batch.forward_mode.is_decode_or_idle():
+            decode_rids = [getattr(req, "trace_rid", req.rid) for req in batch.reqs]
+            decode_tokens = len(decode_rids)
+            decode_req_stats = [
+                self._get_req_batch_stats(req, extend_len=1) for req in batch.reqs
+            ]
+        elif batch.forward_mode.is_mixed():
+            extend_lens = batch.extend_lens or []
+            for req, extend_len in zip(batch.reqs, extend_lens):
+                if extend_len == 1 and len(req.output_ids) > 0:
+                    decode_rids.append(getattr(req, "trace_rid", req.rid))
+                    decode_tokens += 1
+                    decode_req_stats.append(
+                        self._get_req_batch_stats(req, extend_len=extend_len)
+                    )
+                else:
+                    prefill_rids.append(getattr(req, "trace_rid", req.rid))
+                    prefill_tokens += extend_len
+                    prefill_req_stats.append(
+                        self._get_req_batch_stats(req, extend_len=extend_len)
+                    )
+        else:
+            prefill_rids = [getattr(req, "trace_rid", req.rid) for req in batch.reqs]
+            if batch.extend_lens is not None:
+                prefill_tokens = sum(batch.extend_lens)
+                extend_lens = batch.extend_lens
+            else:
+                prefill_tokens = int(getattr(batch, "extend_num_tokens", 0) or 0)
+                extend_lens = [None] * len(batch.reqs)
+            prefill_req_stats = [
+                self._get_req_batch_stats(req, extend_len=extend_len)
+                for req, extend_len in zip(batch.reqs, extend_lens)
+            ]
+
+        return {
+            "batch_id": self.forward_ct,
+            "start_time": start_time,
+            "forward_mode": batch.forward_mode.name,
+            "batch_size": len(batch.reqs),
+            "num_prefill_reqs": len(prefill_rids),
+            "num_decode_reqs": len(decode_rids),
+            "prefill_tokens": prefill_tokens,
+            "decode_tokens": decode_tokens,
+            "total_tokens": prefill_tokens + decode_tokens,
+            "prefill_rids": prefill_rids,
+            "decode_rids": decode_rids,
+            "prefill_req_stats": prefill_req_stats,
+            "decode_req_stats": decode_req_stats,
+        }
+
+    def _log_batch_composition_stats(
+        self, batch_stats: Optional[dict], end_time: float
+    ) -> None:
+        if batch_stats is None:
+            return
+        batch_stats["end_time"] = end_time
+        batch_stats["forward_latency_ms"] = (end_time - batch_stats["start_time"]) * 1e3
+        logger.info(
+            "Batch Composition Stats: %s",
+            json.dumps(batch_stats, separators=(",", ":")),
+        )
 
     @contextmanager
     def _forward_isolation(self, batch: ScheduleBatch, *, overlap: bool):
@@ -3127,6 +3264,11 @@ class Scheduler(
         # Place holder handling for pd-disagg decode event loop
         if batch.forward_mode.is_prebuilt():
             return self._run_batch_prebuilt(batch)
+
+        batch_start_time = time.perf_counter()
+        batch_composition_stats = self._get_batch_composition_stats(
+            batch, batch_start_time
+        )
 
         # Run forward
         if self.is_generation:
@@ -3278,6 +3420,7 @@ class Scheduler(
                 )
 
         self._maybe_report_active_ranks()
+        self._log_batch_composition_stats(batch_composition_stats, time.perf_counter())
 
         return ret
 

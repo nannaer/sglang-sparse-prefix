@@ -43,6 +43,9 @@ if TYPE_CHECKING:
     from sglang.srt.managers.schedule_batch import ScheduleBatch
 
 SGLANG_TEST_REQUEST_TIME_STATS = get_bool_env_var("SGLANG_TEST_REQUEST_TIME_STATS")
+SGLANG_LOG_DECODE_STEP_LATENCIES = get_bool_env_var(
+    "SGLANG_LOG_DECODE_STEP_LATENCIES"
+)
 
 
 logger = logging.getLogger(__name__)
@@ -601,9 +604,18 @@ class SchedulerReqTimeStats(ReqTimeStatsBase):
     last_decode_finish_time: float = 0.0
     decode_ct: int = 0
     last_decode_scheduled_time: float = 0.0
+    last_decode_scheduled_batch_id: Optional[int] = None
     last_forward_entry_time: float = 0.0
     last_prefill_finished_time: float = 0.0
     run_batch_cpu_start_time: float = 0.0
+    prefill_forward_duration: float = 0.0
+    decode_forward_duration: float = 0.0
+    decode_waiting_duration: float = 0.0
+    decode_step_durations: Optional[List[float]] = None
+    decode_step_waiting_durations: Optional[List[float]] = None
+    decode_step_wait_start_times: Optional[List[float]] = None
+    decode_step_wait_end_times: Optional[List[float]] = None
+    decode_step_batch_ids: Optional[List[int]] = None
 
     # speculative decoding
     spec_draft_start_time: float = 0.0
@@ -693,6 +705,15 @@ class SchedulerReqTimeStats(ReqTimeStatsBase):
         self.last_chunked_prefill_finish_time = 0.0
         self.last_decode_finish_time = 0.0
         self.last_decode_scheduled_time = 0.0
+        self.last_decode_scheduled_batch_id = None
+        self.prefill_forward_duration = 0.0
+        self.decode_forward_duration = 0.0
+        self.decode_waiting_duration = 0.0
+        self.decode_step_durations = None
+        self.decode_step_waiting_durations = None
+        self.decode_step_wait_start_times = None
+        self.decode_step_wait_end_times = None
+        self.decode_step_batch_ids = None
 
         if self.trace_ctx.tracing_enable:
             self.trace_ctx.trace_event("retract", 1, convert_time_to_realtime_ns(ts))
@@ -771,6 +792,9 @@ class SchedulerReqTimeStats(ReqTimeStatsBase):
         if last_time == 0.0:
             last_time = self.last_forward_entry_time
 
+        if last_time > 0.0:
+            self.prefill_forward_duration += ts - last_time
+
         stage = RequestStage.PREFILL_CHUNKED_FORWARD
         self.observe_per_stage_req_latency(stage, ts - last_time)
         self.trace_slice(stage, last_time, ts)
@@ -782,6 +806,13 @@ class SchedulerReqTimeStats(ReqTimeStatsBase):
             self.last_prefill_finished_time = ts
 
             stage = RequestStage.PREFILL_FORWARD
+            if self.last_chunked_prefill_finish_time > 0:
+                prefill_start_time = self.last_chunked_prefill_finish_time
+            else:
+                prefill_start_time = self.last_forward_entry_time
+            if prefill_start_time > 0.0:
+                self.prefill_forward_duration += ts - prefill_start_time
+
             self.observe_per_stage_req_latency(stage, ts - self.last_forward_entry_time)
 
             if self.trace_ctx.tracing_enable:
@@ -839,9 +870,53 @@ class SchedulerReqTimeStats(ReqTimeStatsBase):
             self.observe_per_stage_req_latency(stage, ts - last_time)
             attrs = {"decode_ct": self.decode_ct}
             self.trace_slice(stage, last_time, ts, attrs)
-            self.decode_ct += 1
 
-    def set_last_scheduled_time(self, forward_mode: ForwardMode, ts=None, attrs=None):
+        decode_wait_start_time = last_time
+        if decode_wait_start_time == 0.0:
+            if self.disagg_mode == DisaggregationMode.DECODE:
+                decode_wait_start_time = self.decode_prebuilt_finish_time
+            else:
+                decode_wait_start_time = self.last_prefill_finished_time
+
+        decode_start_time = self.last_decode_scheduled_time
+        decode_wait_duration = 0.0
+        decode_forward_duration = 0.0
+        if decode_start_time > 0.0:
+            if (
+                decode_wait_start_time > 0.0
+                and decode_start_time >= decode_wait_start_time
+            ):
+                decode_wait_duration = decode_start_time - decode_wait_start_time
+                self.decode_waiting_duration += decode_wait_duration
+            if ts >= decode_start_time:
+                decode_forward_duration = ts - decode_start_time
+                self.decode_forward_duration += decode_forward_duration
+        elif decode_wait_start_time > 0.0 and ts >= decode_wait_start_time:
+            decode_forward_duration = ts - decode_wait_start_time
+            self.decode_forward_duration += decode_forward_duration
+
+        if SGLANG_LOG_DECODE_STEP_LATENCIES:
+            if self.decode_step_durations is None:
+                self.decode_step_durations = []
+                self.decode_step_waiting_durations = []
+                self.decode_step_wait_start_times = []
+                self.decode_step_wait_end_times = []
+                self.decode_step_batch_ids = []
+            self.decode_step_durations.append(decode_forward_duration)
+            self.decode_step_waiting_durations.append(decode_wait_duration)
+            self.decode_step_wait_start_times.append(decode_wait_start_time)
+            self.decode_step_wait_end_times.append(decode_start_time)
+            self.decode_step_batch_ids.append(self.last_decode_scheduled_batch_id or -1)
+
+        self.decode_ct += 1
+
+    def set_last_scheduled_time(
+        self,
+        forward_mode: ForwardMode,
+        ts=None,
+        attrs=None,
+        batch_id: Optional[int] = None,
+    ):
         ts = ts or time.perf_counter()
 
         if self.trace_ctx.tracing_enable:
@@ -867,6 +942,7 @@ class SchedulerReqTimeStats(ReqTimeStatsBase):
 
         if forward_mode.is_decode():
             self.last_decode_scheduled_time = ts
+            self.last_decode_scheduled_batch_id = batch_id
 
     def set_completion_time(self, ts=None):
         ts = ts or time.perf_counter()
@@ -1021,6 +1097,7 @@ class SchedulerReqTimeStats(ReqTimeStatsBase):
         return self.forward_entry_time - self.wait_queue_entry_time
 
     def convert_to_duration(self) -> str:
+        decode_step_info = self.decode_step_duration_str()
         if self.disagg_mode == DisaggregationMode.NULL:
             queue_duration = self.duration_between(
                 self.wait_queue_entry_time, self.forward_entry_time
@@ -1034,7 +1111,16 @@ class SchedulerReqTimeStats(ReqTimeStatsBase):
                     queue_duration >= 0 and forward_duration >= 0
                 ), f"queue_duration={queue_duration} < 0 or forward_duration={forward_duration} < 0"
 
-            return f"queue_duration={self.format_duration(queue_duration)}, forward_duration={self.format_duration(forward_duration)}, entry_time={self.format_wallclock(self.wait_queue_entry_time)}"
+            return (
+                f"queue_duration={self.format_duration(queue_duration)}, "
+                f"forward_duration={self.format_duration(forward_duration)}, "
+                f"prefill_duration={self.format_duration(self.prefill_forward_duration)}, "
+                f"decode_duration={self.format_duration(self.decode_forward_duration)}, "
+                f"decode_waiting_duration={self.format_duration(self.decode_waiting_duration)}, "
+                f"decode_steps={self.decode_ct}, "
+                f"{decode_step_info}"
+                f"entry_time={self.format_wallclock(self.wait_queue_entry_time)}"
+            )
         elif self.disagg_mode == DisaggregationMode.PREFILL:
             bootstrap_queue_duration = self.duration_between(
                 self.prefill_bootstrap_queue_entry_time, self.wait_queue_entry_time
@@ -1077,6 +1163,11 @@ class SchedulerReqTimeStats(ReqTimeStatsBase):
                 f"{bootstrap_fields}"
                 f"queue_duration={self.format_duration(queue_duration)}, "
                 f"forward_duration={self.format_duration(forward_duration)}, "
+                f"prefill_duration={self.format_duration(self.prefill_forward_duration)}, "
+                f"decode_duration={self.format_duration(self.decode_forward_duration)}, "
+                f"decode_waiting_duration={self.format_duration(self.decode_waiting_duration)}, "
+                f"decode_steps={self.decode_ct}, "
+                f"{decode_step_info}"
                 f"entry_time={self.format_wallclock(self.prefill_bootstrap_queue_entry_time)}, "
                 f"transfer_speed={self.transfer_speed_gb_s:.2f} GB/s, "
                 f"transfer_total={self.transfer_total_mb:.2f} MB, "
@@ -1133,6 +1224,11 @@ class SchedulerReqTimeStats(ReqTimeStatsBase):
                 f"transfer_duration={self.format_duration(transfer_duration)}, "
                 f"queue_duration={self.format_duration(queue_duration)}, "
                 f"forward_duration={self.format_duration(forward_duration)}, "
+                f"prefill_duration={self.format_duration(self.prefill_forward_duration)}, "
+                f"decode_duration={self.format_duration(self.decode_forward_duration)}, "
+                f"decode_waiting_duration={self.format_duration(self.decode_waiting_duration)}, "
+                f"decode_steps={self.decode_ct}, "
+                f"{decode_step_info}"
                 f"entry_time={self.format_wallclock(self.decode_prealloc_queue_entry_time)}"
             )
         else:
@@ -1157,6 +1253,35 @@ class SchedulerReqTimeStats(ReqTimeStatsBase):
 
     def format_duration(self, duration: float) -> str:
         return f"{duration * 1e3:.2f}ms"
+
+    def decode_step_duration_str(self) -> str:
+        if (
+            not SGLANG_LOG_DECODE_STEP_LATENCIES
+            or self.decode_step_durations is None
+            or self.decode_step_waiting_durations is None
+            or self.decode_step_wait_start_times is None
+            or self.decode_step_wait_end_times is None
+            or self.decode_step_batch_ids is None
+        ):
+            return ""
+
+        def format_list(values: List[float]) -> str:
+            return "[" + ",".join(f"{v * 1e3:.2f}" for v in values) + "]"
+
+        def format_int_list(values: List[int]) -> str:
+            return "[" + ",".join(str(v) for v in values) + "]"
+
+        return (
+            f"decode_step_durations_ms={format_list(self.decode_step_durations)}, "
+            f"decode_step_waiting_durations_ms="
+            f"{format_list(self.decode_step_waiting_durations)}, "
+            f"decode_step_wait_start_times="
+            f"{format_list(self.decode_step_wait_start_times)}, "
+            f"decode_step_wait_end_times="
+            f"{format_list(self.decode_step_wait_end_times)}, "
+            f"decode_step_batch_ids="
+            f"{format_int_list(self.decode_step_batch_ids)}, "
+        )
 
     def duration_between(self, start: float, end: float) -> float:
         if start <= 0 or end <= 0:
@@ -1196,23 +1321,24 @@ class EncoderReqTimeStats(ReqTimeStatsBase):
             )
 
 
-def set_schedule_time_batch(batch: ScheduleBatch):
-    # only for tracing
-    if not get_global_tracing_enabled():
-        return
-
+def set_schedule_time_batch(batch: ScheduleBatch, batch_id: Optional[int] = None):
     ts = time.perf_counter()
-    bid = uuid.uuid4().hex[:8]
-    _attrs = {"bid": bid, "batch_size": len(batch.reqs)}
-    if batch.forward_mode.is_decode():
-        _attrs["forward_mode"] = "decode"
-    elif batch.forward_mode.is_prefill():
-        _attrs["forward_mode"] = "prefill"
-    elif batch.forward_mode.is_prebuilt():
-        _attrs["forward_mode"] = "prebuilt"
+    tracing_enabled = get_global_tracing_enabled()
+    _attrs = None
+    if tracing_enabled:
+        bid = uuid.uuid4().hex[:8]
+        _attrs = {"bid": bid, "batch_size": len(batch.reqs)}
+        if batch.forward_mode.is_decode():
+            _attrs["forward_mode"] = "decode"
+        elif batch.forward_mode.is_prefill():
+            _attrs["forward_mode"] = "prefill"
+        elif batch.forward_mode.is_prebuilt():
+            _attrs["forward_mode"] = "prebuilt"
 
     for req in batch.reqs:
-        req.time_stats.set_last_scheduled_time(batch.forward_mode, ts, _attrs)
+        req.time_stats.set_last_scheduled_time(
+            batch.forward_mode, ts, _attrs, batch_id=batch_id
+        )
 
 
 def set_time_batch(

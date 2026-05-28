@@ -708,9 +708,11 @@ class Req(ReqDllmMixin):
         ] = None,
         return_pooled_hidden_states: bool = False,
         multi_item_delimiter_indices: Optional[List[int]] = None,
+        trace_rid: Optional[str] = None,
     ):
         # Input and output info
         self.rid = rid
+        self.trace_rid = trace_rid or rid
         self.origin_input_ids = origin_input_ids
         self.origin_input_ids_unpadded = (
             origin_input_ids_unpadded
@@ -1502,6 +1504,15 @@ class Req(ReqDllmMixin):
         if self.has_log_time_stats:
             return
 
+        input_len = len(self.origin_input_ids)
+        output_len = len(self.output_ids)
+        cached_tokens = int(getattr(self, "cached_tokens", 0) or 0)
+        cached_tokens_device = int(getattr(self, "cached_tokens_device", 0) or 0)
+        cached_tokens_host = int(getattr(self, "cached_tokens_host", 0) or 0)
+        cached_tokens_storage = int(getattr(self, "cached_tokens_storage", 0) or 0)
+        prefill_new_tokens = max(0, input_len - cached_tokens)
+        cache_hit_rate = cached_tokens / input_len if input_len else 0.0
+
         bootstrap_info = (
             f", bootstrap_room={self.bootstrap_room}"
             if self.bootstrap_room is not None
@@ -1509,11 +1520,17 @@ class Req(ReqDllmMixin):
         )
         prefix = (
             f"ReqTimeStats("
-            f"rid={self.rid}{bootstrap_info}, "
-            f"input_len={len(self.origin_input_ids)}, "
-            f"cached_input_len={self.cached_tokens}, "
-            f"output_len={len(self.output_ids)}, "
-            f"type={self.time_stats.disagg_mode_str()})"
+            f"rid={self.rid}, trace_rid={self.trace_rid}{bootstrap_info}, "
+            f"input_len={input_len}, "
+            f"cached_input_len={cached_tokens}, "
+            f"output_len={output_len}, "
+            f"type={self.time_stats.disagg_mode_str()}, "
+            f"prefill_new_tokens={prefill_new_tokens}, "
+            f"cache_hit_rate={cache_hit_rate:.6f}, "
+            f"cached_tokens_device={cached_tokens_device}, "
+            f"cached_tokens_host={cached_tokens_host}, "
+            f"cached_tokens_storage={cached_tokens_storage}, "
+            f"retraction_count={self.retraction_count})"
         )
         logger.info(f"{prefix}: {self.time_stats.convert_to_duration()}")
         self.has_log_time_stats = True
