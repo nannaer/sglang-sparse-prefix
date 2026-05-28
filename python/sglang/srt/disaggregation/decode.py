@@ -1055,6 +1055,11 @@ class DecodePreallocQueue(DecodeHiCachePreallocMixin):
                 self.req_to_metadata_buffer_idx_allocator.alloc()
             )
             assert decode_req.metadata_buffer_index is not None
+            # The metadata buffer index is reused. Clear the validation room
+            # before publishing the index to prefill so decode does not observe
+            # a stale bootstrap_room from a previous request while the new
+            # metadata is still in flight.
+            self.metadata_buffers.bootstrap_room[decode_req.metadata_buffer_index, 0] = 0
             page_indices = kv_to_page_indices(kv_indices, kv_transfer_page_size)
             decode_req.kv_receiver.send_metadata(
                 page_indices,

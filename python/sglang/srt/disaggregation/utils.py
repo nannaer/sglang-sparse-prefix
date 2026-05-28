@@ -91,6 +91,11 @@ def _apply_metadata_gate(polls, decode_reqs, metadata_buffers, server_args) -> N
             ].item()
             if actual_room == 0:
                 polls[i] = int(KVPoll.Transferring)
+            elif actual_room != decode_req.req.bootstrap_room:
+                # Keep all TP ranks' transfer queues consistent. A stale or
+                # corrupted metadata slot must become a collective Failed
+                # status before pop_transferred mutates any local queue.
+                polls[i] = int(KVPoll.Failed)
 
 
 def poll_and_all_reduce(
