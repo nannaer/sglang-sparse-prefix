@@ -28,6 +28,7 @@ class TransferKVChunk:
     trace_ctx: Union[TraceReqContext, TraceNullContext] = dataclasses.field(
         default_factory=TraceNullContext
     )
+    enqueue_time: Optional[float] = None
 
 
 def pack_list_of_buffers(buffers: List[bytes]) -> bytes:
@@ -80,6 +81,10 @@ class FastQueue:
             while not self._buf:
                 self._cond.wait()
             return self._buf.popleft()
+
+    def qsize(self):
+        with self._cond:
+            return len(self._buf)
 
 
 class AuxDataCodec:

@@ -253,6 +253,15 @@ class DecodeRequest:
     kv_receiver: CommonKVReceiver
     waiting_for_input: bool = False
     metadata_buffer_index: int = -1
+    transfer_queue_entry_time: float = 0.0
+    transfer_first_poll_time: float = 0.0
+    transfer_last_poll_time: float = 0.0
+    transfer_poll_count: int = 0
+    transfer_poll_bootstrapping_count: int = 0
+    transfer_poll_waiting_for_input_count: int = 0
+    transfer_poll_transferring_count: int = 0
+    transfer_poll_success_count: int = 0
+    transfer_poll_failed_count: int = 0
 
     # HiCache Status
     prefix_match: Optional[DecodePrefixMatch] = None
@@ -1467,6 +1476,26 @@ class DecodeTransferQueue(DecodeHiCacheTransferMixin):
         self.queue.append(decode_req)
 
     def extend(self, decode_reqs: List[DecodeRequest]) -> None:
+        now = time.perf_counter()
+        for dr in decode_reqs:
+            dr.transfer_queue_entry_time = now
+            ts = dr.req.time_stats
+            prealloc_to_transfer_ms = (
+                (ts.decode_transfer_queue_entry_time - ts.decode_prealloc_queue_entry_time)
+                * 1000
+                if ts.decode_prealloc_queue_entry_time > 0
+                and ts.decode_transfer_queue_entry_time > 0
+                else -1.0
+            )
+            logger.info(
+                "PDDecodeTransferEnqueue("
+                f"rid={dr.req.rid}, trace_rid={dr.req.trace_rid}, "
+                f"bootstrap_room={dr.req.bootstrap_room}, input_len={len(dr.req.origin_input_ids)}, "
+                f"cached_input_len={int(getattr(dr.req, 'cached_tokens', 0) or 0)}, "
+                f"cache_protected_len={int(getattr(dr.req, 'cache_protected_len', 0) or 0)}, "
+                f"prealloc_to_transfer_ms={prealloc_to_transfer_ms:.2f}, "
+                f"queue_len_before_extend={len(self.queue)})"
+            )
         self.queue.extend(decode_reqs)
         if self.enable_staging:
             for dr in decode_reqs:
@@ -1634,10 +1663,13 @@ class DecodeTransferQueue(DecodeHiCacheTransferMixin):
                 ]
             )
 
+        poll_start_time = time.perf_counter()
+        queue_len_at_poll_start = len(self.queue)
         if self.enable_staging:
             polls = self._poll_with_staging()
         else:
             polls = self._poll_with_metadata_gate()
+        poll_end_time = time.perf_counter()
 
         transferred_reqs = []
         indices_to_remove = set()
@@ -1646,6 +1678,22 @@ class DecodeTransferQueue(DecodeHiCacheTransferMixin):
                 continue
 
             hicache_restore_status = decode_req.hicache_restore_status
+            if decode_req.transfer_first_poll_time == 0.0:
+                decode_req.transfer_first_poll_time = poll_start_time
+            decode_req.transfer_last_poll_time = poll_end_time
+            decode_req.transfer_poll_count += 1
+
+            if poll == KVPoll.Bootstrapping:
+                decode_req.transfer_poll_bootstrapping_count += 1
+            elif poll == KVPoll.WaitingForInput:
+                decode_req.transfer_poll_waiting_for_input_count += 1
+            elif poll == KVPoll.Transferring:
+                decode_req.transfer_poll_transferring_count += 1
+            elif poll == KVPoll.Success:
+                decode_req.transfer_poll_success_count += 1
+            elif poll == KVPoll.Failed:
+                decode_req.transfer_poll_failed_count += 1
+
             if (
                 poll == KVPoll.Failed
                 or hicache_restore_status == HiCacheRestoreResult.FAILED
@@ -1692,7 +1740,47 @@ class DecodeTransferQueue(DecodeHiCacheTransferMixin):
                     and hicache_restore_status == HiCacheRestoreResult.PENDING
                 ):
                     continue
+                ts = decode_req.req.time_stats
+                transfer_queue_entry_time = (
+                    ts.decode_transfer_queue_entry_time
+                    if ts.decode_transfer_queue_entry_time > 0
+                    else decode_req.transfer_queue_entry_time
+                )
+                transfer_entry_to_first_poll_ms = (
+                    (decode_req.transfer_first_poll_time - transfer_queue_entry_time)
+                    * 1000
+                    if transfer_queue_entry_time > 0
+                    and decode_req.transfer_first_poll_time > 0
+                    else -1.0
+                )
+                first_poll_to_success_ms = (
+                    (poll_end_time - decode_req.transfer_first_poll_time) * 1000
+                    if decode_req.transfer_first_poll_time > 0
+                    else -1.0
+                )
+                transfer_queue_duration_ms = (
+                    (poll_end_time - transfer_queue_entry_time) * 1000
+                    if transfer_queue_entry_time > 0
+                    else -1.0
+                )
                 self._commit_transfer_to_req(decode_req)
+                logger.info(
+                    "PDDecodeTransferSuccess("
+                    f"rid={decode_req.req.rid}, trace_rid={decode_req.req.trace_rid}, "
+                    f"bootstrap_room={decode_req.req.bootstrap_room}, input_len={len(decode_req.req.origin_input_ids)}, "
+                    f"cached_input_len={int(getattr(decode_req.req, 'cached_tokens', 0) or 0)}, "
+                    f"cache_protected_len={int(getattr(decode_req.req, 'cache_protected_len', 0) or 0)}, "
+                    f"transfer_queue_duration_ms={transfer_queue_duration_ms:.2f}, "
+                    f"transfer_entry_to_first_poll_ms={transfer_entry_to_first_poll_ms:.2f}, "
+                    f"first_poll_to_success_ms={first_poll_to_success_ms:.2f}, "
+                    f"last_poll_call_duration_ms={(poll_end_time - poll_start_time) * 1000:.2f}, "
+                    f"poll_count={decode_req.transfer_poll_count}, "
+                    f"poll_bootstrapping={decode_req.transfer_poll_bootstrapping_count}, "
+                    f"poll_waiting_for_input={decode_req.transfer_poll_waiting_for_input_count}, "
+                    f"poll_transferring={decode_req.transfer_poll_transferring_count}, "
+                    f"poll_success={decode_req.transfer_poll_success_count}, "
+                    f"queue_len_at_poll_start={queue_len_at_poll_start})"
+                )
                 indices_to_remove.add(i)
                 # Check if request was aborted due to corruption
                 if isinstance(decode_req.req.finished_reason, FINISH_ABORT):
