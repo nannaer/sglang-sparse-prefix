@@ -18,6 +18,9 @@ from sglang.srt.layers.attention.dsa.utils import (
     is_dsa_enable_prefill_cp,
     is_dsa_prefill_cp_in_seq_split,
 )
+from sglang.srt.layers.attention.dsa.hisparse_topk_trace import (
+    maybe_trace_hisparse_topk_overlap,
+)
 from sglang.srt.layers.dp_attention import attn_tp_all_gather_into_tensor
 from sglang.srt.layers.layernorm import LayerNorm
 from sglang.srt.layers.quantization.fp8_kernel import fp8_dtype, is_fp8_fnuz
@@ -67,6 +70,16 @@ if _is_cuda:
 
 if _use_aiter:
     from aiter.ops.cache import indexer_k_quant_and_cache
+
+
+def _capture_and_trace_indexer_topk(
+    layer_id: int,
+    topk_indices: Optional[torch.Tensor],
+    forward_batch: "ForwardBatch",
+) -> Optional[torch.Tensor]:
+    maybe_trace_hisparse_topk_overlap(layer_id, topk_indices, forward_batch)
+    return maybe_capture_indexer_topk(layer_id, topk_indices)
+
 
 if is_npu():
     import torch_npu
@@ -1379,7 +1392,7 @@ class Indexer(MultiPlatformOp):
                 return_indices,
             )
             topk_result = _broadcast_indexer_topk_from_rank0(topk_result)
-            return maybe_capture_indexer_topk(layer_id, topk_result)
+            return _capture_and_trace_indexer_topk(layer_id, topk_result, forward_batch)
 
         # When weights_proj is LoRA-wrapped, use an eager module call so the
         # wrapper owns base+delta and no LoRA kernel runs under torch.compile
@@ -1514,7 +1527,9 @@ class Indexer(MultiPlatformOp):
                         device=x_meta.device,
                     )
                     topk_result = _broadcast_indexer_topk_from_rank0(topk_result)
-                    return maybe_capture_indexer_topk(layer_id, topk_result)
+                    return _capture_and_trace_indexer_topk(
+                        layer_id, topk_result, forward_batch
+                    )
 
             if (
                 forward_batch.forward_mode.is_decode_or_idle()
@@ -1569,7 +1584,9 @@ class Indexer(MultiPlatformOp):
                     )
                     topk_result = torch.cat([topk_result_prev, topk_result_next], dim=0)
                     topk_result = _broadcast_indexer_topk_from_rank0(topk_result)
-                    return maybe_capture_indexer_topk(layer_id, topk_result)
+                    return _capture_and_trace_indexer_topk(
+                        layer_id, topk_result, forward_batch
+                    )
                 elif is_in_tc_piecewise_cuda_graph():
                     assert (
                         not enable_dual_stream
@@ -1606,7 +1623,7 @@ class Indexer(MultiPlatformOp):
                 layer_id=layer_id,
             )
         topk_result = _broadcast_indexer_topk_from_rank0(topk_result)
-        return maybe_capture_indexer_topk(layer_id, topk_result)
+        return _capture_and_trace_indexer_topk(layer_id, topk_result, forward_batch)
 
     def forward_npu(
         self,
