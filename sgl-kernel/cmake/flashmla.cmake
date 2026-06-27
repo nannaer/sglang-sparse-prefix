@@ -33,7 +33,7 @@ if(${CUDA_VERSION} VERSION_GREATER 12.4)
         "-gencode=arch=compute_90a,code=sm_90a"
     )
 endif()
-if(${CUDA_VERSION} VERSION_GREATER 12.8)
+if(${CUDA_VERSION} VERSION_GREATER_EQUAL 13.0 OR SGL_KERNEL_ENABLE_SM100A)
     list(APPEND FLASHMLA_CUDA_FLAGS
         "-gencode=arch=compute_100a,code=sm_100a"
     )
@@ -163,6 +163,8 @@ target_include_directories(flashmla_ops PRIVATE
     ${repo-flashmla_SOURCE_DIR}/csrc/extension/sm90/dense_fp8/
     ${repo-flashmla_SOURCE_DIR}/csrc/cutlass/include
     ${repo-flashmla_SOURCE_DIR}/csrc/cutlass/tools/util/include
+    ${repo-flashmla-cutlass_SOURCE_DIR}/include
+    ${repo-flashmla-cutlass_SOURCE_DIR}/tools/util/include
 )
 
 target_link_libraries(flashmla_ops PRIVATE ${TORCH_LIBRARIES} c10 cuda)

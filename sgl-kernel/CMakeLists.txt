@@ -206,8 +206,7 @@ endif()
 
 if ("${CUDA_VERSION}" VERSION_GREATER_EQUAL "12.8" OR SGL_KERNEL_ENABLE_SM100A)
     list(APPEND SGL_KERNEL_CUDA_FLAGS
-        "-gencode=arch=compute_100a,code=sm_100a"
-        "-gencode=arch=compute_120a,code=sm_120a"
+        "-gencode=arch=compute_100,code=sm_100"
     )
     # refer sm_121, sm_110 and sm_101 description  https://github.com/pytorch/pytorch/pull/156176
     if ("${CUDA_VERSION}" VERSION_GREATER_EQUAL "13.0")
