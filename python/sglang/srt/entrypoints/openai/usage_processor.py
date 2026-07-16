@@ -10,9 +10,9 @@ class UsageProcessor:
     """Stateless helpers that turn raw token counts into a UsageInfo."""
 
     @staticmethod
-    def _details_if_cached(count: int) -> Optional[PromptTokensDetails]:
-        """Return PromptTokensDetails only when count > 0 (keeps JSON slim)."""
-        return PromptTokensDetails(cached_tokens=count) if count > 0 else None
+    def _cache_details(count: int) -> PromptTokensDetails:
+        """Return PromptTokensDetails when cache reporting is explicitly enabled."""
+        return PromptTokensDetails(cached_tokens=count)
 
     @staticmethod
     def calculate_response_usage(
@@ -42,7 +42,7 @@ class UsageProcessor:
                 responses[i]["meta_info"].get("cached_tokens", 0)
                 for i in range(0, len(responses), n_choices)
             )
-            cached_details = UsageProcessor._details_if_cached(cached_total)
+            cached_details = UsageProcessor._cache_details(cached_total)
 
         return UsageProcessor.calculate_token_usage(
             prompt_tokens=prompt_tokens,
@@ -74,7 +74,7 @@ class UsageProcessor:
         total_completion_tokens = sum(completion_tokens.values())
 
         cached_details = (
-            UsageProcessor._details_if_cached(
+            UsageProcessor._cache_details(
                 sum(tok for idx, tok in cached_tokens.items() if idx % n_choices == 0)
             )
             if enable_cache_report

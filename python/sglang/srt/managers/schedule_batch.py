@@ -1532,7 +1532,7 @@ class Req(ReqDllmMixin):
             f"cached_tokens_storage={cached_tokens_storage}, "
             f"retraction_count={self.retraction_count})"
         )
-        logger.info(f"{prefix}: {self.time_stats.convert_to_duration()}")
+        logger.info(f"{prefix}: {self.time_stats.convert_to_duration(output_len)}")
         self.has_log_time_stats = True
 
     def set_extend_input_len(self, extend_input_len: int):

@@ -3420,6 +3420,12 @@ class Scheduler(
                 )
 
         self._maybe_report_active_ranks()
+        if self.is_generation:
+            set_time_batch(
+                batch.reqs,
+                "set_last_model_forward_finish_time",
+                attrs=batch.forward_mode,
+            )
         self._log_batch_composition_stats(batch_composition_stats, time.perf_counter())
 
         return ret
