@@ -143,19 +143,47 @@ def hc_split_sinkhorn(
     sinkhorn_iters: int = 20,
     eps: float = 1e-6,
 ):
+    def _torch_fallback():
+        work = mixes.float()
+        base = hc_base.float()
+        scale = hc_scale.float()
+        pre = torch.sigmoid(work[..., :hc_mult] * scale[0] + base[:hc_mult]) + eps
+        post = 2 * torch.sigmoid(
+            work[..., hc_mult : 2 * hc_mult] * scale[1]
+            + base[hc_mult : 2 * hc_mult]
+        )
+        comb = (
+            work[..., 2 * hc_mult :].view(*work.shape[:-1], hc_mult, hc_mult)
+            * scale[2]
+            + base[2 * hc_mult :].view(hc_mult, hc_mult)
+        )
+
+        comb = torch.exp(comb - comb.max(dim=-1, keepdim=True).values)
+        comb = comb / comb.sum(dim=-1, keepdim=True) + eps
+        comb = comb / (comb.sum(dim=-2, keepdim=True) + eps)
+        for _ in range(sinkhorn_iters - 1):
+            comb = comb / (comb.sum(dim=-1, keepdim=True) + eps)
+            comb = comb / (comb.sum(dim=-2, keepdim=True) + eps)
+        return pre, post, comb
+
     b, s, _ = mixes.size()
     pre = mixes.new_empty(b, s, hc_mult)
     post = mixes.new_empty(b, s, hc_mult)
     comb = mixes.new_empty(b, s, hc_mult, hc_mult)
-    kernel = hc_split_sinkhorn_kernel(hc_mult, sinkhorn_iters, eps)
-    kernel(
-        mixes.view(-1, (2 + hc_mult) * hc_mult),
-        hc_scale,
-        hc_base,
-        pre.view(-1, hc_mult),
-        post.view(-1, hc_mult),
-        comb.view(-1, hc_mult, hc_mult),
-    )
+    try:
+        kernel = hc_split_sinkhorn_kernel(hc_mult, sinkhorn_iters, eps)
+        kernel(
+            mixes.view(-1, (2 + hc_mult) * hc_mult),
+            hc_scale,
+            hc_base,
+            pre.view(-1, hc_mult),
+            post.view(-1, hc_mult),
+            comb.view(-1, hc_mult, hc_mult),
+        )
+    except RuntimeError as err:
+        if "tilelang is not installed" in str(err):
+            return _torch_fallback()
+        raise
     return pre, post, comb
 
 
