@@ -1601,6 +1601,70 @@ class ServingChatTestCase(unittest.TestCase):
             },
         )
 
+    def test_continuous_streaming_usage_reports_cached_tokens(self):
+        """Continuous usage must expose cache hits before the final usage chunk."""
+
+        async def _mock_generate_with_cache_hit():
+            yield {
+                "text": "Cached response",
+                "meta_info": {
+                    "id": "chatcmpl-continuous-cache-test",
+                    "prompt_tokens": 10,
+                    "completion_tokens": 2,
+                    "reasoning_tokens": 0,
+                    "cached_tokens": 6,
+                    "finish_reason": {"type": "stop", "matched": None},
+                    "output_token_logprobs": None,
+                    "output_top_logprobs": None,
+                },
+                "index": 0,
+            }
+
+        self.tm.server_args.enable_cache_report = True
+        self.tm.generate_request.return_value = _mock_generate_with_cache_hit()
+        req = ChatCompletionRequest(
+            model="x",
+            messages=[{"role": "user", "content": "Hi?"}],
+            max_tokens=100,
+            stream=True,
+            stream_options={
+                "include_usage": True,
+                "continuous_usage_stats": True,
+            },
+        )
+
+        with patch(
+            "sglang.srt.entrypoints.openai.serving_chat.generate_chat_conv"
+        ) as conv_mock:
+            conv_ins = Mock()
+            conv_ins.get_prompt.return_value = "Test prompt"
+            conv_mock.return_value = conv_ins
+            adapted_request, _ = self.chat._convert_to_internal_request(
+                req, self.fastapi_request
+            )
+
+            async def run_stream():
+                return [
+                    chunk
+                    async for chunk in self.chat._generate_chat_stream(
+                        adapted_request, req, self.fastapi_request
+                    )
+                ]
+
+        chunks = get_or_create_event_loop().run_until_complete(run_stream())
+        content_usages = []
+        for chunk in chunks:
+            if not chunk.startswith("data: ") or chunk.strip() == "data: [DONE]":
+                continue
+            data = json.loads(chunk[len("data: ") :])
+            if data.get("choices") and data.get("usage"):
+                content_usages.append(data["usage"])
+
+        self.assertGreaterEqual(len(content_usages), 1)
+        for usage in content_usages:
+            self.assertEqual(usage["prompt_tokens"], 10)
+            self.assertEqual(usage["prompt_tokens_details"]["cached_tokens"], 6)
+
     # ------------- incremental streaming output tests -------------
     def test_incremental_streaming_output_delta(self):
         """Test that streaming with incremental_streaming_output produces correct deltas.

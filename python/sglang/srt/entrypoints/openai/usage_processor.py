@@ -92,6 +92,27 @@ class UsageProcessor:
         )
 
     @staticmethod
+    def calculate_continuous_usage(
+        prompt_tokens: int,
+        completion_tokens: int,
+        reasoning_tokens: int = 0,
+        cached_tokens: int = 0,
+        enable_cache_report: bool = False,
+    ) -> UsageInfo:
+        """Build usage attached to an in-progress streaming content chunk."""
+        cached_details = (
+            UsageProcessor._cache_details(cached_tokens)
+            if enable_cache_report
+            else None
+        )
+        return UsageProcessor.calculate_token_usage(
+            prompt_tokens=prompt_tokens,
+            reasoning_tokens=reasoning_tokens,
+            completion_tokens=completion_tokens,
+            cached_tokens=cached_details,
+        )
+
+    @staticmethod
     def calculate_token_usage(
         prompt_tokens: int,
         completion_tokens: int,
