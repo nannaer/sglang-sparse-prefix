@@ -542,6 +542,7 @@ class AnthropicServing:
             "model": anthropic_request.model,
             "max_tokens": anthropic_request.max_tokens,
             "stream": anthropic_request.stream or False,
+            "return_token_ids": anthropic_request.return_token_ids,
         }
 
         if anthropic_request.temperature is not None:
@@ -828,6 +829,8 @@ class AnthropicServing:
         captured_thinking_signature: str = ""
         finish_reason: Optional[str] = None
         final_usage: Optional[AnthropicUsage] = None
+        final_prompt_token_ids: Optional[list[int]] = None
+        final_output_token_ids: Optional[list[int]] = None
         message_started = False
         had_content_delta = False
         message_id = f"msg_{uuid.uuid4().hex}"
@@ -1056,7 +1059,12 @@ class AnthropicServing:
                     )
                 )
 
-                yield _emit(MessageStopEvent())
+                yield _emit(
+                    MessageStopEvent(
+                        prompt_token_ids=final_prompt_token_ids,
+                        output_token_ids=final_output_token_ids,
+                    )
+                )
                 continue
 
             # Parse the OpenAI chunk
@@ -1096,6 +1104,12 @@ class AnthropicServing:
                     include_input=False,
                     include_output=True,
                 )
+
+            if chunk.sglext is not None:
+                if chunk.sglext.prompt_token_ids is not None:
+                    final_prompt_token_ids = chunk.sglext.prompt_token_ids
+                if chunk.sglext.output_token_ids is not None:
+                    final_output_token_ids = chunk.sglext.output_token_ids
 
             # Usage-only chunk (empty choices with usage info)
             if not chunk.choices and chunk.usage:

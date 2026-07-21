@@ -378,6 +378,9 @@ class AnthropicMessagesRequest(BaseModel):
     # when targeting non-Anthropic backends, so the schema must accept them.
     output_config: Optional[AnthropicOutputConfig] = None
     betas: Optional[list[str]] = None
+    # SGLang observability extension. Harbor strips the returned ID arrays
+    # before forwarding the stream to an unmodified Anthropic client.
+    return_token_ids: bool = False
 
     @field_validator("model")
     @classmethod
@@ -455,6 +458,8 @@ class MessageDeltaEvent(BaseModel):
 
 class MessageStopEvent(BaseModel):
     type: Literal["message_stop"] = "message_stop"
+    prompt_token_ids: Optional[list[int]] = None
+    output_token_ids: Optional[list[int]] = None
 
 
 class ContentBlockStartEvent(BaseModel):

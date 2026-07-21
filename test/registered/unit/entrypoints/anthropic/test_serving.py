@@ -98,7 +98,7 @@ class _FakeNonStreamingOpenAI:
         return self._response
 
 
-def _chunk(choices=None, usage=None):
+def _chunk(choices=None, usage=None, sglext=None):
     data = {
         "id": "chatcmpl-test",
         "object": "chat.completion.chunk",
@@ -108,6 +108,8 @@ def _chunk(choices=None, usage=None):
     }
     if usage is not None:
         data["usage"] = usage
+    if sglext is not None:
+        data["sglext"] = sglext
     return f"data: {json.dumps(data)}\n\n"
 
 
@@ -163,6 +165,33 @@ class TestAnthropicServing(unittest.TestCase):
         }
         data.update(overrides)
         return AnthropicMessagesRequest.model_validate(data)
+
+    def test_stream_forwards_opt_in_token_ids_on_message_stop(self):
+        serving = self._serving(
+            [
+                _chunk([_choice({"role": "assistant", "content": ""})]),
+                _chunk([_choice({"content": "done"}, finish_reason="stop")]),
+                _chunk(
+                    sglext={
+                        "prompt_token_ids": [1, 2, 3],
+                        "output_token_ids": [4, 5],
+                    }
+                ),
+                "data: [DONE]\n\n",
+            ]
+        )
+        events = asyncio.run(
+            _collect_anthropic_events(
+                serving,
+                self._anthropic_request(return_token_ids=True),
+            )
+        )
+
+        message_stop = next(
+            event for event in events if event["type"] == "message_stop"
+        )
+        self.assertEqual(message_stop["prompt_token_ids"], [1, 2, 3])
+        self.assertEqual(message_stop["output_token_ids"], [4, 5])
 
     def test_stream_closes_tool_block_before_text_delta(self):
         serving = self._serving(

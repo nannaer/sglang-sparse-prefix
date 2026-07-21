@@ -588,7 +588,9 @@ class OpenAIServingChat(OpenAIServingBase):
             video_max_dynamic_patch=vid_max_dynamic_patch,
             max_dynamic_patch=getattr(request, "max_dynamic_patch", None),
             use_audio_in_video=getattr(request, "use_audio_in_video", False),
-            return_prompt_token_ids=request.return_prompt_token_ids,
+            return_prompt_token_ids=(
+                request.return_prompt_token_ids or request.return_token_ids
+            ),
         )
 
         return adapted_request, request
@@ -996,6 +998,8 @@ class OpenAIServingChat(OpenAIServingBase):
         hidden_states = {}
         routed_experts = {}
         cached_tokens_details = {}
+        prompt_token_ids = {}
+        output_token_ids = {}
         image_tokens = {}
         audio_tokens = {}
         video_tokens = {}
@@ -1028,6 +1032,32 @@ class OpenAIServingChat(OpenAIServingBase):
                 image_tokens[index] = content["meta_info"].get("image_tokens", 0)
                 audio_tokens[index] = content["meta_info"].get("audio_tokens", 0)
                 video_tokens[index] = content["meta_info"].get("video_tokens", 0)
+
+                if request.return_token_ids:
+                    raw_prompt_ids = content.get("prompt_token_ids")
+                    if isinstance(raw_prompt_ids, list):
+                        prompt_token_ids[index] = list(raw_prompt_ids)
+
+                    raw_output_ids = list(content.get("output_ids") or [])
+                    total_output_tokens = completion_tokens[index]
+                    previous_output_ids = output_token_ids.get(index, [])
+                    if len(raw_output_ids) == total_output_tokens:
+                        # Non-incremental streaming returns the full sequence.
+                        output_token_ids[index] = raw_output_ids
+                    elif (
+                        len(previous_output_ids) + len(raw_output_ids)
+                        == total_output_tokens
+                    ):
+                        # Incremental streaming returns only this chunk's IDs.
+                        output_token_ids[index] = previous_output_ids + raw_output_ids
+                    elif raw_output_ids[: len(previous_output_ids)] == previous_output_ids:
+                        output_token_ids[index] = raw_output_ids
+                    else:
+                        raise ValueError(
+                            "Unable to reconstruct streamed output token IDs: "
+                            f"previous={len(previous_output_ids)}, "
+                            f"chunk={len(raw_output_ids)}, total={total_output_tokens}"
+                        )
 
                 # Handle logprobs
                 choice_logprobs = None
@@ -1156,7 +1186,19 @@ class OpenAIServingChat(OpenAIServingBase):
                 if first_details is not None:
                     sglext_details = cached_tokens_details_from_dict(first_details)
 
-            if sglext_routed is not None or sglext_details is not None:
+            sglext_prompt_ids = None
+            sglext_output_ids = None
+            if request.return_token_ids:
+                if request.n != 1:
+                    raise ValueError("return_token_ids currently requires n=1")
+                sglext_prompt_ids = prompt_token_ids.get(0)
+                sglext_output_ids = output_token_ids.get(0, [])
+
+            if (
+                sglext_routed is not None
+                or sglext_details is not None
+                or request.return_token_ids
+            ):
                 sglext_chunk = ChatCompletionStreamResponse(
                     id=content["meta_info"]["id"],
                     created=int(time.time()),
@@ -1165,6 +1207,8 @@ class OpenAIServingChat(OpenAIServingBase):
                     sglext=SglExt(
                         routed_experts=sglext_routed,
                         cached_tokens_details=sglext_details,
+                        prompt_token_ids=sglext_prompt_ids,
+                        output_token_ids=sglext_output_ids,
                     ),
                 )
                 yield f"data: {sglext_chunk.model_dump_json()}\n\n"

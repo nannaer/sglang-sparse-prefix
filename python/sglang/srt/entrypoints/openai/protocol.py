@@ -407,6 +407,8 @@ class SglExt(BaseModel):
 
     routed_experts: Optional[str] = None
     cached_tokens_details: Optional[CachedTokensDetails] = None
+    prompt_token_ids: Optional[List[int]] = None
+    output_token_ids: Optional[List[int]] = None
 
     @model_serializer(mode="wrap")
     def _serialize(self, handler):
@@ -689,6 +691,9 @@ class ChatCompletionRequest(BaseModel):
     return_routed_experts: bool = False
     routed_experts_start_len: int = 0
     return_cached_tokens_details: bool = False
+    # SGLang observability extension. Unlike return_prompt_token_ids, this is
+    # supported for streaming and emits both ID arrays in a final sglext chunk.
+    return_token_ids: bool = False
     return_prompt_token_ids: bool = False
     return_meta_info: bool = False
     reasoning_effort: Optional[Literal["none", "low", "medium", "high", "max"]] = Field(
