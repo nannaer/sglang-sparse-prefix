@@ -1050,7 +1050,10 @@ class OpenAIServingChat(OpenAIServingBase):
                     ):
                         # Incremental streaming returns only this chunk's IDs.
                         output_token_ids[index] = previous_output_ids + raw_output_ids
-                    elif raw_output_ids[: len(previous_output_ids)] == previous_output_ids:
+                    elif (
+                        raw_output_ids[: len(previous_output_ids)]
+                        == previous_output_ids
+                    ):
                         output_token_ids[index] = raw_output_ids
                     else:
                         raise ValueError(
@@ -1294,11 +1297,23 @@ class OpenAIServingChat(OpenAIServingBase):
         cached_tokens_details = process_cached_tokens_details_from_ret(
             first_ret, request
         )
+        sglext_prompt_ids = None
+        sglext_output_ids = None
+        if request.return_token_ids:
+            if request.n != 1:
+                raise ValueError("return_token_ids currently requires n=1")
+            raw_prompt_ids = first_ret.get("prompt_token_ids")
+            if isinstance(raw_prompt_ids, list):
+                sglext_prompt_ids = list(raw_prompt_ids)
+            sglext_output_ids = list(first_ret.get("output_ids") or [])
+
         response_sglext = None
-        if routed_experts or cached_tokens_details:
+        if routed_experts or cached_tokens_details or request.return_token_ids:
             response_sglext = SglExt(
                 routed_experts=routed_experts,
                 cached_tokens_details=cached_tokens_details,
+                prompt_token_ids=sglext_prompt_ids,
+                output_token_ids=sglext_output_ids,
             )
 
         for idx, ret_item in enumerate(ret):
