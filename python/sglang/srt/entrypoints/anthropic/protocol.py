@@ -6,6 +6,7 @@ and ``ContentBlockDelta`` are discriminated unions over the ``type`` field,
 so each variant carries only the fields it actually uses.
 """
 
+import json
 import uuid
 from typing import Annotated, Any, Literal, Optional, Union
 
@@ -68,6 +69,24 @@ class ToolUseBlock(BaseModel):
     id: str
     name: str
     input: dict[str, Any] = Field(default_factory=dict)
+
+    @field_validator("input", mode="before")
+    @classmethod
+    def _normalize_stringified_json_object(cls, value: Any) -> Any:
+        """Accept a JSON-object string emitted by compatible model backends.
+
+        Some tool parsers can double-encode arguments as ``"{}"`` in an
+        otherwise valid assistant-history block. Normalize only strings that
+        decode to an object; malformed strings and non-object JSON remain
+        invalid under the declared ``dict`` field type.
+        """
+        if not isinstance(value, str):
+            return value
+        try:
+            decoded = json.loads(value)
+        except (json.JSONDecodeError, TypeError):
+            return value
+        return decoded if isinstance(decoded, dict) else value
 
 
 class ToolResultBlock(BaseModel):

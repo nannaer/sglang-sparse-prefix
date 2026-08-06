@@ -412,6 +412,52 @@ class TestAnthropicServing(unittest.TestCase):
         self.assertIn("https://docs.sglang.ai", tool_message["content"])
         self.assertIn("Anthropic API notes", tool_message["content"])
 
+    def test_stringified_tool_use_input_object_is_normalized(self):
+        request = AnthropicMessagesRequest.model_validate(
+            {
+                "model": "test-model",
+                "max_tokens": 16,
+                "messages": [
+                    {
+                        "role": "assistant",
+                        "content": [
+                            {
+                                "type": "tool_use",
+                                "id": "call_1",
+                                "name": "Read",
+                                "input": '{"file_path": "/app/example.py"}',
+                            }
+                        ],
+                    }
+                ],
+            }
+        )
+
+        block = request.messages[0].content[0]
+        self.assertEqual(block.input, {"file_path": "/app/example.py"})
+
+    def test_non_object_tool_use_input_string_remains_invalid(self):
+        with self.assertRaises(ValueError):
+            AnthropicMessagesRequest.model_validate(
+                {
+                    "model": "test-model",
+                    "max_tokens": 16,
+                    "messages": [
+                        {
+                            "role": "assistant",
+                            "content": [
+                                {
+                                    "type": "tool_use",
+                                    "id": "call_1",
+                                    "name": "Read",
+                                    "input": "not-json",
+                                }
+                            ],
+                        }
+                    ],
+                }
+            )
+
     def test_builtin_web_search_tool_without_schema_is_skipped(self):
         request = AnthropicMessagesRequest.model_validate(
             {
