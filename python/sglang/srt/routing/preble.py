@@ -85,6 +85,7 @@ class PrebleScheduler:
         prefill_time: Callable[[int, int], float] = a6000_prefill_time,
         initial_tpot: float = 0.15,
         max_nodes: int = 100000,
+        enable_rebalancing: bool = True,
     ):
         if num_workers < 1 or window_seconds <= 0 or initial_tpot <= 0 or max_nodes < 2:
             raise ValueError(
@@ -99,6 +100,10 @@ class PrebleScheduler:
         self.history = deque()
         self.tpot = [deque([initial_tpot], maxlen=200) for _ in range(num_workers)]
         self.scheduled = 0
+        self.enable_rebalancing = enable_rebalancing
+        self.ttft_history = deque()
+        self.migrations = 0
+        self.replications = 0
 
     def _insert(self, tokens: Sequence[int]) -> PrefixNode:
         node = self.root
@@ -202,7 +207,6 @@ class PrebleScheduler:
         if not candidates or any(w < 0 or w >= self.num_workers for w in candidates):
             raise ValueError("No valid available worker")
         now = time.monotonic()
-        stats = self._statistics(now)
         leaf = self._insert(tokens)
         # A split changes important nodes, so regroup historical observations.
         stats = self._statistics(now)
@@ -225,6 +229,9 @@ class PrebleScheduler:
             )
         )
         self.scheduled += 1
+        if self.enable_rebalancing and self.scheduled >= 50 * self.num_workers:
+            if len(list(leaf.path())) - len(list(self.important(leaf).path())) < 3:
+                self._rebalance(now)
         self._prune()
         return Assignment(leaf, worker, output_budget)
 
@@ -243,3 +250,72 @@ class PrebleScheduler:
             node.active[assignment.worker] -= 1
         if output_tokens > 1 and latency > ttft > 0:
             self.tpot[assignment.worker].append((latency - ttft) / (output_tokens - 1))
+        if ttft > 0:
+            self.ttft_history.append(
+                (time.monotonic(), assignment.leaf, assignment.worker, ttft)
+            )
+
+    def _overloaded(self, node, worker, now):
+        while self.ttft_history and self.ttft_history[0][0] < now - self.window_seconds:
+            self.ttft_history.popleft()
+        halves = ([], [])
+        for timestamp, leaf, selected, ttft in self.ttft_history:
+            if selected == worker and self.important(leaf) is node:
+                halves[int(timestamp >= now - self.window_seconds / 2)].append(ttft)
+        return bool(halves[0] and halves[1]) and (
+            sum(halves[1]) / len(halves[1]) >= 2 * sum(halves[0]) / len(halves[0])
+        )
+
+    @staticmethod
+    def _assign_subtree(node, worker, replicate=False):
+        pending = [node]
+        while pending:
+            current = pending.pop()
+            if replicate:
+                current.workers.add(worker)
+            else:
+                current.workers = {worker}
+            pending.extend(current.children.values())
+
+    def _rebalance(self, now):
+        """Move small prefix groups; replicate an indivisible, overloaded group.
+
+        Like upstream, this only changes future routing. Active requests remain
+        on their original workers, and no KV bytes are transferred.
+        """
+        stats = self._statistics(now)
+        loads, node_costs = self._costs(stats, minimum_count=2)
+        ranked = sorted(range(self.num_workers), key=lambda w: (-loads[w], w))
+        while len(ranked) > 1:
+            high, low = ranked[0], ranked[-1]
+            if loads[high] <= 1.5 * loads[low]:
+                break
+            groups = sorted(
+                (
+                    (costs[high], node)
+                    for node, costs in node_costs.items()
+                    if high in costs
+                ),
+                key=lambda item: item[0],
+            )
+            if len(groups) == 1:
+                cost, node = groups[0]
+                if low not in node.workers and self._overloaded(node, high, now):
+                    self._assign_subtree(node, low, replicate=True)
+                    self.replications += 1
+                    self.ttft_history = deque(
+                        e
+                        for e in self.ttft_history
+                        if not (e[2] == high and self.important(e[1]) is node)
+                    )
+            else:
+                for cost, node in groups:
+                    if loads[high] - cost < loads[low] + cost:
+                        break
+                    self._assign_subtree(node, low)
+                    self.migrations += 1
+                    loads[high] -= cost
+                    loads[low] += cost
+                    if loads[high] <= 1.5 * loads[low]:
+                        break
+            ranked = ranked[1:]
