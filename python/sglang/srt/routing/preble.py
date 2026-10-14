@@ -228,7 +228,12 @@ class PrebleScheduler:
         # A split changes important nodes, so regroup historical observations.
         stats = self._statistics(now)
         costs, _ = self._costs(stats)
-        if len(leaf.tokens) < leaf.context - len(leaf.tokens):
+        path = list(leaf.path())
+        matched = max(
+            (node.context for node in path if node.workers.intersection(candidates)),
+            default=0,
+        )
+        if len(tokens) - matched < matched:
             node = leaf
             while node.parent is not None:
                 assigned = node.workers.intersection(candidates)
@@ -238,14 +243,15 @@ class PrebleScheduler:
                 node = node.parent
         worker = min(candidates, key=lambda w: (costs[w], w))
         self.outstanding_tokens[worker] += output_budget
-        for node in leaf.path():
+        hit_tokens = max(
+            (node.context for node in path if worker in node.workers), default=0
+        )
+        for node in path:
             node.workers.add(worker)
             node.active[worker] += 1
             node.last_used = now
         self.history.append(
-            Observation(
-                now, leaf, len(tokens), len(tokens) - len(leaf.tokens), output_budget
-            )
+            Observation(now, leaf, len(tokens), hit_tokens, output_budget)
         )
         self.scheduled += 1
         if self.enable_rebalancing and self.scheduled >= 50 * self.num_workers:
