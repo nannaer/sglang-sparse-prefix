@@ -144,6 +144,8 @@ class PrebleScheduler:
     def _statistics(self, now: float):
         while self.history and self.history[0].timestamp < now - self.window_seconds:
             self.history.popleft()
+        while self.ttft_history and self.ttft_history[0][0] < now - self.window_seconds:
+            self.ttft_history.popleft()
         stats = {}
         for event in self.history:
             node = self.important(event.leaf)
@@ -167,12 +169,14 @@ class PrebleScheduler:
                 / len(node.workers)
             )
             node_costs[node] = {}
-            for worker in node.workers:
-                cost = prefill + node.active[worker] * output * median(
-                    self.tpot[worker]
-                )
+            active_workers = {worker for worker, count in node.active.items() if count}
+            for worker in node.workers | active_workers:
+                cost = (prefill if worker in node.workers else 0) + node.active[
+                    worker
+                ] * output * median(self.tpot[worker])
                 costs[worker] += cost
-                node_costs[node][worker] = cost
+                if worker in node.workers:
+                    node_costs[node][worker] = cost
         return costs, node_costs
 
     def _prune(self):
