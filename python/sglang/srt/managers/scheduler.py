@@ -2728,6 +2728,12 @@ class Scheduler(
 
         # Get priority queue
         self.policy.calc_priority(self.waiting_queue, self.running_batch)
+        prefill_max_requests = self.server_args.prefill_max_requests
+        if self.policy.prefill_limit is not None:
+            prefill_max_requests = min(
+                self.policy.prefill_limit,
+                prefill_max_requests if prefill_max_requests is not None else self.policy.prefill_limit,
+            )
 
         if TEST_RETRACT and running_bs > TEST_RETRACT_NO_PREFILL_BS:
             # If we are testing retraction and the running batch size exceeds
@@ -2756,7 +2762,7 @@ class Scheduler(
             self.priority_scheduling_preemption_threshold,
             max_prefill_bs=self.max_prefill_bs,
             max_running_requests=self.max_running_requests,
-            prefill_max_requests=self.server_args.prefill_max_requests,
+            prefill_max_requests=prefill_max_requests,
             prefill_delayer_single_pass=prefill_delayer_single_pass,
             dllm_config=self.dllm_config,
             waiting_queue_len=len(self.waiting_queue),

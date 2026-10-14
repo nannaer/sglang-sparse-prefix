@@ -5104,6 +5104,7 @@ class ServerArgs:
                 "random",
                 "fcfs",
                 "dfs-weight",
+                "fcfs-mpq",
                 "lof",
                 "priority",
                 "routing-key",

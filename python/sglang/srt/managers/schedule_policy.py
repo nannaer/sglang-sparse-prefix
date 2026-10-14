@@ -135,6 +135,7 @@ class CacheAwarePolicy(Enum):
 
     LPM = "lpm"  # longest prefix match
     DFS_WEIGHT = "dfs-weight"  # depth-first search weighting
+    FCFS_MPQ = "fcfs-mpq"  # Preble's cache-hit priority groups
 
 
 class CacheAgnosticPolicy(Enum):
@@ -163,6 +164,8 @@ class SchedulePolicy:
         self.enable_priority_scheduling = enable_priority_scheduling
         self.schedule_low_priority_values_first = schedule_low_priority_values_first
         self.priority_sign = 1 if schedule_low_priority_values_first else -1
+        self.prefill_limit = None
+        self.mpq_cursor = 9
 
         # It is used to find the matching prefix for in-batch prefix caching.
         self.waiting_queue_radix_tree = RadixCache.create_simulated()
@@ -171,6 +174,7 @@ class SchedulePolicy:
         self, waiting_queue: List[Req], running_batch: Optional[ScheduleBatch] = None
     ) -> None:
         policy = self._determine_active_policy(waiting_queue)
+        self.prefill_limit = None
 
         # Populate req.num_matched_prefix_tokens at schedule time. Cache-aware policies
         # set it in _compute_prefix_matches; do the same full match for
@@ -201,6 +205,8 @@ class SchedulePolicy:
                 )
             elif policy == CacheAwarePolicy.DFS_WEIGHT:
                 SchedulePolicy._sort_by_dfs_weight(waiting_queue, self.tree_cache)
+            elif policy == CacheAwarePolicy.FCFS_MPQ:
+                self._sort_by_cache_hit_groups(waiting_queue)
             else:
                 raise ValueError(f"Unknown CacheAware Policy: {policy=}")
         else:
@@ -219,6 +225,31 @@ class SchedulePolicy:
                     SchedulePolicy._sort_by_routing_key(waiting_queue, running_batch)
             else:
                 raise ValueError(f"Unknown CacheAgnostic Policy: {policy=}")
+
+    def _sort_by_cache_hit_groups(self, waiting_queue: List[Req]) -> None:
+        """Round-robin ten hit-rate groups, with 10 * (priority + 1) quota.
+
+        Preserve FIFO within a group. Refresh membership at every prefill decision
+        because the local cache can change while requests wait. The scheduler's
+        existing prefill budget limits admission to the selected group.
+        """
+        groups = [[] for _ in range(10)]
+        for req in waiting_queue:
+            length = len(req.origin_input_ids) + len(req.output_ids)
+            hits = min(len(req.prefix_indices), length)
+            group = max(0, min(9, (10 * hits + length - 1) // max(1, length) - 1))
+            groups[group].append(req)
+        for _ in range(10):
+            group = self.mpq_cursor
+            self.mpq_cursor = (group + 9) % 10
+            if groups[group]:
+                selected = groups[group]
+                self.prefill_limit = min(len(selected), 10 * (group + 1))
+                selected_ids = {id(req) for req in selected}
+                waiting_queue[:] = selected + [
+                    req for req in waiting_queue if id(req) not in selected_ids
+                ]
+                return
 
     def _determine_active_policy(self, waiting_queue: List[Req]) -> Policy:
         if self.policy == CacheAwarePolicy.LPM and len(waiting_queue) > 128:
