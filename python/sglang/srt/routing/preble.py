@@ -40,6 +40,7 @@ class PrefixNode:
     children: dict[int, PrefixNode] = field(default_factory=dict)
     workers: set[int] = field(default_factory=set)
     active: dict[int, int] = field(default_factory=lambda: defaultdict(int))
+    last_used: float = 0.0
 
     @property
     def large(self) -> bool:
@@ -125,6 +126,7 @@ class PrebleScheduler:
                 split = PrefixNode(child.tokens[:matched], node, node.context + matched)
                 split.workers = child.workers.copy()
                 split.active.update(child.active)
+                split.last_used = child.last_used
                 node.children[split.tokens[0]] = split
                 child.tokens = child.tokens[matched:]
                 child.parent = split
@@ -147,6 +149,11 @@ class PrebleScheduler:
             self.history.popleft()
         while self.ttft_history and self.ttft_history[0][0] < now - self.window_seconds:
             self.ttft_history.popleft()
+        for node in self.nodes:
+            if node.last_used < now - self.window_seconds and not any(
+                node.active.values()
+            ):
+                node.workers.clear()
         stats = {}
         for event in self.history:
             node = self.important(event.leaf)
@@ -234,6 +241,7 @@ class PrebleScheduler:
         for node in leaf.path():
             node.workers.add(worker)
             node.active[worker] += 1
+            node.last_used = now
         self.history.append(
             Observation(
                 now, leaf, len(tokens), len(tokens) - len(leaf.tokens), output_budget
