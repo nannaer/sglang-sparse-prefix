@@ -23,6 +23,7 @@ def create_app(worker_urls, tokenizer, scheduler):
     urls = [url.rstrip("/") for url in worker_urls]
     if len(urls) != scheduler.num_workers or len(set(urls)) != len(urls):
         raise ValueError("Worker URLs must be unique and match the scheduler pool")
+    vocab_size = len(tokenizer)
     unavailable_until = [0.0] * len(urls)
 
     @asynccontextmanager
@@ -106,7 +107,7 @@ def create_app(worker_urls, tokenizer, scheduler):
             or any(type(t) is not int or t < 0 for t in tokens)
         ):
             raise HTTPException(400, "input_ids must be one nonempty token list")
-        if any(t >= len(tokenizer) for t in tokens):
+        if any(t >= vocab_size for t in tokens):
             raise HTTPException(400, "Token ID outside model vocabulary")
         params = payload.get("sampling_params", {})
         if not isinstance(params, dict):
