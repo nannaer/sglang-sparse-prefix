@@ -259,7 +259,14 @@ def create_app(worker_urls, tokenizer, scheduler):
             await release()
         if last is None:
             raise HTTPException(502, "Worker returned no generation")
-        return JSONResponse(last, headers=routing_headers)
+        error = last.get("error")
+        reason = last.get("meta_info", {}).get("finish_reason") or {}
+        status = 200
+        if error is not None or reason.get("type") == "abort":
+            code = error.get("code") if isinstance(error, dict) else None
+            code = code or reason.get("status_code")
+            status = code if type(code) is int and 400 <= code < 600 else 502
+        return JSONResponse(last, status_code=status, headers=routing_headers)
 
     return app
 
