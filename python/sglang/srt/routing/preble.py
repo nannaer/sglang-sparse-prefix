@@ -104,6 +104,7 @@ class PrebleScheduler:
         self.ttft_history = deque()
         self.migrations = 0
         self.replications = 0
+        self.outstanding_tokens = [0] * num_workers
 
     def _insert(self, tokens: Sequence[int]) -> PrefixNode:
         node = self.root
@@ -157,7 +158,11 @@ class PrebleScheduler:
         return stats
 
     def _costs(self, stats, minimum_count: int = 1):
-        costs = [0.0] * self.num_workers
+        # Decode load survives history expiry and prefix ownership migration.
+        costs = [
+            tokens * median(self.tpot[worker])
+            for worker, tokens in enumerate(self.outstanding_tokens)
+        ]
         node_costs = {}
         for node, (count, total, hits, output) in stats.items():
             if not node.workers or count < minimum_count:
@@ -174,7 +179,8 @@ class PrebleScheduler:
                 cost = (prefill if worker in node.workers else 0) + node.active[
                     worker
                 ] * output * median(self.tpot[worker])
-                costs[worker] += cost
+                if worker in node.workers:
+                    costs[worker] += prefill
                 if worker in node.workers:
                     node_costs[node][worker] = cost
         return costs, node_costs
@@ -224,6 +230,7 @@ class PrebleScheduler:
                     break
                 node = node.parent
         worker = min(candidates, key=lambda w: (costs[w], w))
+        self.outstanding_tokens[worker] += output_budget
         for node in leaf.path():
             node.workers.add(worker)
             node.active[worker] += 1
@@ -250,6 +257,7 @@ class PrebleScheduler:
         if assignment.finished:
             return
         assignment.finished = True
+        self.outstanding_tokens[assignment.worker] -= assignment.output_budget
         for node in assignment.leaf.path():
             node.active[assignment.worker] -= 1
         if output_tokens > 1 and latency > ttft > 0:
