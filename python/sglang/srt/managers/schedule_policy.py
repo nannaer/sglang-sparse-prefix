@@ -165,6 +165,7 @@ class SchedulePolicy:
         self.schedule_low_priority_values_first = schedule_low_priority_values_first
         self.priority_sign = 1 if schedule_low_priority_values_first else -1
         self.prefill_limit = None
+        self.prefill_candidates = None
         self.mpq_cursor = 9
 
         # It is used to find the matching prefix for in-batch prefix caching.
@@ -175,6 +176,7 @@ class SchedulePolicy:
     ) -> None:
         policy = self._determine_active_policy(waiting_queue)
         self.prefill_limit = None
+        self.prefill_candidates = None
 
         # Populate req.num_matched_prefix_tokens at schedule time. Cache-aware policies
         # set it in _compute_prefix_matches; do the same full match for
@@ -236,7 +238,9 @@ class SchedulePolicy:
         groups = [[] for _ in range(10)]
         for req in waiting_queue:
             length = len(req.origin_input_ids) + len(req.output_ids)
-            hits = min(len(req.prefix_indices), length)
+            hits = min(len(req.prefix_indices), req._compute_max_prefix_len(length))
+            if req.positional_embed_overrides is not None:
+                hits = 0
             group = max(0, min(9, (10 * hits + length - 1) // max(1, length) - 1))
             groups[group].append(req)
         for _ in range(10):
@@ -244,6 +248,8 @@ class SchedulePolicy:
             self.mpq_cursor = (group + 9) % 10
             if groups[group]:
                 selected = groups[group]
+                selected.sort(key=lambda req: req.time_stats.wait_queue_entry_time)
+                self.prefill_candidates = selected
                 self.prefill_limit = min(len(selected), 10 * (group + 1))
                 selected_ids = {id(req) for req in selected}
                 waiting_queue[:] = selected + [

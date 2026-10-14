@@ -2730,9 +2730,10 @@ class Scheduler(
         self.policy.calc_priority(self.waiting_queue, self.running_batch)
         prefill_max_requests = self.server_args.prefill_max_requests
         if self.policy.prefill_limit is not None:
+            mpq_limit = self.policy.prefill_limit + int(self.chunked_req is not None)
             prefill_max_requests = min(
-                self.policy.prefill_limit,
-                prefill_max_requests if prefill_max_requests is not None else self.policy.prefill_limit,
+                mpq_limit,
+                prefill_max_requests if prefill_max_requests is not None else mpq_limit,
             )
 
         if TEST_RETRACT and running_bs > TEST_RETRACT_NO_PREFILL_BS:
@@ -2789,7 +2790,12 @@ class Scheduler(
         if mamba_allocator is not None:
             mamba_allocator.alloc_group_begin(len(self.waiting_queue))
         # Get requests from the waiting queue to a new prefill batch
-        for req in self.waiting_queue:
+        prefill_candidates = (
+            self.policy.prefill_candidates
+            if self.policy.prefill_candidates is not None
+            else self.waiting_queue
+        )
+        for req in prefill_candidates:
             if self.enable_lora and not self._can_schedule_lora_req(req, running_loras):
                 continue
 
