@@ -13,6 +13,7 @@ import aiohttp
 import uvicorn
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import JSONResponse, Response, StreamingResponse
+from starlette.background import BackgroundTask
 from transformers import AutoTokenizer
 
 from sglang.srt.routing.preble import PrebleScheduler
@@ -135,26 +136,86 @@ def create_app(worker_urls, tokenizer, scheduler):
         if "authorization" in request.headers:
             headers["Authorization"] = request.headers["authorization"]
         session = app.state.session
-        try:
+        response = None
+        released = False
+
+        async def abort():
+            try:
+                async with session.post(
+                    url + "/abort_request",
+                    json={"rid": payload["rid"]},
+                    headers=headers,
+                    timeout=aiohttp.ClientTimeout(total=5),
+                ) as result:
+                    await result.read()
+            except (aiohttp.ClientError, asyncio.TimeoutError):
+                pass
+
+        async def release(done=False, output_tokens=0, ttft=0):
+            nonlocal released
+            if released:
+                return
+            released = True
+            if response is not None:
+                response.close()
+            scheduler.finish(
+                assignment,
+                output_tokens if done else 0,
+                ttft if done else 0,
+                time.monotonic() - started,
+            )
+            if not done:
+                await asyncio.shield(asyncio.create_task(abort()))
+
+        async def with_disconnect(operation):
+            # Nonstream HTTP handlers keep running after a socket disconnect.
+            stopped = asyncio.Event()
+
+            async def disconnected():
+                while not stopped.is_set() and not await request.is_disconnected():
+                    try:
+                        await asyncio.wait_for(stopped.wait(), timeout=0.1)
+                    except asyncio.TimeoutError:
+                        pass
+
+            pending = asyncio.ensure_future(operation)
+            monitor = asyncio.create_task(disconnected())
+            try:
+                done, _ = await asyncio.wait(
+                    (pending, monitor), return_when=asyncio.FIRST_COMPLETED
+                )
+                if monitor in done:
+                    raise HTTPException(499, "Client disconnected")
+                return await pending
+            finally:
+                stopped.set()
+                if not pending.done():
+                    pending.cancel()
+                await asyncio.gather(pending, monitor, return_exceptions=True)
+
+        async def open_response():
+            nonlocal response
             response = await session.post(
                 url + "/generate", json=payload, headers=headers
             )
+
+        try:
+            await with_disconnect(open_response())
         except (aiohttp.ClientError, asyncio.TimeoutError):
-            scheduler.finish(assignment)
+            await release()
             unavailable_until[assignment.worker] = time.monotonic() + 5
             raise HTTPException(502, "Worker connection failed")
         except BaseException:
-            scheduler.finish(assignment)
+            await release()
             raise
         if response.status != 200:
             try:
-                body = await response.read()
+                body = await with_disconnect(response.read())
                 return Response(
                     body, status_code=response.status, media_type="application/json"
                 )
             finally:
-                response.release()
-                scheduler.finish(assignment)
+                await release(done=True)
 
         async def chunks():
             ttft = 0.0
@@ -174,39 +235,28 @@ def create_app(worker_urls, tokenizer, scheduler):
                             output_tokens = count
                     yield line
             finally:
-                response.close()
-                scheduler.finish(
-                    assignment,
-                    output_tokens if done else 0,
-                    ttft if done else 0,
-                    time.monotonic() - started,
-                )
-                if not done:
-                    # Release backend resources on frontend cancellation as well.
-                    async def abort():
-                        try:
-                            async with session.post(
-                                url + "/abort_request",
-                                json={"rid": payload["rid"]},
-                                headers=headers,
-                                timeout=aiohttp.ClientTimeout(total=5),
-                            ) as result:
-                                await result.read()
-                        except (aiohttp.ClientError, asyncio.TimeoutError):
-                            pass
-
-                    task = asyncio.create_task(abort())
-                    await asyncio.shield(task)
+                await release(done, output_tokens, ttft)
 
         routing_headers = {"X-Preble-Worker": str(assignment.worker)}
         if stream:
             return StreamingResponse(
-                chunks(), media_type="text/event-stream", headers=routing_headers
+                chunks(),
+                media_type="text/event-stream",
+                headers=routing_headers,
+                background=BackgroundTask(release),
             )
-        last = None
-        async for line in chunks():
-            if line.startswith(b"data:") and line[5:].strip() != b"[DONE]":
-                last = json.loads(line[5:])
+
+        async def collect():
+            last = None
+            async for line in chunks():
+                if line.startswith(b"data:") and line[5:].strip() != b"[DONE]":
+                    last = json.loads(line[5:])
+            return last
+
+        try:
+            last = await with_disconnect(collect())
+        finally:
+            await release()
         if last is None:
             raise HTTPException(502, "Worker returned no generation")
         return JSONResponse(last, headers=routing_headers)
