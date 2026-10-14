@@ -1,6 +1,6 @@
 # Copyright 2026 SGLang Team
 # Licensed under the Apache License, Version 2.0.
-"""Preble frontend for a fixed pool of identical SGLang /generate workers."""
+"""Preble frontend for identical, cumulative-streaming SGLang /generate workers."""
 
 import argparse
 import asyncio
@@ -31,6 +31,19 @@ def create_app(worker_urls, tokenizer, scheduler):
             connector=aiohttp.TCPConnector(limit=0),
         ) as session:
             app.state.session = session
+
+            async def check_worker(url):
+                async with session.get(
+                    url + "/server_info", timeout=aiohttp.ClientTimeout(total=10)
+                ) as response:
+                    response.raise_for_status()
+                    info = await response.json()
+                if info.get("incremental_streaming_output", False):
+                    raise ValueError(
+                        f"Preble requires cumulative streaming output: {url}"
+                    )
+
+            await asyncio.gather(*(check_worker(url) for url in urls))
             yield
 
     app = FastAPI(lifespan=lifespan)
@@ -74,6 +87,10 @@ def create_app(worker_urls, tokenizer, scheduler):
             raise HTTPException(
                 400, "Preble supports stateless text requests to one model"
             )
+        if any(payload.get(k) is not None for k in ("extra_key", "cache_salt")):
+            raise HTTPException(
+                400, "Preble does not support cache namespaces (extra_key/cache_salt)"
+            )
         tokens = payload.get("input_ids")
         if tokens is None:
             text = payload.get("text")
@@ -93,6 +110,8 @@ def create_app(worker_urls, tokenizer, scheduler):
         params = payload.get("sampling_params", {})
         if not isinstance(params, dict):
             raise HTTPException(400, "sampling_params must be an object")
+        if type(params.get("n", 1)) is not int or params.get("n", 1) != 1:
+            raise HTTPException(400, "Preble supports one sample per request (n=1)")
         budget = params.get("max_new_tokens", 16)
         if type(budget) is not int or budget < 0:
             raise HTTPException(400, "max_new_tokens must be nonnegative")
