@@ -10,6 +10,20 @@
 
 </div>
 
+# SGLang Prefix Load Balancing
+
+This repository contains a prefix-aware global load-balancing extension for
+SGLang. It routes requests across identical SGLang workers using prompt-prefix
+locality, estimated prefill/decode load, and local cache-hit priority queues.
+The implementation is compatible with the current SGLang checkout; Preble is
+the upstream scheduling design used as the reference.
+
+The project repository is
+[`nannaer/sglang-sparse-prefix`](https://github.com/nannaer/sglang-sparse-prefix).
+See [`examples/preble/README.md`](examples/preble/README.md) for implementation
+details and [`examples/preble/RESULTS.md`](examples/preble/RESULTS.md) for the
+Qwen3-235B LooGLE measurements.
+
 --------------------------------------------------------------------------------
 
 <p align="center">

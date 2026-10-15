@@ -1,4 +1,4 @@
-# Qwen3-235B LooGLE measurements
+# SGLang prefix load balancing: Qwen3-235B LooGLE measurements
 
 These measurements validate the current SGLang integration on a large BF16 model. They compare the upstream no-eviction-cost E2 variant against round-robin with the same local MPQ policy. They do not reproduce the paper's numerical speedups or its full eviction-aware serving configuration.
 

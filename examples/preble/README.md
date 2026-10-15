@@ -1,4 +1,4 @@
-# Preble scheduling on current SGLang
+# SGLang prefix load balancing
 
 This integration adds Preble's global exploration/exploitation (E2) routing and
 local cache-hit priority queues to the current SGLang runtime. It uses this
