@@ -2305,6 +2305,7 @@ class Scheduler(
                 elif self.enable_hierarchical_cache:
                     self.tree_cache.terminate_prefetch(candidate_req.rid)
                 self.waiting_queue.pop(idx)
+                self.policy.remove_admitted_requests([candidate_req])
                 req_to_abort = candidate_req
                 message = "The request is aborted by a higher priority request."
 
@@ -2351,6 +2352,7 @@ class Scheduler(
             self.waiting_queue = [
                 req for req in self.waiting_queue if req not in deleted_reqs
             ]
+            self.policy.remove_admitted_requests(list(deleted_reqs))
 
     def handle_embedding_request(
         self,
@@ -3943,6 +3945,7 @@ class Scheduler(
             # This only works for requests that have not started anything.
             # We still need to send something back to TokenizerManager to clean up the state.
             req = self.waiting_queue.pop(i)
+            self.policy.remove_admitted_requests([req])
             if self.enable_hicache_storage:
                 # to release prefetch events associated with the request
                 self.tree_cache.release_aborted_request(req.rid)

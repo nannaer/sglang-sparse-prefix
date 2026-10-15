@@ -440,6 +440,7 @@ class SchedulerDisaggregationPrefillMixin:
             self.waiting_queue = [
                 req for req in self.waiting_queue if req not in failed
             ]
+            self.policy.remove_admitted_requests(list(failed))
 
     @scheduler_nvtx_method("scheduler.get_next_batch_to_run")
     def get_next_disagg_prefill_batch_to_run(

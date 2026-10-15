@@ -280,9 +280,15 @@ class SchedulePolicy:
                 return
 
     def remove_admitted_requests(self, reqs: List[Req]) -> None:
-        """Let retracted requests be classified again when they re-enter MPQ."""
+        """Release MPQ state for requests leaving the waiting queue.
+
+        This covers normal admission, retraction, cancellation, and timeout.
+        The candidate snapshot belongs to the current scheduling pass; clear it
+        when any of its requests leave so it cannot retain a canceled request.
+        """
         for req in reqs:
             self.mpq_group_by_req.pop(req, None)
+        self.prefill_candidates = None
 
     def _determine_active_policy(self, waiting_queue: List[Req]) -> Policy:
         if self.policy == CacheAwarePolicy.LPM and len(waiting_queue) > 128:
