@@ -1,4 +1,6 @@
-# Preble 原版对齐后的 235B 补充实验
+# 历史 235B ABBA 实验
+
+> 此报告固定旧 runtime `c773f3e560`。复核确认 A1/A2 在全局路由分叉前已有 worker 执行速度差异，旧启动流程也存在 warmup 就绪竞态；因此下文比例仅描述这四轮，不能作为控制住副本速度后的性能收益。结论见[延迟差异](VARIANCE_ANALYSIS.md)，当前实现与单轮验证见[一致性验证](ALIGNMENT_REAUDIT.md)和[2296 结果](RUNTIME_2296.md)。原数据保持原样。
 
 本次测量使用 runtime [`c773f3e560`](https://github.com/nannaer/sglang-sparse-prefix/commit/c773f3e5605eb3fe9a2d032c80f0e9def6dfc2d9)，比较 **Preble + MPQ** 与 **RR + LPM**。参考仍固定为 WukLab/Preble `1a35eae20c416f7062ca81775aab72890323fd97` 的公开服务默认路径，SGLang base 未变。
 

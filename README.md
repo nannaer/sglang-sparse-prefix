@@ -1,72 +1,83 @@
 # SGLang Prefix Load Balancing
 
-在当前 SGLang 上接入 Preble：按照 prompt 前缀、预计计算负载与驱逐重算代价，把请求分配给独立模型副本；副本内部使用 MPQ 调度等待请求。
+把 [Preble](https://github.com/WukLab/preble/tree/1a35eae20c416f7062ca81775aab72890323fd97) 的全局前缀路由与本地 MPQ 调度接入当前 SGLang。参考 commit `1a35eae20c`，当前 runtime `091d70e1e7`，SGLang base `ef11e39048`。
 
-项目：[`nannaer/sglang-sparse-prefix`](https://github.com/nannaer/sglang-sparse-prefix)。原设计来自 [Preble 论文](https://arxiv.org/abs/2407.00023) 与 [WukLab/Preble](https://github.com/WukLab/preble)，底层 runtime 来自 [SGLang](https://github.com/sgl-project/sglang)。
-
-## 一次请求怎么运行
+## 请求执行流程
 
 ```text
-客户端发送 prompt
-    ↓
-Frontend：tokenize → 更新全局前缀树 → 估计候选副本代价 → 选择副本
-    ↓
-Worker：进入持久 MPQ 分组 → 按组轮转与 FIFO 准入 → SGLang 生成
-    ↓
-完成反馈：释放引用，记录 TTFT，用输出长度与时延更新 TPOT
+/generate → frontend 分词、更新全局前缀树、选择副本
+          → 发送相同 token IDs → worker MPQ 排队 → SGLang prefill / decode
+          → 转发流式输出 → 完成反馈、释放引用、更新 TTFT / TPOT
 ```
 
-全局路由同时考虑三件事：前缀目前分配给谁、各副本还有多少工作、放入新请求后可能驱逐哪些前缀。可复用前缀较长时在既有归属中选；否则探索全部副本，选择估计代价最低的一端。
+各 worker 的实际 KV 留在本地 HBM。Frontend 的虚拟缓存用于估算驱逐重算代价；migration / replication 调整未来路由归属，由后续请求建立缓存，不传输 KV，也没有接 Mooncake。
+
+## 调度算法
+
+压缩 radix 节点的 `segment` 是节点自身 token 数，`context_before` 是此前路径长度。`segment > context_before` 为大节点；请求组是从叶向上最近的大节点。
 
 ```text
-route(prompt):
-    leaf = 全局压缩前缀树.insert(prompt)
-    candidates = 既有归属 if leaf 段短于它之前的 context else 全部副本
-    cost[w] = 窗口 prefill 代价 + 在途 decode 代价 + 虚拟驱逐重算代价
-    worker = 原版最小代价选择(candidates, cost)
-    更新引用、虚拟缓存与窗口；满足条件时调整未来路由归属
-    forward(worker, 相同的 prompt token IDs)
+route(prompt, output_budget):
+    leaf, splits = 全局 radix.insert(prompt)
+    按原规则继承 split 的归属、引用和窗口统计
+    group = leaf 向上最近的大节点
+    candidates = 从 leaf 向上最近非空归属 if leaf.segment < leaf.context_before else 全部副本
+    w = 唯一候选；多个候选时按原版 load + eviction_cost 选择
+    更新归属、虚拟缓存、在途引用和 180 秒窗口
+    若虚拟占用超容量：按原虚拟 LRU 驱逐
+    若累计请求 ≥ 50×副本数 且 leaf 到 group 的深度差 < 3：
+        仅计窗口请求数 ≥ 2 的组；最大/最小负载比 ≥ 1.5 时尝试重平衡
+        多个可迁组：从小代价组开始迁，直到平衡或迁移会反转两端负载
+        单个热点组：两半窗都有样本、后半窗平均 TTFT ≥ 前半窗 2 倍时添加归属
+    forward(w, prompt token IDs)
 ```
 
-每个 worker 的真正 KV 留在自己的 HBM。全局虚拟缓存用于预测代价，不是共享 KV 存储；这里的前缀迁移 / 复制是调整未来请求归属，新副本通过后续请求计算并建立缓存。
+候选代价如下。`T(new_tokens, full_context)` 保留原二维 prefill 模型，按部署整体缩放；`g` 是该副本所属前缀组，`v` 是原虚拟 LRU 选出的 victim：
 
-## 是否与 Preble 一致
+```text
+prefill(g) = miss_rate(g) × 窗口请求数(g) × T(g.segment, g.full_context) / 归属副本数(g)
+decode(g,w) = 在途引用数(g,w) × 组输出预算(g) × median(TPOT[w])
+load(w) = Σg [prefill(g) + decode(g,w)]
+eviction_cost(w) = Σ大节点v [miss_rate(v) × 窗口请求数(v) × T(v.segment, v.full_context)]
+```
 
-对齐目标是原版**公开服务默认路径**，参考 commit 固定为 `1a35eae20c416f7062ca81775aab72890323fd97`。SGLang 保持 base `ef11e3904885c8050f167a4a6f805da03e9e9bae`，没有降级或导入旧 runtime。
+原版对参与代价比较的每个候选都模拟释放新 leaf 段所需空间，不等实际容量满了才加驱逐代价；缺少窗口统计时按原规则回退。输出长度采样在原公开路径中被注释，因此组输出估计回退到最近预算。
 
-| 模块 | 当前实现 |
+```text
+worker_prefill():
+    先续已有 chunk，扣除 token / slot / chunk 预算
+    若预算耗尽：返回，不推进 MPQ cursor
+    首次进入等待队列：按本地命中率固定分入 10 组，等待期间不换组
+        group = max(0, ceil(10 × hit_rate) - 1)，取值 0…9
+    从 cursor 按 9→0 循环选择首个非空组；组内按分词前到达时间 FIFO
+    刷新所选组匹配；新请求配额 = min(组大小, 10×(组号+1))
+    顺序尝试准入，实际加入才消耗配额：
+        普通容量 / 输入不满足 → SKIP，继续同组后项
+        锁后容量不足或本轮预算耗尽 → 停止
+    请求准入或取消离队时清除 MPQ 引用；retract 后重新分组
+
+finish(request):
+    释放原副本路径引用，记录组 TTFT
+    output_len > 1 且 latency > TTFT > 0 时：TPOT[w].append((latency - TTFT) / output_len)
+```
+
+## 与 Preble 的一致性
+
+已按原**公开服务默认路径**复核上述算法、候选迭代顺序、HTTP 反馈与非 speculative MPQ retract。保留原 argmin 候选位置缺陷、虚拟 LRU 重复父项和特定 split / expiry 断言，以及成功 HTTP 反馈预算为 0 的旧 ledger 行为；实际路由代价使用活跃引用。
+
+当前页级 KV / slot、single chunk、物理释放与已生成输出保留属于 runtime 适配，不能承诺与旧版逐 batch 相同。原模拟器可选 hint 未接入；不可用 worker 过滤与显式非流式是现代服务扩展。详细对应与边界见[一致性验证](examples/preble/ALIGNMENT_REAUDIT.md)。
+
+## 验证结果
+
+| 验证 | 结果 |
 | --- | --- |
-| 全局 E2 | 原版节点段 / context 判断、归属继承与候选选择 |
-| 负载估计 | 原版 180 秒窗口、miss/count、prefill / decode 公式与二维时间模型 |
-| 全局驱逐 | 原版虚拟 GPU radix cache、LRU victim 和重算代价；CLI 默认开启 |
-| 重平衡 | 原版 warmup、migration 与 TTFT 热点 replication |
-| 本地 MPQ | 持久十组、9→0 轮转、分词前到达时间 FIFO、`10 × (group+1)` 新请求配额 |
+| 全局源码差分 | 9012 次选择 / 完成尝试状态一致；9006 正常完成，6 次双方同一原断言。 |
+| 本地调度 | 准入 / chunk 41 项、FIFO / IPC 8 项、取消 41 项；retract 306 项对原版、1200 项既有路径、1 项现代保护通过。 |
+| 服务与候选 | 健康池 960、部分池 1200、HTTP 计时与预算差分通过，含修前负对照。 |
+| 真实推理 | 2296 指定容器，BF16 Qwen3-235B-A22B、8×H200、2×TP4，LooGLE 393/393 成功；只跑一轮 Preble + MPQ。 |
 
-必要适配集中在当前 `Req` / radix / `PrefillAdder` 接口、chunk 准入、HTTP 生命周期以及硬件时间 / 容量参数。原模拟器的可选 hit-rate hint 未暴露；原版候选 ID、虚拟驱逐重复计数和特定 split 后断言等缺陷也保留并记录，因此不声称所有输入都能成功处理。
+源码语义验证与 GPU 性能证据分别记录。当前单轮结果见[235B 报告](examples/preble/RUNTIME_2296.md)，原始指标与 hash 随报告提供；不宣称稳定性能收益或论文数值复现。旧 A1/A2 的后台速度在路由分叉前已不同，旧 ABBA 不能作为控制住副本速度的比较，见[延迟差异结论](examples/preble/VARIANCE_ANALYSIS.md)。
 
-[实现文档](examples/preble/README.md) 给出完整伪代码、代价公式、逐文件源码映射、适配与原版缺陷的链接，以及两份 TP4 235B 副本的启动命令。
+[启动、轨迹准备与执行命令](examples/preble/README.md) · [源码验证数据](examples/preble/results/reaudit-20261015/semantic-validation.json) · [历史实验](examples/preble/RUNTIME_RESULTS.md)
 
-## 验证与复现
-
-全局差分覆盖 **9012 次选择与 9012 次完成尝试**，状态与原源码一致：9006 次正常完成，6 次双方触发同一原断言。本轮又验证了真实准入 / chunk 源码 41 项、FIFO 与 pickle 8 项、取消生命周期另 41 项、原 HTTP TPOT 3 个场景，并用旧行为负对照检查 chunk 轮转与引用释放。它们是使用 CPU 基础设施桩的语义检查；旧 5000 次分组差分的覆盖盲区也已在[实现文档](examples/preble/README.md)中说明。验证脚本不作为单元测试提交。
-
-真实推理使用 **Qwen3-235B-A22B-Instruct-2507、完整 BF16、8×H200、两个独立 TP4 副本**。本轮固定 runtime `c773f3e560`，用原版 LooGLE 生成器与旧 schema 数据产生 24 文档 / 393 请求的轨迹，在 1.4 RPS 档按 **Preble → RR → RR → Preble（ABBA）** 执行，每轮清空 cache、固定同一份到达文件。
-
-四轮 **1572/1572 请求成功**。合并两轮的平均时延如下，单位为秒：
-
-| 策略 | TTFT mean | E2E mean |
-| --- | --- | --- |
-| Preble + MPQ | 21.346 | 51.428 |
-| RR + LPM | 34.717 | 65.251 |
-
-本次轨迹上平均 TTFT / E2E 分别降低 **38.5% / 21.2%**。Preble 两轮波动仍明显；这是一档、两次重复的描述性比较。
-
-逐轮数据、统计口径、源码验证与复现证据见[本轮实验报告](examples/preble/RUNTIME_RESULTS.md)。这是现代 SGLang 上的大模型验证，模型、硬件和随机流不同于论文，不等同论文数值复现。旧版 0.7 / 1.4 RPS 八轮数据保留在[历史报告](examples/preble/RESULTS.md)，其实现和执行协议不同，不作为当前五项修正的 GPU 验证。
-
-公开入口：
-
-- [准备原版生成器轨迹](benchmark/preble/prepare_reference_loogle.py)：固定源码 / 数据版本与 hash，输出 token IDs 和固定 arrival 文件。
-- [校准部署时间模型](benchmark/preble/calibrate.py)：先 warmup，再冻结二维原模型的整体 scale 与初始 TPOT。
-- [重放请求](benchmark/preble/bench_loogle.py)：同一份 workload / arrivals，用 Preble 或 round-robin 路由，保存逐请求与汇总指标。
-
-安装沿用 [SGLang 安装说明](https://docs.sglang.io/get_started/install.html)，运行步骤见 [实现与运行方法](examples/preble/README.md)。本项目保留 SGLang 的 [Apache-2.0 许可证](LICENSE)。
+安装沿用 [SGLang 文档](https://docs.sglang.io/get_started/install.html)，许可证为 [Apache-2.0](LICENSE)。
