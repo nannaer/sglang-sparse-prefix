@@ -1,0 +1,1896 @@
+{
+  "schema_version": 1,
+  "reference_commit": "1a35eae20c416f7062ca81775aab72890323fd97",
+  "reports": {
+    "global-diff.json": {
+      "source": {
+        "file": "$RESULTS/reference-alignment-validation/global-diff.json",
+        "sha256": "26e6c823c3f992ac355cb3318ce2a043c206fa7cde4296ed31f3faf6b4828af6"
+      },
+      "data": {
+        "reference_commit": "1a35eae20c416f7062ca81775aab72890323fd97",
+        "reference_repository": "/tmp/preble-source",
+        "integration_repository": "$REPOSITORY",
+        "checked_files_sha256": {
+          "preble_cache.py": "12c6ba78d219dc296919f76415194b0c6571099a3c126943be133b49c73f9003",
+          "preble_cost.py": "c438285d82b811777ec9919b8aa54106b987cfbef5bfb076645999eea26a47e8",
+          "preble.py": "abed9e809cf95b20451368fbf7fc938e5799968e2c3a13f578dae7a6f7867e25"
+        },
+        "temporary_validation_script": "/tmp/preble_global_diff.py",
+        "reference_state_parity": true,
+        "all_workload_requests_successful": false,
+        "status": "matched_reference_with_shared_upstream_assertion_failures",
+        "method": {
+          "reference_classes": "AST extracted from pinned source, no old runtime dependencies imported",
+          "clock": "same UUID generation and fixed wall/datetime values per logical operation",
+          "healthy_pool": true,
+          "floating_point_normalization_decimal_places": 11,
+          "comparison": "selected worker, tree/ref/cache/evicted/allocated/depth/access state, histogram maps and timestamps, TPOT, TTFT, allocation and cost arrays"
+        },
+        "random_replay": {
+          "workers": [
+            2,
+            3,
+            4
+          ],
+          "eviction_settings": [
+            false,
+            true
+          ],
+          "seeds_per_setting": 6,
+          "traces": 36,
+          "phases_per_trace": 2,
+          "random_choice_steps": 13680,
+          "expiry_seconds_between_drained_phases": 200,
+          "select_calls": 9012,
+          "finish_attempts": 9012,
+          "successful_finishes": 9006,
+          "seeded_select_calls": 0,
+          "shared_finish_assertion_failures": 6
+        },
+        "targeted_migration": [
+          {
+            "workers": 2,
+            "migrations": 1
+          },
+          {
+            "workers": 3,
+            "migrations": 1
+          },
+          {
+            "workers": 4,
+            "migrations": 1
+          }
+        ],
+        "targeted_replication": [
+          {
+            "workers": 2,
+            "replications": 1
+          },
+          {
+            "workers": 3,
+            "replications": 1
+          },
+          {
+            "workers": 4,
+            "replications": 1
+          }
+        ],
+        "a6000_regression_combinations": 50,
+        "partial_availability_transport_mapping_checks": 516,
+        "shared_finish_assertion_failures": {
+          "count": 6,
+          "cases": [
+            {
+              "tokens": [
+                4,
+                4,
+                4,
+                4,
+                101,
+                109,
+                105,
+                104
+              ],
+              "worker": 0,
+              "recent_replay": [
+                [
+                  "select",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  26
+                ],
+                [
+                  "select",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  15
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  19
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  14
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  0
+                ],
+                [
+                  "finish",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    102
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  0
+                ],
+                [
+                  "select",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  10
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    101,
+                    109,
+                    105,
+                    104
+                  ],
+                  0
+                ]
+              ]
+            },
+            {
+              "tokens": [
+                4,
+                4,
+                4,
+                4,
+                101,
+                109,
+                105,
+                104
+              ],
+              "worker": 0,
+              "recent_replay": [
+                [
+                  "select",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  26
+                ],
+                [
+                  "select",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  15
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  19
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  14
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  0
+                ],
+                [
+                  "finish",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    102
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  0
+                ],
+                [
+                  "select",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  10
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    101,
+                    109,
+                    105,
+                    104
+                  ],
+                  0
+                ]
+              ]
+            },
+            {
+              "tokens": [
+                4,
+                4,
+                4,
+                4,
+                101,
+                109,
+                105,
+                104
+              ],
+              "worker": 0,
+              "recent_replay": [
+                [
+                  "select",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  26
+                ],
+                [
+                  "select",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  15
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  19
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  14
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  2
+                ],
+                [
+                  "finish",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  2
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    102
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  0
+                ],
+                [
+                  "select",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  10
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    101,
+                    109,
+                    105,
+                    104
+                  ],
+                  0
+                ]
+              ]
+            },
+            {
+              "tokens": [
+                4,
+                4,
+                4,
+                4,
+                101,
+                109,
+                105,
+                104
+              ],
+              "worker": 0,
+              "recent_replay": [
+                [
+                  "select",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  26
+                ],
+                [
+                  "select",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  15
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  19
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  14
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  2
+                ],
+                [
+                  "finish",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  2
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    102
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  0
+                ],
+                [
+                  "select",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  10
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    101,
+                    109,
+                    105,
+                    104
+                  ],
+                  0
+                ]
+              ]
+            },
+            {
+              "tokens": [
+                4,
+                4,
+                4,
+                4,
+                101,
+                109,
+                105,
+                104
+              ],
+              "worker": 0,
+              "recent_replay": [
+                [
+                  "select",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  26
+                ],
+                [
+                  "select",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  15
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  19
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  14
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  3
+                ],
+                [
+                  "finish",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  2
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    102
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  0
+                ],
+                [
+                  "select",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  10
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  2
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    101,
+                    109,
+                    105,
+                    104
+                  ],
+                  0
+                ]
+              ]
+            },
+            {
+              "tokens": [
+                4,
+                4,
+                4,
+                4,
+                101,
+                109,
+                105,
+                104
+              ],
+              "worker": 0,
+              "recent_replay": [
+                [
+                  "select",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  26
+                ],
+                [
+                  "select",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  15
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  19
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  14
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  3
+                ],
+                [
+                  "finish",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  2
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    102
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  0
+                ],
+                [
+                  "select",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  10
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    101,
+                    109,
+                    105,
+                    104
+                  ],
+                  0
+                ]
+              ]
+            }
+          ],
+          "interpretation": "These are failures in both the pinned reference and the port, not successful requests. The replay compares their matching partial cleanup state and continues."
+        },
+        "known_reference_behaviors_retained": [
+          "calculate_min_load_cost returns candidate-list position for complete healthy pool, even for exploitation subsets",
+          "histogram regrouping after some overlapping radix splits can leave finish important node absent and assert",
+          "virtual eviction can count duplicate parent heap entries while returning a unique victim set"
+        ],
+        "transport_extensions": [
+          "partial availability remaps candidate-list positions to actual worker ids",
+          "finish is idempotent and cancellation/error cleanup with zero output omits the success-only histogram assertion"
+        ]
+      }
+    },
+    "mpq-validation.json": {
+      "source": {
+        "file": "$RESULTS/reference-alignment-validation/mpq-validation.json",
+        "sha256": "add8b3659af3078656046969a99cbaa0ea7eab966b5677158f01b8615ba23fec"
+      },
+      "data": {
+        "component": "Preble worker FCFS-MPQ reference alignment",
+        "recorded_at_utc": "2026-10-15T04:17:02.896139+00:00",
+        "repository": "$REPOSITORY",
+        "reference_repository": "/tmp/preble-source",
+        "reference_commit": "1a35eae20c416f7062ca81775aab72890323fd97",
+        "scope": [
+          "python/sglang/srt/managers/schedule_policy.py",
+          "python/sglang/srt/managers/scheduler.py"
+        ],
+        "validation_scripts_are_uncommitted": true,
+        "environment": {
+          "python": "/tmp/preble-env/bin/python",
+          "python_base_prefix": "/opt/conda/envs/cqx_sglang",
+          "python_version": "3.13",
+          "working_directory": "$REPOSITORY",
+          "PYTHONPATH": "python",
+          "LD_LIBRARY_PATH": "/opt/conda/lib/python3.11/site-packages/torch/lib/:/mnt/nvme1n1/ml_research/majinming/install/lib:/usr/local/cuda/lib64:",
+          "loaded_runtime_libraries_verified": [
+            "/opt/conda/envs/cqx_sglang/lib/libsqlite3.so.3.53.0",
+            "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6.0.34"
+          ]
+        },
+        "checks": [
+          {
+            "name": "reference_source_differential",
+            "command": "/tmp/preble-env/bin/python /tmp/verify_preble_mpq_alignment.py",
+            "status": "passed",
+            "decisions": 5000,
+            "method": "Execute AST-extracted actual upstream get_new_fill_batch_v2, get_schedule_group, check_req_hit and get_priority_queue against actual adapted policy methods; controlled cache responses and admission limits isolate MPQ decisions.",
+            "coverage": [
+              "Persistent group membership despite changing cache hits",
+              "Classify only new and re-entering requests",
+              "Raw full-prefix buckets, including full match in group 9",
+              "Original logprob prefix slicing for bucket assignment",
+              "Descending round-robin cursor and one selected group per decision",
+              "Per-group request quotas",
+              "Arrival FIFO across retraction; original incoming-pop order for equal timestamps",
+              "Aborted waiting requests, empty groups, changing hits and capacity 0 through 15"
+            ],
+            "stdout": "PASS: 5000 differential scheduling decisions against upstream source; persistent membership, raw-hit buckets, FIFO, re-entry, logprob buckets, quotas and empty groups",
+            "limitation": "Does not simulate native GPU allocation or PrefillAdder token-budget admission."
+          },
+          {
+            "name": "real_runtime_classes_cpu_smoke",
+            "command": "PYTHONPATH=python /tmp/preble-env/bin/python /tmp/verify_preble_mpq_runtime.py",
+            "status": "passed",
+            "method": "Use real Req, RadixCache, SchedulePolicy and Req.init_next_round_input on CPU. No model server or small model is used.",
+            "coverage": [
+              "Full 20-token cache hit assigns group 9; admission rematches 19 tokens and keeps one token to compute",
+              "Logprob start values 0, 4, 20 and -1 preserve reference bucket assignment and modern admission caps",
+              "Positional embedding overrides retain reference bucket classification but clear prefix reuse at admission",
+              "Disabled radix cache retains fcfs-mpq with group 0 quota 10 for 25 waiting requests",
+              "Full-hit group 9 quota is 100 for 120 waiting requests"
+            ],
+            "stdout": "PASS: real Req/RadixCache/SchedulePolicy CPU smoke; raw-hit MPQ classification, last-token/logprob/embedding admission safety, disabled-cache quota10, high-hit quota100",
+            "limitation": "Class-level CPU correctness validation; not a large-model performance or paper-reproduction result."
+          },
+          {
+            "name": "syntax_and_scoped_diff",
+            "commands": [
+              "/tmp/preble-env/bin/python -m py_compile python/sglang/srt/managers/schedule_policy.py python/sglang/srt/managers/scheduler.py",
+              "git diff --check -- python/sglang/srt/managers/schedule_policy.py python/sglang/srt/managers/scheduler.py"
+            ],
+            "status": "passed"
+          }
+        ],
+        "version_adaptations_and_limits": [
+          {
+            "topic": "Immutable arrival FIFO",
+            "reference": "Original FCFS-MPQ sorts by immutable Req.arrival_time supplied by the tokenizer manager.",
+            "adaptation": "Current API created_time is not serialized into the scheduler. Use the existing immutable SchedulerReqTimeStats.scheduler_recv_time, which ordinary retraction does not reset. Avoid wait_queue_entry_time, which resets on requeue; no new Req field is added.",
+            "limit": "Orders by first scheduler receipt instead of original tokenizer/API arrival; necessary adaptation to the current runtime timestamp propagation."
+          },
+          {
+            "topic": "Native safety and chunked prefill",
+            "adaptation": "Keep modern Req.init_next_round_input last-token/logprob/embedding safety and native single continuing chunked-request path. Existing chunk continuation is accounted for outside the selected MPQ group quota.",
+            "limit": "Original Preble chunk-budget scheduling and modern PrefillAdder need not form identical model batches."
+          },
+          {
+            "topic": "Capacity exhaustion behavior",
+            "reference": "Original schedule_within_group can continue past an ordinary non-fitting request, but breaks after lock-related capacity failure.",
+            "adaptation": "Leave the current runtime PrefillAdder result handling intact: the scheduler breaks when admission returns a non-CONTINUE result.",
+            "limit": "Token-budget/capacity exhaustion can therefore differ from original admission behavior; no unrelated runtime rewrite is included."
+          }
+        ]
+      }
+    },
+    "frontend-validation.json": {
+      "source": {
+        "file": "$RESULTS/reference-alignment-validation/frontend-validation.json",
+        "sha256": "a92088de285b2a513b0bcfb5e89646ae6fc51cbf0888fb725415ecfbec1723ad"
+      },
+      "data": {
+        "recorded_at_utc": "2026-10-15T04:22:07.528326+00:00",
+        "scope": "Frontend CLI and local HTTP transport only; no model download or model inference",
+        "command": "PYTHONPATH=python /tmp/preble-env/bin/python /tmp/verify_preble_frontend.py",
+        "working_directory": "$REPOSITORY",
+        "source_sha256": {
+          "python/sglang/launch_preble.py": "9de0220ab9fe4054aeca7ea6b454ab8a0157d6b49702bf57b475052d6f1e4ca1",
+          "python/sglang/srt/routing/preble.py": "abed9e809cf95b20451368fbf7fc938e5799968e2c3a13f578dae7a6f7867e25",
+          "python/sglang/srt/routing/preble_cache.py": "12c6ba78d219dc296919f76415194b0c6571099a3c126943be133b49c73f9003",
+          "python/sglang/srt/routing/preble_cost.py": "c438285d82b811777ec9919b8aa54106b987cfbef5bfb076645999eea26a47e8"
+        },
+        "cases": [
+          {
+            "name": "cli_defaults",
+            "status": "passed",
+            "details": {
+              "serving_eviction": true,
+              "class_default_eviction": false,
+              "max_tokens_gpu": [
+                198516,
+                198516
+              ],
+              "prefill_model": "reference two-argument A6000"
+            }
+          },
+          {
+            "name": "cli_flags_and_capacity",
+            "status": "passed",
+            "details": {
+              "capacity": [
+                1234,
+                5678
+              ],
+              "flags": "verified"
+            }
+          },
+          {
+            "name": "cli_cost_models",
+            "status": "passed",
+            "details": {
+              "scaled": 2.5,
+              "linear_tokens_per_second": 5000,
+              "context_dependence": "verified"
+            }
+          },
+          {
+            "name": "cli_reject_prefill-tokens-per-second_0",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--prefill-tokens-per-second",
+                "0"
+              ],
+              "error": "SystemExit: 2",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_reject_prefill-tokens-per-second_-1",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--prefill-tokens-per-second",
+                "-1"
+              ],
+              "error": "SystemExit: 2",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_reject_prefill-tokens-per-second_nan",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--prefill-tokens-per-second",
+                "nan"
+              ],
+              "error": "SystemExit: 2",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_reject_prefill-tokens-per-second_inf",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--prefill-tokens-per-second",
+                "inf"
+              ],
+              "error": "SystemExit: 2",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_reject_prefill-time-scale_0",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--prefill-time-scale",
+                "0"
+              ],
+              "error": "SystemExit: 2",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_reject_prefill-time-scale_-1",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--prefill-time-scale",
+                "-1"
+              ],
+              "error": "SystemExit: 2",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_reject_prefill-time-scale_nan",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--prefill-time-scale",
+                "nan"
+              ],
+              "error": "SystemExit: 2",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_reject_prefill-time-scale_inf",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--prefill-time-scale",
+                "inf"
+              ],
+              "error": "SystemExit: 2",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_invalid_--prefill-tokens-per-second_1000_--prefill-time-scale_2",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--prefill-tokens-per-second",
+                "1000",
+                "--prefill-time-scale",
+                "2"
+              ],
+              "error": "SystemExit: 2",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_invalid_--max-tokens-per-worker_20",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--max-tokens-per-worker",
+                "20"
+              ],
+              "error": "ValueError: One positive virtual KV capacity is required per worker",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_invalid_--max-tokens-per-worker_20_0",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--max-tokens-per-worker",
+                "20",
+                "0"
+              ],
+              "error": "ValueError: One positive virtual KV capacity is required per worker",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_invalid_--max-tokens-per-worker_20_-1",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--max-tokens-per-worker",
+                "20",
+                "-1"
+              ],
+              "error": "ValueError: One positive virtual KV capacity is required per worker",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_invalid_--window-seconds_0",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--window-seconds",
+                "0"
+              ],
+              "error": "ValueError: Worker count, window and TPOT must be positive",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_invalid_--window-seconds_nan",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--window-seconds",
+                "nan"
+              ],
+              "error": "ValueError: cannot convert float NaN to integer",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_invalid_--window-seconds_inf",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--window-seconds",
+                "inf"
+              ],
+              "error": "OverflowError: cannot convert float infinity to integer",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_invalid_--initial-tpot_0",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--initial-tpot",
+                "0"
+              ],
+              "error": "SystemExit: 2",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_invalid_--initial-tpot_nan",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--initial-tpot",
+                "nan"
+              ],
+              "error": "SystemExit: 2",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "cli_invalid_--initial-tpot_inf",
+            "status": "passed",
+            "details": {
+              "rejected": [
+                "--initial-tpot",
+                "inf"
+              ],
+              "error": "SystemExit: 2",
+              "tokenizer_calls": 0
+            }
+          },
+          {
+            "name": "transport_nonstream_success",
+            "status": "passed",
+            "details": {
+              "status": 200,
+              "cumulative_final_text": "abc"
+            }
+          },
+          {
+            "name": "transport_stream_and_active",
+            "status": "passed",
+            "details": {
+              "active_during_request": [
+                1,
+                0
+              ],
+              "final_active": [
+                0,
+                0
+              ]
+            }
+          },
+          {
+            "name": "transport_concurrent_cache_splits",
+            "status": "passed",
+            "details": {
+              "concurrent_active": [
+                3,
+                0
+              ],
+              "final_active": [
+                0,
+                0
+              ],
+              "nodes_after_splits": 7
+            }
+          },
+          {
+            "name": "transport_default_budget_and_text_tokens",
+            "status": "passed",
+            "details": {
+              "forwarded_max_new_tokens": 16,
+              "inflight_decode_budget": 16,
+              "forwarded_tokens_equal_routing_tokens": true
+            }
+          },
+          {
+            "name": "transport_virtual_eviction",
+            "status": "passed",
+            "details": {
+              "evicted_virtual_nodes": 12,
+              "allocated_size": [
+                24,
+                24
+              ]
+            }
+          },
+          {
+            "name": "transport_backend_failures_and_abort_events",
+            "status": "passed",
+            "details": [
+              {
+                "case": "http_error",
+                "status": 503,
+                "abort_sent": false
+              },
+              {
+                "case": "abort_event",
+                "status": 409,
+                "abort_sent": false
+              },
+              {
+                "case": "premature_eof",
+                "status": 200,
+                "abort_sent": true
+              },
+              {
+                "case": "malformed",
+                "status": 500,
+                "abort_sent": true
+              },
+              {
+                "case": "connection_drop",
+                "status": 502,
+                "abort_sent": true
+              }
+            ]
+          },
+          {
+            "name": "transport_client_disconnects",
+            "status": "passed",
+            "details": [
+              {
+                "stream": true,
+                "before_headers": false,
+                "abort_sent": true
+              },
+              {
+                "stream": false,
+                "before_headers": false,
+                "abort_sent": true
+              },
+              {
+                "stream": false,
+                "before_headers": true,
+                "abort_sent": true
+              }
+            ]
+          },
+          {
+            "name": "transport_request_validation",
+            "status": "passed",
+            "details": {
+              "rejected_request_count": 13,
+              "no_scheduler_mutation": true
+            }
+          }
+        ],
+        "passed": 29,
+        "failed": 0,
+        "limitations": [
+          "Uses mocked tokenizer and localhost fake HTTP workers, not a model server.",
+          "Checks active references on non-root nodes; the reference cache intentionally excludes its root sentinel from completion decrements."
+        ]
+      }
+    },
+    "archived-arrivals.json": {
+      "source": {
+        "file": "$RESULTS/reference-alignment-validation/archived-arrivals.json",
+        "sha256": "2501487e2089e4b52628a86e0ef7b058bef1f82d83dc39f139baa5be190c138b"
+      },
+      "data": {
+        "success": true,
+        "successful": 3,
+        "observed_offsets": [
+          0.0,
+          0.07977200299501419,
+          0.16041388385929167
+        ],
+        "invalid_arrival_cases_rejected": 7
+      }
+    }
+  },
+  "public_calibration_helper": {
+    "source": {
+      "file": "/tmp/preble-calibration-validation-7ksrc63g/report.json",
+      "sha256": "61ea2c52b47dcfbed7cb8d927d6cd8b209bc8bf1b0c4bb4668c3a6b4c9123df2"
+    },
+    "data": {
+      "script": "$REPOSITORY/benchmark/preble/calibrate.py",
+      "script_sha256": "caa109cc8c6d5388b4141612f5a8dcee68c9b586b62aff2ca4cc6aa39dfd4a3a",
+      "cuda_visible_devices": "",
+      "fake_http_worker_urls": [
+        "http://127.0.0.1:44823",
+        "http://127.0.0.1:39029"
+      ],
+      "normal_run_http_requests": 60,
+      "checks": [
+        "Two actual localhost HTTP workers: six profiles x warmup/measure, flush/prime ordering, phase barrier, first-longest selection, hashes, cache-adjusted predictions, measured-only medians",
+        "Existing output is refused without any HTTP request or overwrite",
+        "Seven malformed workload cases, duplicate/bad URLs and unusable output budget fail before HTTP",
+        "Bad flush response, missing DONE, aborted finish, SSE error and invalid cache count each fail without calibration output"
+      ],
+      "all_passed": true
+    }
+  },
+  "analysis_context_cap": {
+    "source": {
+      "file": "$RUN/artifact/context-cap-validation.json",
+      "sha256": "4893c0ea5389a5f223a9d82e4912b2d6194c61559d0a4834b35ff299bdf3531a"
+    },
+    "data": {
+      "utc": "2026-10-15T06:05:01.340803+00:00",
+      "scope": "CPU only; no network, HTTP, model load, GPU request, or modification to experimental trial data",
+      "change_reason": "A requested cap of45 is clamped by the frozen runtime to44 for32722-token prompts; enforce that exact effective cap rather than weakening validation.",
+      "analyzer_sha256": "94b523fee9229ea15806da3ad7f53322fc02ebb29d2ed7754280192736031d24",
+      "previous_analyzer_sha256": "c24c5579f60390167ba45e35b0ed34fa01027317f2c9e4c5b95b2b5ba57c3fab",
+      "validation_script_sha256": "7f36398e938c9cc09791e4973a47f6e2c5b0c5b58b4269151242d0888262d96a",
+      "source_oracles": {
+        "python/sglang/srt/managers/tp_worker.py": "93cd9a8e6d31651de48d42e0b67e90a2f6ef7348edb9fe6cf04c51c6049789a4",
+        "python/sglang/srt/managers/scheduler.py": "c8ab119f238596c9a9f9eeeef8fb9e2cebaea4504a0efc420662e52548430d78",
+        "python/sglang/srt/model_executor/model_runner.py": "49d826708bb84b78f6a11fb0212a33b7fd9324eda3b0d96019d46e0eb5f11251"
+      },
+      "source_method_differential_cases": 5000,
+      "source_method_differential_passed": true,
+      "validated_completed_trials": [
+        {
+          "name": "preble-mpq-r0.7-rep1",
+          "requests": 393,
+          "legitimate_context_capped_length44": 22
+        },
+        {
+          "name": "preble-mpq-r0.7-rep2",
+          "requests": 393,
+          "legitimate_context_capped_length44": 22
+        },
+        {
+          "name": "preble-mpq-r1.4-rep1",
+          "requests": 393,
+          "legitimate_context_capped_length44": 22
+        },
+        {
+          "name": "preble-mpq-r1.4-rep2",
+          "requests": 393,
+          "legitimate_context_capped_length44": 22
+        },
+        {
+          "name": "rr-lpm-r1.4-rep1",
+          "requests": 393,
+          "legitimate_context_capped_length44": 22
+        },
+        {
+          "name": "rr-lpm-r1.4-rep2",
+          "requests": 393,
+          "legitimate_context_capped_length44": 22
+        }
+      ],
+      "total_validated_requests": 2358,
+      "negative_cases": [
+        {
+          "output_tokens": 43,
+          "rejected": true,
+          "reason": "preble-mpq-r0.7-rep1 request40: length finish before effective generation cap"
+        },
+        {
+          "output_tokens": 45,
+          "rejected": true,
+          "reason": "preble-mpq-r0.7-rep1 request40: output exceeds effective generation cap"
+        },
+        {
+          "output_tokens": 46,
+          "rejected": true,
+          "reason": "preble-mpq-r0.7-rep1 request40: output exceeds effective generation cap"
+        }
+      ],
+      "statistics_unchanged": "Only output-cap acceptance and its interpretation text changed; means, quantiles, cache weighting, throughput, output agreement, and source request files are unchanged."
+    }
+  },
+  "interpretation": "Global differential replay matched the pinned reference including six shared finish assertion failures: 9,012 selections/finish attempts, 9,006 successful finishes. Shared assertion failures are not successful requests. MPQ reports 5,000 scheduling decisions, frontend29 cases, and archived-arrival replay3 real localhost HTTP requests. These CPU/transport checks do not constitute a small-model benchmark or a claim that all upstream paths are bug-free.",
+  "validation_scripts_committed": false,
+  "known_limit": "Original bugs deliberately retained for reference parity are described in the global report. Native GPU allocation and modern PrefillAdder batch construction are necessary runtime adaptations; exact original model batches are not promised."
+}

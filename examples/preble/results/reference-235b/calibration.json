@@ -1,0 +1,291 @@
+{
+  "schema_version": 1,
+  "source": {
+    "file": "$RUN/calibration-final.json",
+    "sha256": "b9a93683d8e47498af24030166e9ec17ab6ab5bc7493798e10c873057a066fc0"
+  },
+  "frozen_values_and_method": {
+    "utc": "2026-10-15T04:34:34.267473+00:00",
+    "warmup_artifact_sha256": "7706da111c0c3df405b04a4b02578d6f6aa3bf0821f27990f24ca09bc47651c8",
+    "warmup": "An earlier pass exercised all six profiles on both replicas; flush before each measured profile.",
+    "method": "median of TTFT / reference T(new_prefill_tokens, full_context_tokens); frozen before benchmark",
+    "prefill_time_scale": 2.387698396256729,
+    "initial_tpot": 0.06731290138453584,
+    "workload_sha256": "b9fbf417c3f588e7b92dd134fff42eead61b7bf3aa10ff3c7020db2f96b74d68"
+  },
+  "measured_samples": [
+    {
+      "prompt_tokens": 8192,
+      "cached_tokens": 0,
+      "output_tokens": 45,
+      "ttft": 2.835042968392372,
+      "latency": 5.784608268178999,
+      "tpot": 0.06703557499515062,
+      "output_sha256": "69cd247e1233708a6fc6e9dfa980616ea6977d91c2d86705c67cd51dd361e463",
+      "worker": 0,
+      "intended_prefix": 0,
+      "new_prefill_tokens": 8192,
+      "reference_prediction": 1.1829747528164514,
+      "ratio": 2.39653717177196,
+      "scaled_prediction": 2.8245869201120413,
+      "relative_prediction_error": -0.0036881445526238954
+    },
+    {
+      "prompt_tokens": 16384,
+      "cached_tokens": 0,
+      "output_tokens": 45,
+      "ttft": 6.372639601118863,
+      "latency": 9.311982919462025,
+      "tpot": 0.06680325723507187,
+      "output_sha256": "08041d1c3aa1e85718249c47c32e55d1f7420e1a557cc95014299a7b072f7894",
+      "worker": 0,
+      "intended_prefix": 0,
+      "new_prefill_tokens": 16384,
+      "reference_prediction": 2.687691780372007,
+      "ratio": 2.371045537162307,
+      "scaled_prediction": 6.417397353626634,
+      "relative_prediction_error": 0.007023424406412904
+    },
+    {
+      "prompt_tokens": 32722,
+      "cached_tokens": 0,
+      "output_tokens": 44,
+      "ttft": 15.828478198498487,
+      "latency": 18.70803169347346,
+      "tpot": 0.06696636034825514,
+      "output_sha256": "9fac1ad573ce2c451c6e7835561b8cb9b13de0413f958b5f78e16f04ea612e0f",
+      "worker": 0,
+      "intended_prefix": 0,
+      "new_prefill_tokens": 32722,
+      "reference_prediction": 6.66388627070534,
+      "ratio": 2.375262355253719,
+      "scaled_prediction": 15.911350561400376,
+      "relative_prediction_error": 0.005235649432789424
+    },
+    {
+      "prompt_tokens": 16896,
+      "cached_tokens": 16385,
+      "output_tokens": 45,
+      "ttft": 0.2900827657431364,
+      "latency": 3.2520263390615582,
+      "tpot": 0.0673168993936005,
+      "output_sha256": "5a2ec23a0f8ef998318d81eb35b6a1b84a8e537309e841baf3c44df138da575c",
+      "worker": 0,
+      "intended_prefix": 16384,
+      "new_prefill_tokens": 511,
+      "reference_prediction": 0.12257746389422935,
+      "ratio": 2.366526085035055,
+      "scaled_prediction": 0.29267801395746856,
+      "relative_prediction_error": 0.008946578428000063
+    },
+    {
+      "prompt_tokens": 18432,
+      "cached_tokens": 16385,
+      "output_tokens": 45,
+      "ttft": 1.0479691540822387,
+      "latency": 4.02099968213588,
+      "tpot": 0.06756887563758275,
+      "output_sha256": "8ca2f16515037956a9361fcb310d450862be08fd8a28bbc801d77eace249880b",
+      "worker": 0,
+      "intended_prefix": 16384,
+      "new_prefill_tokens": 2047,
+      "reference_prediction": 0.3854922590942293,
+      "ratio": 2.718521914148409,
+      "scaled_prediction": 0.9204392488086748,
+      "relative_prediction_error": -0.12169242269849867
+    },
+    {
+      "prompt_tokens": 32722,
+      "cached_tokens": 30675,
+      "output_tokens": 44,
+      "ttft": 1.4683228740468621,
+      "latency": 4.343446392565966,
+      "tpot": 0.06686333763997915,
+      "output_sha256": "9fac1ad573ce2c451c6e7835561b8cb9b13de0413f958b5f78e16f04ea612e0f",
+      "worker": 0,
+      "intended_prefix": 30674,
+      "new_prefill_tokens": 2047,
+      "reference_prediction": 0.4874106032053405,
+      "ratio": 3.0124967827757216,
+      "scaled_prediction": 1.1637895155919165,
+      "relative_prediction_error": -0.20740217552806872
+    },
+    {
+      "prompt_tokens": 8192,
+      "cached_tokens": 0,
+      "output_tokens": 45,
+      "ttft": 2.8376889107748866,
+      "latency": 5.79538737796247,
+      "tpot": 0.06722041970880871,
+      "output_sha256": "69cd247e1233708a6fc6e9dfa980616ea6977d91c2d86705c67cd51dd361e463",
+      "worker": 1,
+      "intended_prefix": 0,
+      "new_prefill_tokens": 8192,
+      "reference_prediction": 1.1829747528164514,
+      "ratio": 2.39877385719252,
+      "scaled_prediction": 2.8245869201120413,
+      "relative_prediction_error": -0.004617134250726407
+    },
+    {
+      "prompt_tokens": 16384,
+      "cached_tokens": 0,
+      "output_tokens": 45,
+      "ttft": 6.377529512159526,
+      "latency": 9.391837503761053,
+      "tpot": 0.06850699980912561,
+      "output_sha256": "08041d1c3aa1e85718249c47c32e55d1f7420e1a557cc95014299a7b072f7894",
+      "worker": 1,
+      "intended_prefix": 0,
+      "new_prefill_tokens": 16384,
+      "reference_prediction": 2.687691780372007,
+      "ratio": 2.372864909114245,
+      "scaled_prediction": 6.417397353626634,
+      "relative_prediction_error": 0.006251298624505797
+    },
+    {
+      "prompt_tokens": 32722,
+      "cached_tokens": 0,
+      "output_tokens": 44,
+      "ttft": 15.852449966594577,
+      "latency": 18.75606637634337,
+      "tpot": 0.06752596301741379,
+      "output_sha256": "9fac1ad573ce2c451c6e7835561b8cb9b13de0413f958b5f78e16f04ea612e0f",
+      "worker": 1,
+      "intended_prefix": 0,
+      "new_prefill_tokens": 32722,
+      "reference_prediction": 6.66388627070534,
+      "ratio": 2.3788596207414976,
+      "scaled_prediction": 15.911350561400376,
+      "relative_prediction_error": 0.003715551534931194
+    },
+    {
+      "prompt_tokens": 16896,
+      "cached_tokens": 16385,
+      "output_tokens": 45,
+      "ttft": 0.2910672863945365,
+      "latency": 3.2673025177791715,
+      "tpot": 0.06764170980419625,
+      "output_sha256": "5a2ec23a0f8ef998318d81eb35b6a1b84a8e537309e841baf3c44df138da575c",
+      "worker": 1,
+      "intended_prefix": 16384,
+      "new_prefill_tokens": 511,
+      "reference_prediction": 0.12257746389422935,
+      "ratio": 2.3745579093208766,
+      "scaled_prediction": 0.29267801395746856,
+      "relative_prediction_error": 0.0055338666975743855
+    },
+    {
+      "prompt_tokens": 18432,
+      "cached_tokens": 16385,
+      "output_tokens": 45,
+      "ttft": 1.0475508626550436,
+      "latency": 4.0091426111757755,
+      "tpot": 0.06730890337547119,
+      "output_sha256": "8ca2f16515037956a9361fcb310d450862be08fd8a28bbc801d77eace249880b",
+      "worker": 1,
+      "intended_prefix": 16384,
+      "new_prefill_tokens": 2047,
+      "reference_prediction": 0.3854922590942293,
+      "ratio": 2.7174368302917893,
+      "scaled_prediction": 0.9204392488086748,
+      "relative_prediction_error": -0.12134171082080092
+    },
+    {
+      "prompt_tokens": 32722,
+      "cached_tokens": 30675,
+      "output_tokens": 44,
+      "ttft": 1.4127875808626413,
+      "latency": 4.342122674919665,
+      "tpot": 0.0681240719548145,
+      "output_sha256": "9fac1ad573ce2c451c6e7835561b8cb9b13de0413f958b5f78e16f04ea612e0f",
+      "worker": 1,
+      "intended_prefix": 30674,
+      "new_prefill_tokens": 2047,
+      "reference_prediction": 0.4874106032053405,
+      "ratio": 2.8985573386622656,
+      "scaled_prediction": 1.1637895155919165,
+      "relative_prediction_error": -0.176245932965158
+    }
+  ],
+  "input": {
+    "manifest": {
+      "source": {
+        "file": "$RESULTS/loogle-24-393-45-32723.manifest.json",
+        "sha256": "4992bc3090519c4d05c3013a2fdf597431faa854bdaada48add2503c259a9530"
+      },
+      "data": {
+        "workload": "$RESULTS/loogle-24-393-45-32723.jsonl",
+        "prepare_only": true,
+        "dataset": "$RESULTS/loogle-shortdep-qa.jsonl",
+        "model_path": "$MODEL",
+        "patterns": 24,
+        "requests": 393,
+        "max_input_tokens": 32723,
+        "max_new_tokens": 45,
+        "seed": 42,
+        "policy": "preble",
+        "router_url": "http://127.0.0.1:8000",
+        "worker_urls": [
+          "http://127.0.0.1:31000",
+          "http://127.0.0.1:31001"
+        ],
+        "rate": 2,
+        "concurrency": 256,
+        "output": null,
+        "actual_requests": 393,
+        "actual_patterns": 24,
+        "dataset_sha256": "8951521e8c8340a4e6aa5ffcb2e8f058cca154251915acf946e721fcf001e8c7",
+        "workload_sha256": "b9fbf417c3f588e7b92dd134fff42eead61b7bf3aa10ff3c7020db2f96b74d68"
+      }
+    },
+    "workload_sha256": "b9fbf417c3f588e7b92dd134fff42eead61b7bf3aa10ff3c7020db2f96b74d68",
+    "relationship_to_formal_trace": "Calibration uses the older prepared seed42 workload only to select the first longest raw-token prompt and its six profile lengths. Formal comparisons use the separate seed10 pinned-reference generator trace. Calibration was frozen before every formal comparison trial; it is not refitted from performance results."
+  },
+  "initial_warmup": {
+    "source": {
+      "file": "$RUN/calibration-warmup/calibration.json",
+      "sha256": "7706da111c0c3df405b04a4b02578d6f6aa3bf0821f27990f24ca09bc47651c8"
+    },
+    "method": "median of TTFT / reference T(new_prefill_tokens, full_context_tokens); frozen before benchmark",
+    "sample_count": 12,
+    "interpretation": "This earlier full pass exercised all six profiles per replica; its fitted values were superseded by the following measured pass."
+  },
+  "per_worker_raw_sources": [
+    {
+      "file": "$RUN/calibration-final-worker0.json",
+      "sha256": "8fd56fc0983fd6155d9557019db584244a3bb0a03aab8981f34ebdb03b2ba298"
+    },
+    {
+      "file": "$RUN/calibration-final-worker1.json",
+      "sha256": "0dcc3003ade74df00493dfcebd77b9e1e76ca461e2ebf606a206503b4548c2e0"
+    }
+  ],
+  "lpm_warmup": {
+    "source": {
+      "file": "$RUN/lpm-warmup.json",
+      "sha256": "0d27f1e63fb495cd130c584d08e35385d278b4a2fbd767d42951f8e4ccce4b47"
+    },
+    "data": {
+      "utc": "2026-10-15T05:45:59.959915+00:00",
+      "method": "One pass of the original six profiles per LPM replica; flush before every profile, prime partial prefixes. No fitting.",
+      "workload_sha256": "b9fbf417c3f588e7b92dd134fff42eead61b7bf3aa10ff3c7020db2f96b74d68",
+      "frozen_artifact_sha256": {
+        "calibration-final.json": "b9a93683d8e47498af24030166e9ec17ab6ab5bc7493798e10c873057a066fc0",
+        "calibration-final-worker0.json": "8fd56fc0983fd6155d9557019db584244a3bb0a03aab8981f34ebdb03b2ba298",
+        "calibration-final-worker1.json": "0dcc3003ade74df00493dfcebd77b9e1e76ca461e2ebf606a206503b4548c2e0",
+        "calibration-warmup/calibration-worker0.json": "6db0cfdbe9f0051636db2e576d8065a06b3728de9716cb83abdbd3e45327665b",
+        "calibration-warmup/calibration-worker1.json": "6024feb2719252f00b468c0e12e45c45d562fc5bf2c42e4528d89d70402065b9",
+        "calibration-warmup/calibration.json": "7706da111c0c3df405b04a4b02578d6f6aa3bf0821f27990f24ca09bc47651c8"
+      },
+      "frozen_prefill_time_scale": 2.387698396256729,
+      "frozen_initial_tpot": 0.06731290138453584,
+      "frozen_random_seeds": {
+        "0": 659938497,
+        "1": 556540270
+      }
+    },
+    "sample_count": 12,
+    "refitted": false
+  },
+  "model": "One hardware scale multiplies the pinned two-dimensional A6000 T(new_prefill_tokens, full_context_tokens); context dependence remains. Initial TPOT is measured separately. Samples retain actual cached/new/output token counts; budget45 is a ceiling, and the longest prompt can return44 tokens."
+}

@@ -1,0 +1,1823 @@
+{
+  "schema_version": 1,
+  "reference": {
+    "repository": "https://github.com/WukLab/preble",
+    "commit": "1a35eae20c416f7062ca81775aab72890323fd97",
+    "sglang_base_commit": "ef11e3904885c8050f167a4a6f805da03e9e9bae"
+  },
+  "hardware": {
+    "host": "gpu-lg-cmc-h-h200-1727.host.h.pjlab.org.cn",
+    "container": "sglang_chenjiefei_ds4",
+    "gpu_model": "NVIDIA H200",
+    "physical_gpus": 8,
+    "replicas": 2,
+    "tensor_parallel_per_replica": 4,
+    "gpu_groups": [
+      [
+        0,
+        1,
+        2,
+        3
+      ],
+      [
+        4,
+        5,
+        6,
+        7
+      ]
+    ],
+    "launch_preflight_source": {
+      "file": "$RUN/launch-preflight.json",
+      "sha256": "808f42a9da344ad0f65ae8c547e9df8769ab5676db93d5d178df6de4eaa5b51d"
+    },
+    "initial_gpu_query": "0, NVIDIA H200, 0, 143771, 0\n1, NVIDIA H200, 0, 143771, 0\n2, NVIDIA H200, 0, 143771, 0\n3, NVIDIA H200, 0, 143771, 0\n4, NVIDIA H200, 0, 143771, 0\n5, NVIDIA H200, 0, 143771, 0\n6, NVIDIA H200, 0, 143771, 0\n7, NVIDIA H200, 0, 143771, 0\n",
+    "platform_observation": {
+      "source": {
+        "file": "$RUN/platform.json",
+        "sha256": "8aaa08e6c33ad85a5cee4cca66c9a4e60bbd972d17e8a58b9a037f88c9d0707f"
+      },
+      "data": {
+        "utc": "2026-10-15T05:54:20.181833+00:00",
+        "hostname": "gpu-lg-cmc-h-h200-1727.host.h.pjlab.org.cn",
+        "container": "sglang_chenjiefei_ds4",
+        "python": "3.13.13",
+        "platform": "Linux-5.15.0-174-generic-x86_64-with-glibc2.35",
+        "gpu_query_argv": [
+          "nvidia-smi",
+          "--query-gpu=index,name,uuid,driver_version,memory.total",
+          "--format=csv,noheader,nounits"
+        ],
+        "gpu_query": "0, NVIDIA H200, GPU-4c7c5851-ab7a-d1cf-52ce-58ca07224881, 595.71.05, 143771\n1, NVIDIA H200, GPU-52c6021a-cd0d-74fe-f6f6-3467456a7965, 595.71.05, 143771\n2, NVIDIA H200, GPU-ad818be1-561b-0b4e-a60f-b66293778d33, 595.71.05, 143771\n3, NVIDIA H200, GPU-51eebdf2-0e01-5d9e-07b4-291f20bd7be1, 595.71.05, 143771\n4, NVIDIA H200, GPU-fa595cc2-6f94-dfb4-9c23-ad441550aa57, 595.71.05, 143771\n5, NVIDIA H200, GPU-8c097415-d02f-56ea-7e81-3b8092a2dcf9, 595.71.05, 143771\n6, NVIDIA H200, GPU-04c87c61-6dbb-4c09-8fa2-8af843eedddb, 595.71.05, 143771\n7, NVIDIA H200, GPU-12602db0-2e3c-8d52-92f6-2ec21e4f3589, 595.71.05, 143771\n"
+      }
+    }
+  },
+  "model": {
+    "repository": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+    "public_weight_revision": "ac9c66cc9b46af7306746a9250f23d47083d689e",
+    "local_snapshot": "$MODEL",
+    "weight_dtype": "BF16",
+    "quantization": null,
+    "prior_metadata_report": {
+      "source": {
+        "file": "$RESULTS/model-revision.json",
+        "sha256": "3b9ed8779e3424183ae1e332ff988060f19e3e807e28c5878b9ef0cc82c47cc9"
+      },
+      "data": {
+        "repo": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+        "public_revision": "ac9c66cc9b46af7306746a9250f23d47083d689e",
+        "local_snapshot": "$MODEL",
+        "file_verification": {
+          "config.json": {
+            "local_sha256": "ad59a339665ee1c68cbff06ac72c9e59f5183ebfaf3698c98737e003a870e9e2",
+            "remote_sha256": "ad59a339665ee1c68cbff06ac72c9e59f5183ebfaf3698c98737e003a870e9e2",
+            "identical": true
+          },
+          "model.safetensors.index.json": {
+            "local_sha256": "821d06bca7fdd15b787dfd5ac169815ecaf0fa0b6952e143fff472df26072f03",
+            "remote_sha256": "821d06bca7fdd15b787dfd5ac169815ecaf0fa0b6952e143fff472df26072f03",
+            "identical": true
+          },
+          "tokenizer_config.json": {
+            "local_sha256": "a5036bfb48523661f15d50c664e8dfc0e9b0b4c9a20eba3180782d52a1b94a8d",
+            "remote_sha256": "a62ff0a2472a0fa1b8eaabcb57c59b58afa42a22831dc141400b6e0cf2b65ce3",
+            "identical": false
+          },
+          "tokenizer.json": {
+            "local_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+            "remote_sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+            "identical": true
+          },
+          "generation_config.json": {
+            "local_sha256": "835fffe355c9438e7a25be099b3fccaa98350b83451f9fd2d99512e74f1ade48",
+            "remote_sha256": "835fffe355c9438e7a25be099b3fccaa98350b83451f9fd2d99512e74f1ade48",
+            "identical": true
+          }
+        },
+        "quantization": null,
+        "weight_dtype": "BF16",
+        "tokenizer_config_different_keys": [
+          "chat_template",
+          "model_max_length"
+        ]
+      }
+    },
+    "prior_header_report": {
+      "source": {
+        "file": "$RESULTS/model-header-validation.json",
+        "sha256": "7e490054d22a50f25ba33e240077366295b60725456c1554c7cc310736b49ab3"
+      },
+      "data": {
+        "checked_at": "2026-10-14T20:29:35.272549+00:00",
+        "model_repo": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+        "revision": "ac9c66cc9b46af7306746a9250f23d47083d689e",
+        "local_snapshot": "$MODEL",
+        "method": "Read only 8-byte length prefixes and JSON headers, stat files, compare public pinned file metadata; no tensor payload scan.",
+        "limitations": "Headers and sizes cannot detect corruption or substitutions confined to tensor payloads. Only two shard payloads were previously SHA256 checked.",
+        "shard_count": 118,
+        "tensor_count": 36945,
+        "expected_tensor_count": 36945,
+        "dtype_counts": {
+          "BF16": 36945
+        },
+        "total_header_bytes_read": 4605920,
+        "total_tensor_bytes": 470187269120,
+        "all_files_regular_inside_snapshot": true,
+        "error_count": 0,
+        "errors": []
+      }
+    },
+    "prior_full_payload_report": {
+      "source": {
+        "file": "$RESULTS/model-payload-validation.json",
+        "sha256": "15e91660b42ee558482d15d212093a51a0824fecfb68c2eeb0ca7951970d9a31"
+      },
+      "data": {
+        "model_repo": "Qwen/Qwen3-235B-A22B-Instruct-2507",
+        "revision": "ac9c66cc9b46af7306746a9250f23d47083d689e",
+        "local_snapshot": "$MODEL",
+        "completed_count": 118,
+        "expected_count": 118,
+        "all_match": true,
+        "complete": true,
+        "elapsed_s": 92.721,
+        "checked_at": "2026-10-14T20:32:18.019748+00:00",
+        "method": "SHA256 of all existing local safetensors files, compared with LFS SHA at pinned public revision; 4 streaming threads, ionice idle and nice19."
+      }
+    },
+    "prior_full_payload_verification": {
+      "checked_at": "2026-10-14T20:32:18.019748+00:00",
+      "shards": 118,
+      "all_lfs_sha256_match": true,
+      "header_bf16_tensors": 36945
+    },
+    "current_run_scope": "The full 118-shard content hash and 36,945-BF16-tensor header checks are historical reports from 2026-10-14. This experiment did not repeat the full weight payload scan. The formal trace manifest archives current tokenizer/config hashes, and both workers loaded all 118 real shards successfully.",
+    "tokenizer_config_note": "The local tokenizer_config differs from the public weight revision in chat_template and model_max_length. The workload archives raw token IDs and uses /generate; the selected tokenizer/config hashes are in the formal trace manifest."
+  },
+  "dependencies": {
+    "python": "3.13.13",
+    "torch": "2.11.0+cu128",
+    "triton": "3.6.0",
+    "sglang-kernel": "0.4.4+cu129",
+    "transformers": "5.8.1",
+    "apache-tvm-ffi": "0.1.9",
+    "flashinfer-python": "0.6.12",
+    "flashinfer-cubin": "0.6.12",
+    "flashinfer-jit-cache": "0.6.12+cu128",
+    "nvidia-cutlass-dsl": "4.5.2",
+    "nvidia-nccl-cu12": "2.28.9",
+    "trace_preparation": {
+      "python": "3.13.13",
+      "datasets": "4.8.4",
+      "numpy": "2.4.3",
+      "transformers": "5.8.1",
+      "tokenizers": "0.22.2",
+      "pyarrow": "23.0.1"
+    }
+  },
+  "runtime_loaded_libraries": {
+    "source": {
+      "file": "$RUN/runtime-processes.json",
+      "sha256": "4e6e87a9ef7f8a0481167c91ed4124aed362847807ca52d424f7887f7701de3e"
+    },
+    "data": {
+      "utc": "2026-10-15T04:24:57.914917+00:00",
+      "hostname": "gpu-lg-cmc-h-h200-1727.host.h.pjlab.org.cn",
+      "processes": [
+        {
+          "worker": 0,
+          "pid": 1963288,
+          "ppid": 1,
+          "state": "S (sleeping)",
+          "command": "$PYTHON -B -m sglang.launch_server --model-path $MODEL --tp-size 4 --host 127.0.0.1 --port 31000 --dtype bfloat16 --mem-fraction-static 0.90 --context-length 32768 --max-running-requests 64 --chunked-prefill-size 512 --schedule-policy fcfs-mpq --attention-backend triton --moe-runner-backend flashinfer_cutlass --disable-cuda-graph",
+          "libraries": [
+            "$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/sm90/common_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/torch/lib/libtorch_cuda.so",
+            "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6.0.34"
+          ]
+        },
+        {
+          "worker": 1,
+          "pid": 1963289,
+          "ppid": 1,
+          "state": "S (sleeping)",
+          "command": "$PYTHON -B -m sglang.launch_server --model-path $MODEL --tp-size 4 --host 127.0.0.1 --port 31001 --dtype bfloat16 --mem-fraction-static 0.90 --context-length 32768 --max-running-requests 64 --chunked-prefill-size 512 --schedule-policy fcfs-mpq --attention-backend triton --moe-runner-backend flashinfer_cutlass --disable-cuda-graph",
+          "libraries": [
+            "$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/sm90/common_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/torch/lib/libtorch_cuda.so",
+            "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6.0.34"
+          ]
+        },
+        {
+          "worker": 0,
+          "pid": 1963563,
+          "ppid": 1963288,
+          "state": "S (sleeping)",
+          "command": "$PYTHON -B -c from multiprocessing.resource_tracker import main;main(60)",
+          "libraries": [
+            "$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2",
+            "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6.0.34"
+          ]
+        },
+        {
+          "worker": 1,
+          "pid": 1963564,
+          "ppid": 1963289,
+          "state": "S (sleeping)",
+          "command": "$PYTHON -B -c from multiprocessing.resource_tracker import main;main(60)",
+          "libraries": [
+            "$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2",
+            "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6.0.34"
+          ]
+        },
+        {
+          "worker": 0,
+          "pid": 1963565,
+          "ppid": 1963288,
+          "state": "D (disk sleep)",
+          "command": "sglang::scheduler_TP0",
+          "libraries": [
+            "$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/flash_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/sm90/common_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/torch/lib/libtorch_cuda.so",
+            "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6.0.34"
+          ]
+        },
+        {
+          "worker": 0,
+          "pid": 1963566,
+          "ppid": 1963288,
+          "state": "D (disk sleep)",
+          "command": "sglang::scheduler_TP1",
+          "libraries": [
+            "$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/flash_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/sm90/common_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/torch/lib/libtorch_cuda.so",
+            "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6.0.34"
+          ]
+        },
+        {
+          "worker": 0,
+          "pid": 1963567,
+          "ppid": 1963288,
+          "state": "D (disk sleep)",
+          "command": "sglang::scheduler_TP2",
+          "libraries": [
+            "$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/flash_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/sm90/common_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/torch/lib/libtorch_cuda.so",
+            "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6.0.34"
+          ]
+        },
+        {
+          "worker": 0,
+          "pid": 1963568,
+          "ppid": 1963288,
+          "state": "D (disk sleep)",
+          "command": "sglang::scheduler_TP3",
+          "libraries": [
+            "$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/flash_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/sm90/common_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/torch/lib/libtorch_cuda.so",
+            "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6.0.34"
+          ]
+        },
+        {
+          "worker": 0,
+          "pid": 1963569,
+          "ppid": 1963288,
+          "state": "S (sleeping)",
+          "command": "sglang::detokenizer",
+          "libraries": [
+            "$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/sm90/common_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/torch/lib/libtorch_cuda.so",
+            "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6.0.34"
+          ]
+        },
+        {
+          "worker": 1,
+          "pid": 1963570,
+          "ppid": 1963289,
+          "state": "D (disk sleep)",
+          "command": "sglang::scheduler_TP0",
+          "libraries": [
+            "$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/flash_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/sm90/common_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/torch/lib/libtorch_cuda.so",
+            "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6.0.34"
+          ]
+        },
+        {
+          "worker": 1,
+          "pid": 1963571,
+          "ppid": 1963289,
+          "state": "D (disk sleep)",
+          "command": "sglang::scheduler_TP1",
+          "libraries": [
+            "$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/flash_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/sm90/common_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/torch/lib/libtorch_cuda.so",
+            "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6.0.34"
+          ]
+        },
+        {
+          "worker": 1,
+          "pid": 1963572,
+          "ppid": 1963289,
+          "state": "D (disk sleep)",
+          "command": "sglang::scheduler_TP2",
+          "libraries": [
+            "$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/flash_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/sm90/common_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/torch/lib/libtorch_cuda.so",
+            "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6.0.34"
+          ]
+        },
+        {
+          "worker": 1,
+          "pid": 1963573,
+          "ppid": 1963289,
+          "state": "D (disk sleep)",
+          "command": "sglang::scheduler_TP3",
+          "libraries": [
+            "$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/flash_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/sm90/common_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/torch/lib/libtorch_cuda.so",
+            "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6.0.34"
+          ]
+        },
+        {
+          "worker": 1,
+          "pid": 1963574,
+          "ppid": 1963289,
+          "state": "S (sleeping)",
+          "command": "sglang::detokenizer",
+          "libraries": [
+            "$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2",
+            "$RESULTS/env/lib/python3.13/site-packages/sgl_kernel/sm90/common_ops.abi3.so",
+            "$RESULTS/env/lib/python3.13/site-packages/torch/lib/libtorch_cuda.so",
+            "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6.0.34"
+          ]
+        }
+      ]
+    }
+  },
+  "worker_source_equivalence": {
+    "mpq_worker_launch_commit": "24dc393f7e1cc41ca8464b91b60be5dc78c3d60a",
+    "lpm_worker_launch_commit": "1fb127f03389ebcbed7528398b6d7f2f0367917d",
+    "full_repository_diff_name_only": [
+      "benchmark/preble/bench_loogle.py",
+      "python/sglang/launch_preble.py",
+      "python/sglang/srt/routing/preble.py"
+    ],
+    "changed_blob_proof": {
+      "benchmark/preble/bench_loogle.py": {
+        "24dc393f7e1cc41ca8464b91b60be5dc78c3d60a": {
+          "git_blob": "aee1cf4cdbc2ebe1407f2d90bdcc5a9bb3d08fe7",
+          "sha256": "1df69df2a360d79914ebb14e363d134a7ae81ce6e34c1214af3b4bc8801cd186"
+        },
+        "1fb127f03389ebcbed7528398b6d7f2f0367917d": {
+          "git_blob": "3326227f7e9724689ca22b7efa03a8dc7039833b",
+          "sha256": "66963c75c29b37e054ab13dd9fc89baaf53f892b4322b3fa1f8446d6a2332983"
+        }
+      },
+      "python/sglang/launch_preble.py": {
+        "24dc393f7e1cc41ca8464b91b60be5dc78c3d60a": {
+          "git_blob": "bec1764b210db83b6172d01e1d2e8f3cf9ab2b8b",
+          "sha256": "07a842310dafbd3ad9c4c31f81b7499bdca6634fa19c408ff1864005caa3466a"
+        },
+        "1fb127f03389ebcbed7528398b6d7f2f0367917d": {
+          "git_blob": "ac2f6248ebce2acf94f36b97396f3fd90313a71a",
+          "sha256": "9de0220ab9fe4054aeca7ea6b454ab8a0157d6b49702bf57b475052d6f1e4ca1"
+        }
+      },
+      "python/sglang/srt/routing/preble.py": {
+        "24dc393f7e1cc41ca8464b91b60be5dc78c3d60a": {
+          "git_blob": "b8825fd8db09dce52036ad35e5d386e7decf851e",
+          "sha256": "08fbda8f2bd4f0156b49ab72ff8276d6382bfe2b758dc9c5a95da4792db1c855"
+        },
+        "1fb127f03389ebcbed7528398b6d7f2f0367917d": {
+          "git_blob": "f1823f62f914dd3f5dbdbdf5c3738dd38dfbd6fe",
+          "sha256": "abed9e809cf95b20451368fbf7fc938e5799968e2c3a13f578dae7a6f7867e25"
+        }
+      }
+    },
+    "identical_worker_runtime_blob_proof": {
+      "python/sglang/launch_server.py": {
+        "git_blob": "6b80e13306704e4da77bd6b639e948fa44ddfb3a",
+        "sha256": "2c608ebeb12c3646829c2fbf27d97854e0e77d003f4b9a97fe7a7a8cb6920d98"
+      },
+      "python/sglang/srt/managers/schedule_policy.py": {
+        "git_blob": "0fd09240b2a4290c38433af320ef60a93025ac97",
+        "sha256": "799b53dcef87a59865903ca1514a10511d8c14b28945219bd3981962bc873156"
+      },
+      "python/sglang/srt/managers/scheduler.py": {
+        "git_blob": "ce9d610308b5388ba97624367aa63c2d871a7c44",
+        "sha256": "c8ab119f238596c9a9f9eeeef8fb9e2cebaea4504a0efc420662e52548430d78"
+      },
+      "python/sglang/srt/managers/schedule_batch.py": {
+        "git_blob": "22fdb01b41fdba231734be3f3caa54236bc1fc9e",
+        "sha256": "c995e03e6f8a2681813b3950dd72a29483c7c9a2aa286fbe41ba3901b753b741"
+      },
+      "python/sglang/srt/mem_cache/radix_cache.py": {
+        "git_blob": "b4365b55c9ffa809b7361924750884594879c792",
+        "sha256": "076cccf9a55ebae186ae9c936bfb4df1c0b07c1c11a89fd0b1bd5c27b3f1f8c1"
+      },
+      "python/sglang/srt/server_args.py": {
+        "git_blob": "f9dae471655a261eef34b9017a97f1c342cafe10",
+        "sha256": "4af20843dbdfc6ea0e3e6ed6c865ce47600ffe99eee54f0d5b91974d4e4c98c6"
+      }
+    },
+    "interpretation": "The complete git diff is limited to benchmark client and Preble frontend/global-router files. Worker scheduler, cache, model runtime and backend files are unchanged between these launch commits. The MPQ workers were already running while frontend code was completed; the LPM workers were restarted from the frontend commit."
+  },
+  "phases": {
+    "preble-mpq": {
+      "source": {
+        "file": "$RUN/preble-mpq-manifest.json",
+        "sha256": "848b0191c4631f4ef880f22a0c9a268f120986c122db742251127d601ac4f5db"
+      },
+      "data": {
+        "utc": "2026-10-15T04:34:58.221224+00:00",
+        "host": "gpu-lg-cmc-h-h200-1727.host.h.pjlab.org.cn",
+        "local_policy": "fcfs-mpq",
+        "frontend_command": [
+          "$PYTHON",
+          "-B",
+          "-m",
+          "sglang.launch_preble",
+          "--worker-urls",
+          "http://127.0.0.1:31000",
+          "http://127.0.0.1:31001",
+          "--model-path",
+          "$MODEL",
+          "--port",
+          "18000",
+          "--max-tokens-per-worker",
+          "328506",
+          "328506",
+          "--prefill-time-scale",
+          "2.387698396256729",
+          "--initial-tpot",
+          "0.06731290138453584"
+        ],
+        "frontend_commit": "1fb127f03389ebcbed7528398b6d7f2f0367917d",
+        "virtual_capacities": [
+          328506,
+          328506
+        ],
+        "rates": [
+          0.7,
+          1.4
+        ],
+        "repetitions": 2,
+        "calibration_sha256": "b9a93683d8e47498af24030166e9ec17ab6ab5bc7493798e10c873057a066fc0",
+        "workload_sha256": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+        "ordering": "All MPQ trials, then restart identical replicas with LPM; no cross-policy temporal alternation.",
+        "script_sha256": "0978e83128f20b6aa53bd2cd58bc7f75b1b0665d5d556999f257e288e77e8c1c",
+        "replay_script_sha256": "66963c75c29b37e054ab13dd9fc89baaf53f892b4322b3fa1f8446d6a2332983"
+      },
+      "frontend_executed": true,
+      "frontend_note": "A fresh frontend was launched for each Preble trial. RR replay directly selected workers; its phase manifest retains the common frontend configuration but does not launch it.",
+      "workers": [
+        {
+          "worker": 0,
+          "launch_source": {
+            "file": "$RUN/worker0-launch.json",
+            "sha256": "b9f88f86055ba3f81d53a8921ff25120b22016fef0624c77027c92ea4896df18"
+          },
+          "server_info_source": {
+            "file": "$RUN/worker0-server-info.json",
+            "sha256": "b55b8051a7ba28737204fe946a019c49094cfea9a1eab00f8e6608f610a3c5b6"
+          },
+          "source_commit_at_launch": "24dc393f7e1cc41ca8464b91b60be5dc78c3d60a",
+          "started_at": "2026-10-15T04:19:00.926401+00:00",
+          "actual_argv": [
+            "$PYTHON",
+            "-B",
+            "-m",
+            "sglang.launch_server",
+            "--model-path",
+            "$MODEL",
+            "--tp-size",
+            "4",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "31000",
+            "--dtype",
+            "bfloat16",
+            "--mem-fraction-static",
+            "0.90",
+            "--context-length",
+            "32768",
+            "--max-running-requests",
+            "64",
+            "--chunked-prefill-size",
+            "512",
+            "--schedule-policy",
+            "fcfs-mpq",
+            "--attention-backend",
+            "triton",
+            "--moe-runner-backend",
+            "flashinfer_cutlass",
+            "--disable-cuda-graph"
+          ],
+          "effective_random_seed": 659938497,
+          "reproduction_argv_with_explicit_seed": [
+            "$PYTHON",
+            "-B",
+            "-m",
+            "sglang.launch_server",
+            "--model-path",
+            "$MODEL",
+            "--tp-size",
+            "4",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "31000",
+            "--dtype",
+            "bfloat16",
+            "--mem-fraction-static",
+            "0.90",
+            "--context-length",
+            "32768",
+            "--max-running-requests",
+            "64",
+            "--chunked-prefill-size",
+            "512",
+            "--schedule-policy",
+            "fcfs-mpq",
+            "--attention-backend",
+            "triton",
+            "--moe-runner-backend",
+            "flashinfer_cutlass",
+            "--disable-cuda-graph",
+            "--random-seed",
+            "659938497"
+          ],
+          "environment": {
+            "PYTHONPATH": "$SGLANG/python",
+            "PYTHONUNBUFFERED": "1",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "CUDA_VISIBLE_DEVICES": "0,1,2,3",
+            "TVM_FFI_CACHE_DIR": "$RESULTS/cache-worker0-cutlass/tvm-ffi",
+            "TRITON_CACHE_DIR": "$RESULTS/cache-worker0-cutlass/triton",
+            "FLASHINFER_WORKSPACE_BASE": "$RESULTS/cache-worker0-cutlass/flashinfer",
+            "TORCH_EXTENSIONS_DIR": "$RESULTS/cache-worker0-cutlass/torch-extensions",
+            "SGLANG_CACHE_DIR": "$RUN/cache-worker0/sglang",
+            "LD_PRELOAD": "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6:$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2"
+          },
+          "reported_version": "0.5.10.post2.dev761+g7ce235232",
+          "effective_settings": {
+            "dtype": "bfloat16",
+            "quantization": null,
+            "tp_size": 4,
+            "dp_size": 1,
+            "context_length": 32768,
+            "max_running_requests": 64,
+            "chunked_prefill_size": 512,
+            "schedule_policy": "fcfs-mpq",
+            "attention_backend": "triton",
+            "moe_runner_backend": "flashinfer_cutlass",
+            "disable_cuda_graph": true,
+            "enable_hierarchical_cache": false,
+            "enable_lmcache": false,
+            "cpu_offload_gb": 0,
+            "radix_eviction_policy": "lru",
+            "load_format": "auto",
+            "model_path": "$MODEL"
+          },
+          "memory_usage_per_replica": {
+            "weight": 109.71,
+            "kvcache": 14.72,
+            "token_capacity": 328506,
+            "graph": 0
+          }
+        },
+        {
+          "worker": 1,
+          "launch_source": {
+            "file": "$RUN/worker1-launch.json",
+            "sha256": "aad423aae3da61e13f9df3462acc3d00469f8daf375b9d25efb72fba06aeb767"
+          },
+          "server_info_source": {
+            "file": "$RUN/worker1-server-info.json",
+            "sha256": "b139bacf58af37b67ed3aee65cba023e1176ab579694b94de84dcce4d0199f27"
+          },
+          "source_commit_at_launch": "24dc393f7e1cc41ca8464b91b60be5dc78c3d60a",
+          "started_at": "2026-10-15T04:19:00.931119+00:00",
+          "actual_argv": [
+            "$PYTHON",
+            "-B",
+            "-m",
+            "sglang.launch_server",
+            "--model-path",
+            "$MODEL",
+            "--tp-size",
+            "4",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "31001",
+            "--dtype",
+            "bfloat16",
+            "--mem-fraction-static",
+            "0.90",
+            "--context-length",
+            "32768",
+            "--max-running-requests",
+            "64",
+            "--chunked-prefill-size",
+            "512",
+            "--schedule-policy",
+            "fcfs-mpq",
+            "--attention-backend",
+            "triton",
+            "--moe-runner-backend",
+            "flashinfer_cutlass",
+            "--disable-cuda-graph"
+          ],
+          "effective_random_seed": 556540270,
+          "reproduction_argv_with_explicit_seed": [
+            "$PYTHON",
+            "-B",
+            "-m",
+            "sglang.launch_server",
+            "--model-path",
+            "$MODEL",
+            "--tp-size",
+            "4",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "31001",
+            "--dtype",
+            "bfloat16",
+            "--mem-fraction-static",
+            "0.90",
+            "--context-length",
+            "32768",
+            "--max-running-requests",
+            "64",
+            "--chunked-prefill-size",
+            "512",
+            "--schedule-policy",
+            "fcfs-mpq",
+            "--attention-backend",
+            "triton",
+            "--moe-runner-backend",
+            "flashinfer_cutlass",
+            "--disable-cuda-graph",
+            "--random-seed",
+            "556540270"
+          ],
+          "environment": {
+            "PYTHONPATH": "$SGLANG/python",
+            "PYTHONUNBUFFERED": "1",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "CUDA_VISIBLE_DEVICES": "4,5,6,7",
+            "TVM_FFI_CACHE_DIR": "$RESULTS/cache-worker1-cutlass/tvm-ffi",
+            "TRITON_CACHE_DIR": "$RESULTS/cache-worker1-cutlass/triton",
+            "FLASHINFER_WORKSPACE_BASE": "$RESULTS/cache-worker1-cutlass/flashinfer",
+            "TORCH_EXTENSIONS_DIR": "$RESULTS/cache-worker1-cutlass/torch-extensions",
+            "SGLANG_CACHE_DIR": "$RUN/cache-worker1/sglang",
+            "LD_PRELOAD": "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6:$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2"
+          },
+          "reported_version": "0.5.10.post2.dev761+g7ce235232",
+          "effective_settings": {
+            "dtype": "bfloat16",
+            "quantization": null,
+            "tp_size": 4,
+            "dp_size": 1,
+            "context_length": 32768,
+            "max_running_requests": 64,
+            "chunked_prefill_size": 512,
+            "schedule_policy": "fcfs-mpq",
+            "attention_backend": "triton",
+            "moe_runner_backend": "flashinfer_cutlass",
+            "disable_cuda_graph": true,
+            "enable_hierarchical_cache": false,
+            "enable_lmcache": false,
+            "cpu_offload_gb": 0,
+            "radix_eviction_policy": "lru",
+            "load_format": "auto",
+            "model_path": "$MODEL"
+          },
+          "memory_usage_per_replica": {
+            "weight": 109.71,
+            "kvcache": 14.72,
+            "token_capacity": 328506,
+            "graph": 0
+          }
+        }
+      ]
+    },
+    "rr-lpm": {
+      "source": {
+        "file": "$RUN/rr-lpm-manifest.json",
+        "sha256": "b4e37b74707af66cd3deb40fead4d6bae34f6d9b592cb1cc08bfce779a0d1a36"
+      },
+      "data": {
+        "utc": "2026-10-15T05:46:45.909937+00:00",
+        "host": "gpu-lg-cmc-h-h200-1727.host.h.pjlab.org.cn",
+        "local_policy": "lpm",
+        "frontend_command": [
+          "$PYTHON",
+          "-B",
+          "-m",
+          "sglang.launch_preble",
+          "--worker-urls",
+          "http://127.0.0.1:31000",
+          "http://127.0.0.1:31001",
+          "--model-path",
+          "$MODEL",
+          "--port",
+          "18000",
+          "--max-tokens-per-worker",
+          "328506",
+          "328506",
+          "--prefill-time-scale",
+          "2.387698396256729",
+          "--initial-tpot",
+          "0.06731290138453584"
+        ],
+        "frontend_commit": "1fb127f03389ebcbed7528398b6d7f2f0367917d",
+        "virtual_capacities": [
+          328506,
+          328506
+        ],
+        "rates": [
+          0.7,
+          1.4
+        ],
+        "repetitions": 2,
+        "calibration_sha256": "b9a93683d8e47498af24030166e9ec17ab6ab5bc7493798e10c873057a066fc0",
+        "workload_sha256": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+        "ordering": "All MPQ trials, then restart identical replicas with LPM; no cross-policy temporal alternation.",
+        "script_sha256": "b7aaf210b3221bcdea387c4c21c3fa123f6bc3d2206763bb5fa7e08e27e4c817",
+        "replay_script_sha256": "66963c75c29b37e054ab13dd9fc89baaf53f892b4322b3fa1f8446d6a2332983"
+      },
+      "frontend_executed": false,
+      "frontend_note": "A fresh frontend was launched for each Preble trial. RR replay directly selected workers; its phase manifest retains the common frontend configuration but does not launch it.",
+      "workers": [
+        {
+          "worker": 0,
+          "launch_source": {
+            "file": "$RUN/worker0-lpm-launch.json",
+            "sha256": "5b60a661245239c6035f1c0d3a72dc81d497d2a1f0552e81a8d87f89e8016ef2"
+          },
+          "server_info_source": {
+            "file": "$RUN/worker0-lpm-server-info.json",
+            "sha256": "18665af5ee632d28ecf7fa03519da1244c2c180b274113d1b6990f995b8d8109"
+          },
+          "source_commit_at_launch": "1fb127f03389ebcbed7528398b6d7f2f0367917d",
+          "started_at": "2026-10-15T05:08:20.629360+00:00",
+          "actual_argv": [
+            "$PYTHON",
+            "-B",
+            "-m",
+            "sglang.launch_server",
+            "--model-path",
+            "$MODEL",
+            "--tp-size",
+            "4",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "31000",
+            "--dtype",
+            "bfloat16",
+            "--mem-fraction-static",
+            "0.90",
+            "--context-length",
+            "32768",
+            "--max-running-requests",
+            "64",
+            "--chunked-prefill-size",
+            "512",
+            "--schedule-policy",
+            "lpm",
+            "--attention-backend",
+            "triton",
+            "--moe-runner-backend",
+            "flashinfer_cutlass",
+            "--disable-cuda-graph",
+            "--random-seed",
+            "659938497"
+          ],
+          "effective_random_seed": 659938497,
+          "reproduction_argv_with_explicit_seed": [
+            "$PYTHON",
+            "-B",
+            "-m",
+            "sglang.launch_server",
+            "--model-path",
+            "$MODEL",
+            "--tp-size",
+            "4",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "31000",
+            "--dtype",
+            "bfloat16",
+            "--mem-fraction-static",
+            "0.90",
+            "--context-length",
+            "32768",
+            "--max-running-requests",
+            "64",
+            "--chunked-prefill-size",
+            "512",
+            "--schedule-policy",
+            "lpm",
+            "--attention-backend",
+            "triton",
+            "--moe-runner-backend",
+            "flashinfer_cutlass",
+            "--disable-cuda-graph",
+            "--random-seed",
+            "659938497"
+          ],
+          "environment": {
+            "PYTHONPATH": "$SGLANG/python",
+            "PYTHONUNBUFFERED": "1",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "CUDA_VISIBLE_DEVICES": "0,1,2,3",
+            "TVM_FFI_CACHE_DIR": "$RESULTS/cache-worker0-cutlass/tvm-ffi",
+            "TRITON_CACHE_DIR": "$RESULTS/cache-worker0-cutlass/triton",
+            "FLASHINFER_WORKSPACE_BASE": "$RESULTS/cache-worker0-cutlass/flashinfer",
+            "TORCH_EXTENSIONS_DIR": "$RESULTS/cache-worker0-cutlass/torch-extensions",
+            "SGLANG_CACHE_DIR": "$RUN/cache-worker0/sglang",
+            "LD_PRELOAD": "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6:$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2"
+          },
+          "reported_version": "0.5.10.post2.dev761+g7ce235232",
+          "effective_settings": {
+            "dtype": "bfloat16",
+            "quantization": null,
+            "tp_size": 4,
+            "dp_size": 1,
+            "context_length": 32768,
+            "max_running_requests": 64,
+            "chunked_prefill_size": 512,
+            "schedule_policy": "lpm",
+            "attention_backend": "triton",
+            "moe_runner_backend": "flashinfer_cutlass",
+            "disable_cuda_graph": true,
+            "enable_hierarchical_cache": false,
+            "enable_lmcache": false,
+            "cpu_offload_gb": 0,
+            "radix_eviction_policy": "lru",
+            "load_format": "auto",
+            "model_path": "$MODEL"
+          },
+          "memory_usage_per_replica": {
+            "weight": 109.71,
+            "kvcache": 14.72,
+            "token_capacity": 328506,
+            "graph": 0
+          }
+        },
+        {
+          "worker": 1,
+          "launch_source": {
+            "file": "$RUN/worker1-lpm-launch.json",
+            "sha256": "131336d802dc383983d2b2c7fe3927dfb3aec8b9ebb299b9fd35139b7db7cd4c"
+          },
+          "server_info_source": {
+            "file": "$RUN/worker1-lpm-server-info.json",
+            "sha256": "ee889b724d9dbb7083e7099d068a246f8899ee7a7d185eacad1edeef549cb6dd"
+          },
+          "source_commit_at_launch": "1fb127f03389ebcbed7528398b6d7f2f0367917d",
+          "started_at": "2026-10-15T05:08:20.635288+00:00",
+          "actual_argv": [
+            "$PYTHON",
+            "-B",
+            "-m",
+            "sglang.launch_server",
+            "--model-path",
+            "$MODEL",
+            "--tp-size",
+            "4",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "31001",
+            "--dtype",
+            "bfloat16",
+            "--mem-fraction-static",
+            "0.90",
+            "--context-length",
+            "32768",
+            "--max-running-requests",
+            "64",
+            "--chunked-prefill-size",
+            "512",
+            "--schedule-policy",
+            "lpm",
+            "--attention-backend",
+            "triton",
+            "--moe-runner-backend",
+            "flashinfer_cutlass",
+            "--disable-cuda-graph",
+            "--random-seed",
+            "556540270"
+          ],
+          "effective_random_seed": 556540270,
+          "reproduction_argv_with_explicit_seed": [
+            "$PYTHON",
+            "-B",
+            "-m",
+            "sglang.launch_server",
+            "--model-path",
+            "$MODEL",
+            "--tp-size",
+            "4",
+            "--host",
+            "127.0.0.1",
+            "--port",
+            "31001",
+            "--dtype",
+            "bfloat16",
+            "--mem-fraction-static",
+            "0.90",
+            "--context-length",
+            "32768",
+            "--max-running-requests",
+            "64",
+            "--chunked-prefill-size",
+            "512",
+            "--schedule-policy",
+            "lpm",
+            "--attention-backend",
+            "triton",
+            "--moe-runner-backend",
+            "flashinfer_cutlass",
+            "--disable-cuda-graph",
+            "--random-seed",
+            "556540270"
+          ],
+          "environment": {
+            "PYTHONPATH": "$SGLANG/python",
+            "PYTHONUNBUFFERED": "1",
+            "PYTHONDONTWRITEBYTECODE": "1",
+            "CUDA_VISIBLE_DEVICES": "4,5,6,7",
+            "TVM_FFI_CACHE_DIR": "$RESULTS/cache-worker1-cutlass/tvm-ffi",
+            "TRITON_CACHE_DIR": "$RESULTS/cache-worker1-cutlass/triton",
+            "FLASHINFER_WORKSPACE_BASE": "$RESULTS/cache-worker1-cutlass/flashinfer",
+            "TORCH_EXTENSIONS_DIR": "$RESULTS/cache-worker1-cutlass/torch-extensions",
+            "SGLANG_CACHE_DIR": "$RUN/cache-worker1/sglang",
+            "LD_PRELOAD": "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6:$RESULTS/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2"
+          },
+          "reported_version": "0.5.10.post2.dev761+g7ce235232",
+          "effective_settings": {
+            "dtype": "bfloat16",
+            "quantization": null,
+            "tp_size": 4,
+            "dp_size": 1,
+            "context_length": 32768,
+            "max_running_requests": 64,
+            "chunked_prefill_size": 512,
+            "schedule_policy": "lpm",
+            "attention_backend": "triton",
+            "moe_runner_backend": "flashinfer_cutlass",
+            "disable_cuda_graph": true,
+            "enable_hierarchical_cache": false,
+            "enable_lmcache": false,
+            "cpu_offload_gb": 0,
+            "radix_eviction_policy": "lru",
+            "load_format": "auto",
+            "model_path": "$MODEL"
+          },
+          "memory_usage_per_replica": {
+            "weight": 109.71,
+            "kvcache": 14.72,
+            "token_capacity": 328506,
+            "graph": 0
+          }
+        }
+      ]
+    }
+  },
+  "execution_manifests": {
+    "preble-mpq": [
+      {
+        "source": {
+          "file": "$RUN/preble-mpq-execution-b7aaf210b322.json",
+          "sha256": "8718c7f2ba6b12ad799cce0aa1a82d13481a18885f64f2469f05b951f5a3fb7f"
+        },
+        "data": {
+          "utc": "2026-10-15T04:44:59.925296+00:00",
+          "host": "gpu-lg-cmc-h-h200-1727.host.h.pjlab.org.cn",
+          "local_policy": "fcfs-mpq",
+          "frontend_command": [
+            "$PYTHON",
+            "-B",
+            "-m",
+            "sglang.launch_preble",
+            "--worker-urls",
+            "http://127.0.0.1:31000",
+            "http://127.0.0.1:31001",
+            "--model-path",
+            "$MODEL",
+            "--port",
+            "18000",
+            "--max-tokens-per-worker",
+            "328506",
+            "328506",
+            "--prefill-time-scale",
+            "2.387698396256729",
+            "--initial-tpot",
+            "0.06731290138453584"
+          ],
+          "frontend_commit": "1fb127f03389ebcbed7528398b6d7f2f0367917d",
+          "virtual_capacities": [
+            328506,
+            328506
+          ],
+          "rates": [
+            0.7,
+            1.4
+          ],
+          "repetitions": 2,
+          "calibration_sha256": "b9a93683d8e47498af24030166e9ec17ab6ab5bc7493798e10c873057a066fc0",
+          "workload_sha256": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+          "ordering": "All MPQ trials, then restart identical replicas with LPM; no cross-policy temporal alternation.",
+          "script_sha256": "b7aaf210b3221bcdea387c4c21c3fa123f6bc3d2206763bb5fa7e08e27e4c817",
+          "replay_script_sha256": "66963c75c29b37e054ab13dd9fc89baaf53f892b4322b3fa1f8446d6a2332983",
+          "phase_manifest_sha256": "848b0191c4631f4ef880f22a0c9a268f120986c122db742251127d601ac4f5db",
+          "runner_revision_note": "Resume after correcting preflight SO_REUSEADDR; inference configuration and trace unchanged."
+        }
+      }
+    ],
+    "rr-lpm": [
+      {
+        "source": {
+          "file": "$RUN/rr-lpm-execution-b7aaf210b322.json",
+          "sha256": "968e5afb092b02c39a58d081def2acc6fc89e72189d38ae4e9032fea41d956eb"
+        },
+        "data": {
+          "utc": "2026-10-15T05:46:45.909937+00:00",
+          "host": "gpu-lg-cmc-h-h200-1727.host.h.pjlab.org.cn",
+          "local_policy": "lpm",
+          "frontend_command": [
+            "$PYTHON",
+            "-B",
+            "-m",
+            "sglang.launch_preble",
+            "--worker-urls",
+            "http://127.0.0.1:31000",
+            "http://127.0.0.1:31001",
+            "--model-path",
+            "$MODEL",
+            "--port",
+            "18000",
+            "--max-tokens-per-worker",
+            "328506",
+            "328506",
+            "--prefill-time-scale",
+            "2.387698396256729",
+            "--initial-tpot",
+            "0.06731290138453584"
+          ],
+          "frontend_commit": "1fb127f03389ebcbed7528398b6d7f2f0367917d",
+          "virtual_capacities": [
+            328506,
+            328506
+          ],
+          "rates": [
+            0.7,
+            1.4
+          ],
+          "repetitions": 2,
+          "calibration_sha256": "b9a93683d8e47498af24030166e9ec17ab6ab5bc7493798e10c873057a066fc0",
+          "workload_sha256": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+          "ordering": "All MPQ trials, then restart identical replicas with LPM; no cross-policy temporal alternation.",
+          "script_sha256": "b7aaf210b3221bcdea387c4c21c3fa123f6bc3d2206763bb5fa7e08e27e4c817",
+          "replay_script_sha256": "66963c75c29b37e054ab13dd9fc89baaf53f892b4322b3fa1f8446d6a2332983",
+          "phase_manifest_sha256": "b4e37b74707af66cd3deb40fead4d6bae34f6d9b592cb1cc08bfce779a0d1a36",
+          "runner_revision_note": "Resume after correcting preflight SO_REUSEADDR; inference configuration and trace unchanged."
+        }
+      }
+    ]
+  },
+  "trial_order_and_commands": [
+    {
+      "name": "preble-mpq-r0.7-rep1",
+      "trial_manifest": {
+        "source": {
+          "file": "$RUN/preble-mpq-r0.7-rep1/trial-manifest.json",
+          "sha256": "6373d04460f9c1e82fd6d50822a5402b733a4558d426da954a3167fe865f7434"
+        },
+        "data": {
+          "phase_manifest_sha256": "848b0191c4631f4ef880f22a0c9a268f120986c122db742251127d601ac4f5db",
+          "arrivals_sha256": "512c9c8d3144e47202637b022433bca671e4e843761f15726a28cba8376781cc",
+          "started_at": "2026-10-15T04:34:58.317235+00:00"
+        }
+      },
+      "actual_client_argv": [
+        "$PYTHON",
+        "-B",
+        "$SGLANG/benchmark/preble/bench_loogle.py",
+        "--workload",
+        "$RUN/artifact/reference-trace/loogle-24-393-reference.jsonl",
+        "--requests",
+        "393",
+        "--policy",
+        "preble",
+        "--rate",
+        "0.7",
+        "--arrivals",
+        "$RUN/artifact/reference-trace/arrivals-r0.7.json",
+        "--output",
+        "$RUN/preble-mpq-r0.7-rep1",
+        "--worker-urls",
+        "http://127.0.0.1:31000",
+        "http://127.0.0.1:31001",
+        "--router-url",
+        "http://127.0.0.1:18000"
+      ],
+      "command_source": {
+        "file": "$RUN/preble-mpq-r0.7-rep1/command.json",
+        "sha256": "00d04e2d75d501602f1e29e58d911d5c711abc05e1fb9ac6141f1daf0281c835"
+      },
+      "flush_source": {
+        "file": "$RUN/preble-mpq-r0.7-rep1/flushes.json",
+        "sha256": "6d8b8ae38d843bbb96b94496ecffbc4f586071a98ed2d1a45339e948f3c57c74"
+      },
+      "completed_at": "2026-10-15T04:43:46.734092+00:00"
+    },
+    {
+      "name": "preble-mpq-r0.7-rep2",
+      "trial_manifest": {
+        "source": {
+          "file": "$RUN/preble-mpq-r0.7-rep2/trial-manifest.json",
+          "sha256": "36fc0de40708337557e99d05bb200d42e2a46c65de2801447a537deb4bac8bc2"
+        },
+        "data": {
+          "phase_manifest_sha256": "848b0191c4631f4ef880f22a0c9a268f120986c122db742251127d601ac4f5db",
+          "execution_manifest_sha256": "8718c7f2ba6b12ad799cce0aa1a82d13481a18885f64f2469f05b951f5a3fb7f",
+          "runner_script_sha256": "b7aaf210b3221bcdea387c4c21c3fa123f6bc3d2206763bb5fa7e08e27e4c817",
+          "arrivals_sha256": "512c9c8d3144e47202637b022433bca671e4e843761f15726a28cba8376781cc",
+          "started_at": "2026-10-15T04:45:00.037815+00:00"
+        }
+      },
+      "actual_client_argv": [
+        "$PYTHON",
+        "-B",
+        "$SGLANG/benchmark/preble/bench_loogle.py",
+        "--workload",
+        "$RUN/artifact/reference-trace/loogle-24-393-reference.jsonl",
+        "--requests",
+        "393",
+        "--policy",
+        "preble",
+        "--rate",
+        "0.7",
+        "--arrivals",
+        "$RUN/artifact/reference-trace/arrivals-r0.7.json",
+        "--output",
+        "$RUN/preble-mpq-r0.7-rep2",
+        "--worker-urls",
+        "http://127.0.0.1:31000",
+        "http://127.0.0.1:31001",
+        "--router-url",
+        "http://127.0.0.1:18000"
+      ],
+      "command_source": {
+        "file": "$RUN/preble-mpq-r0.7-rep2/command.json",
+        "sha256": "afaaf4ffe761fe3df2133a0a8353c2e9e7c4d3aa84c5b5ef851511a3464c7ad1"
+      },
+      "flush_source": {
+        "file": "$RUN/preble-mpq-r0.7-rep2/flushes.json",
+        "sha256": "53da8bb6eec2a0b865eb9c027fcd3cc83cd856512e9408544f0c2c51ff1e589d"
+      },
+      "completed_at": "2026-10-15T04:53:48.961561+00:00"
+    },
+    {
+      "name": "preble-mpq-r1.4-rep1",
+      "trial_manifest": {
+        "source": {
+          "file": "$RUN/preble-mpq-r1.4-rep1/trial-manifest.json",
+          "sha256": "1e6fe4908fa628ce6753fc3f28464b62e26229f8026a1c77eaa7cdb7520369e8"
+        },
+        "data": {
+          "phase_manifest_sha256": "848b0191c4631f4ef880f22a0c9a268f120986c122db742251127d601ac4f5db",
+          "execution_manifest_sha256": "8718c7f2ba6b12ad799cce0aa1a82d13481a18885f64f2469f05b951f5a3fb7f",
+          "runner_script_sha256": "b7aaf210b3221bcdea387c4c21c3fa123f6bc3d2206763bb5fa7e08e27e4c817",
+          "arrivals_sha256": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+          "started_at": "2026-10-15T04:53:49.188936+00:00"
+        }
+      },
+      "actual_client_argv": [
+        "$PYTHON",
+        "-B",
+        "$SGLANG/benchmark/preble/bench_loogle.py",
+        "--workload",
+        "$RUN/artifact/reference-trace/loogle-24-393-reference.jsonl",
+        "--requests",
+        "393",
+        "--policy",
+        "preble",
+        "--rate",
+        "1.4",
+        "--arrivals",
+        "$RUN/artifact/reference-trace/arrivals-r1.4.json",
+        "--output",
+        "$RUN/preble-mpq-r1.4-rep1",
+        "--worker-urls",
+        "http://127.0.0.1:31000",
+        "http://127.0.0.1:31001",
+        "--router-url",
+        "http://127.0.0.1:18000"
+      ],
+      "command_source": {
+        "file": "$RUN/preble-mpq-r1.4-rep1/command.json",
+        "sha256": "8e358badaa7e83227292d768c884adcd30951daaceb8b2c19a44e16bb2b615d0"
+      },
+      "flush_source": {
+        "file": "$RUN/preble-mpq-r1.4-rep1/flushes.json",
+        "sha256": "9a4fd9db3d4533b3bd5612a90e6aeea7c2fe91b030ba936a6ffba2ebb3e43608"
+      },
+      "completed_at": "2026-10-15T04:58:50.506997+00:00"
+    },
+    {
+      "name": "preble-mpq-r1.4-rep2",
+      "trial_manifest": {
+        "source": {
+          "file": "$RUN/preble-mpq-r1.4-rep2/trial-manifest.json",
+          "sha256": "1403a636cd8d577e61d6789d65075a69b7023c73018d37ade50f5df1138f52cc"
+        },
+        "data": {
+          "phase_manifest_sha256": "848b0191c4631f4ef880f22a0c9a268f120986c122db742251127d601ac4f5db",
+          "execution_manifest_sha256": "8718c7f2ba6b12ad799cce0aa1a82d13481a18885f64f2469f05b951f5a3fb7f",
+          "runner_script_sha256": "b7aaf210b3221bcdea387c4c21c3fa123f6bc3d2206763bb5fa7e08e27e4c817",
+          "arrivals_sha256": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+          "started_at": "2026-10-15T04:58:50.726374+00:00"
+        }
+      },
+      "actual_client_argv": [
+        "$PYTHON",
+        "-B",
+        "$SGLANG/benchmark/preble/bench_loogle.py",
+        "--workload",
+        "$RUN/artifact/reference-trace/loogle-24-393-reference.jsonl",
+        "--requests",
+        "393",
+        "--policy",
+        "preble",
+        "--rate",
+        "1.4",
+        "--arrivals",
+        "$RUN/artifact/reference-trace/arrivals-r1.4.json",
+        "--output",
+        "$RUN/preble-mpq-r1.4-rep2",
+        "--worker-urls",
+        "http://127.0.0.1:31000",
+        "http://127.0.0.1:31001",
+        "--router-url",
+        "http://127.0.0.1:18000"
+      ],
+      "command_source": {
+        "file": "$RUN/preble-mpq-r1.4-rep2/command.json",
+        "sha256": "1b2002e9047742bd6412b13214770510d8827bbe628334ec0a1267e55738aa69"
+      },
+      "flush_source": {
+        "file": "$RUN/preble-mpq-r1.4-rep2/flushes.json",
+        "sha256": "765e73f4142713b44ecddb762199ebbdbeb5d2202c3b5878d197fcec2e3fe4be"
+      },
+      "completed_at": "2026-10-15T05:06:02.778834+00:00"
+    },
+    {
+      "name": "rr-lpm-r1.4-rep1",
+      "trial_manifest": {
+        "source": {
+          "file": "$RUN/rr-lpm-r1.4-rep1/trial-manifest.json",
+          "sha256": "fe84c6afd7b8fe10fb64291567fc837f6e17f2e317731b935fa49cfca36698bd"
+        },
+        "data": {
+          "phase_manifest_sha256": "b4e37b74707af66cd3deb40fead4d6bae34f6d9b592cb1cc08bfce779a0d1a36",
+          "execution_manifest_sha256": "968e5afb092b02c39a58d081def2acc6fc89e72189d38ae4e9032fea41d956eb",
+          "runner_script_sha256": "b7aaf210b3221bcdea387c4c21c3fa123f6bc3d2206763bb5fa7e08e27e4c817",
+          "arrivals_sha256": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+          "started_at": "2026-10-15T05:46:46.003045+00:00"
+        }
+      },
+      "actual_client_argv": [
+        "$PYTHON",
+        "-B",
+        "$SGLANG/benchmark/preble/bench_loogle.py",
+        "--workload",
+        "$RUN/artifact/reference-trace/loogle-24-393-reference.jsonl",
+        "--requests",
+        "393",
+        "--policy",
+        "round-robin",
+        "--rate",
+        "1.4",
+        "--arrivals",
+        "$RUN/artifact/reference-trace/arrivals-r1.4.json",
+        "--output",
+        "$RUN/rr-lpm-r1.4-rep1",
+        "--worker-urls",
+        "http://127.0.0.1:31000",
+        "http://127.0.0.1:31001",
+        "--router-url",
+        "http://127.0.0.1:18000"
+      ],
+      "command_source": {
+        "file": "$RUN/rr-lpm-r1.4-rep1/command.json",
+        "sha256": "21ff5e430edd85f9be359c01498a824a414362e9bf8c583bdf97b7a7be1dc3f0"
+      },
+      "flush_source": {
+        "file": "$RUN/rr-lpm-r1.4-rep1/flushes.json",
+        "sha256": "dfd42a9af4dfaa58a1f199defe3011c97852997bc5552bac2b5734b645165998"
+      },
+      "completed_at": "2026-10-15T05:52:06.964449+00:00"
+    },
+    {
+      "name": "rr-lpm-r1.4-rep2",
+      "trial_manifest": {
+        "source": {
+          "file": "$RUN/rr-lpm-r1.4-rep2/trial-manifest.json",
+          "sha256": "fe28acdfce6f1d73b5e58746274598fa902fac392d13db1de54a02a4747ca840"
+        },
+        "data": {
+          "phase_manifest_sha256": "b4e37b74707af66cd3deb40fead4d6bae34f6d9b592cb1cc08bfce779a0d1a36",
+          "execution_manifest_sha256": "968e5afb092b02c39a58d081def2acc6fc89e72189d38ae4e9032fea41d956eb",
+          "runner_script_sha256": "b7aaf210b3221bcdea387c4c21c3fa123f6bc3d2206763bb5fa7e08e27e4c817",
+          "arrivals_sha256": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+          "started_at": "2026-10-15T05:52:06.971488+00:00"
+        }
+      },
+      "actual_client_argv": [
+        "$PYTHON",
+        "-B",
+        "$SGLANG/benchmark/preble/bench_loogle.py",
+        "--workload",
+        "$RUN/artifact/reference-trace/loogle-24-393-reference.jsonl",
+        "--requests",
+        "393",
+        "--policy",
+        "round-robin",
+        "--rate",
+        "1.4",
+        "--arrivals",
+        "$RUN/artifact/reference-trace/arrivals-r1.4.json",
+        "--output",
+        "$RUN/rr-lpm-r1.4-rep2",
+        "--worker-urls",
+        "http://127.0.0.1:31000",
+        "http://127.0.0.1:31001",
+        "--router-url",
+        "http://127.0.0.1:18000"
+      ],
+      "command_source": {
+        "file": "$RUN/rr-lpm-r1.4-rep2/command.json",
+        "sha256": "01e89a06db5f50c868c415c6cb13a5a6dbca2a4100a937d864e5465f3eaf30be"
+      },
+      "flush_source": {
+        "file": "$RUN/rr-lpm-r1.4-rep2/flushes.json",
+        "sha256": "d9180182d3f67df3afca3149c74e4e6b76348e985f2fd9f8cfdcff6b9ac23843"
+      },
+      "completed_at": "2026-10-15T05:58:17.750808+00:00"
+    },
+    {
+      "name": "rr-lpm-r0.7-rep1",
+      "trial_manifest": {
+        "source": {
+          "file": "$RUN/rr-lpm-r0.7-rep1/trial-manifest.json",
+          "sha256": "62dbb65058d1e450fd00fff032bfb026f18bbed734669fa873061a72fb309643"
+        },
+        "data": {
+          "phase_manifest_sha256": "b4e37b74707af66cd3deb40fead4d6bae34f6d9b592cb1cc08bfce779a0d1a36",
+          "execution_manifest_sha256": "968e5afb092b02c39a58d081def2acc6fc89e72189d38ae4e9032fea41d956eb",
+          "runner_script_sha256": "b7aaf210b3221bcdea387c4c21c3fa123f6bc3d2206763bb5fa7e08e27e4c817",
+          "arrivals_sha256": "512c9c8d3144e47202637b022433bca671e4e843761f15726a28cba8376781cc",
+          "started_at": "2026-10-15T05:58:17.756831+00:00"
+        }
+      },
+      "actual_client_argv": [
+        "$PYTHON",
+        "-B",
+        "$SGLANG/benchmark/preble/bench_loogle.py",
+        "--workload",
+        "$RUN/artifact/reference-trace/loogle-24-393-reference.jsonl",
+        "--requests",
+        "393",
+        "--policy",
+        "round-robin",
+        "--rate",
+        "0.7",
+        "--arrivals",
+        "$RUN/artifact/reference-trace/arrivals-r0.7.json",
+        "--output",
+        "$RUN/rr-lpm-r0.7-rep1",
+        "--worker-urls",
+        "http://127.0.0.1:31000",
+        "http://127.0.0.1:31001",
+        "--router-url",
+        "http://127.0.0.1:18000"
+      ],
+      "command_source": {
+        "file": "$RUN/rr-lpm-r0.7-rep1/command.json",
+        "sha256": "858a9d653cfb565afa68d57ec1b1a3f9a24eccb7a9930fe13a818d3cba287b71"
+      },
+      "flush_source": {
+        "file": "$RUN/rr-lpm-r0.7-rep1/flushes.json",
+        "sha256": "1854deaea61b32900e9dbfab108c6ea6d4417ef8833145e175572edc38cdd462"
+      },
+      "completed_at": "2026-10-15T06:08:34.545226+00:00"
+    },
+    {
+      "name": "rr-lpm-r0.7-rep2",
+      "trial_manifest": {
+        "source": {
+          "file": "$RUN/rr-lpm-r0.7-rep2/trial-manifest.json",
+          "sha256": "2206ef1ecb638b5a79a448dbc02e7165dcfa9eda57d54706e978d44a5c96f824"
+        },
+        "data": {
+          "phase_manifest_sha256": "b4e37b74707af66cd3deb40fead4d6bae34f6d9b592cb1cc08bfce779a0d1a36",
+          "execution_manifest_sha256": "968e5afb092b02c39a58d081def2acc6fc89e72189d38ae4e9032fea41d956eb",
+          "runner_script_sha256": "b7aaf210b3221bcdea387c4c21c3fa123f6bc3d2206763bb5fa7e08e27e4c817",
+          "arrivals_sha256": "512c9c8d3144e47202637b022433bca671e4e843761f15726a28cba8376781cc",
+          "started_at": "2026-10-15T06:08:34.551234+00:00"
+        }
+      },
+      "actual_client_argv": [
+        "$PYTHON",
+        "-B",
+        "$SGLANG/benchmark/preble/bench_loogle.py",
+        "--workload",
+        "$RUN/artifact/reference-trace/loogle-24-393-reference.jsonl",
+        "--requests",
+        "393",
+        "--policy",
+        "round-robin",
+        "--rate",
+        "0.7",
+        "--arrivals",
+        "$RUN/artifact/reference-trace/arrivals-r0.7.json",
+        "--output",
+        "$RUN/rr-lpm-r0.7-rep2",
+        "--worker-urls",
+        "http://127.0.0.1:31000",
+        "http://127.0.0.1:31001",
+        "--router-url",
+        "http://127.0.0.1:18000"
+      ],
+      "command_source": {
+        "file": "$RUN/rr-lpm-r0.7-rep2/command.json",
+        "sha256": "2dac53072a1aef67120b0a6893fd5ed26c30d445a2455c2d17102a66dcf81c46"
+      },
+      "flush_source": {
+        "file": "$RUN/rr-lpm-r0.7-rep2/flushes.json",
+        "sha256": "4d23313b39df3c9af0503cecc136b2be7db92ddfbce69395dd4b6ee850c4e6f3"
+      },
+      "completed_at": "2026-10-15T06:18:48.146986+00:00"
+    }
+  ],
+  "formal_trace": {
+    "source": {
+      "file": "$RUN/artifact/reference-trace/manifest.json",
+      "sha256": "20478836d7a01217fd2956e5b1c20bda10a0bfff6d90285a5763e7c6efe0e8ca"
+    },
+    "data": {
+      "reference_commit": "1a35eae20c416f7062ca81775aab72890323fd97",
+      "source_files": {
+        "preble/benchmarks/benchmark_workload_gen.py": "d4a37bcce25d56d73af7e364f88321f1aacf3dec7db3986b329be1c0c6465170",
+        "preble/benchmarks/multi_exp_configs/multi_exp_utils.py": "dfc0f0ac220ccbf436c5c9cf7b84d5a61ce3a00ff46454f78913c4d81268b1df"
+      },
+      "executed_definitions_ast_sha256": {
+        "DataLoader": "1602039ffedf8ac96144cfea8fbf914ea010f2a8f977908ec29ab584fb164938",
+        "LooGLEDatasetType": "155cdecc3a93619e0f42811e09e11273e568e17e7e6f02115545ce0941c6f83a",
+        "LooGLEDataset": "872aeb6c6ddb4ca8a72bcaaaa62c3be6f7445e68ade9c4f2532dc6b5111eee3f",
+        "calc_send_out_times": "f1a3785f4090df644aa7ee922197b61bc507d8d7b56cb6736a395a725784ed67",
+        "create_loogle_dataset": "9e88372834d311d7a18df2d5f65fa13b739f4f363446484030e857141b3028a0"
+      },
+      "dataset_revision": "bdc356116a09a6a3d552e28a9f330878915b1696",
+      "dataset_url": "https://huggingface.co/datasets/bigai-nlco/LooGLE/resolve/bdc356116a09a6a3d552e28a9f330878915b1696/shortdep_qa/test-00000-of-00001.parquet",
+      "dataset_path": "$RUN/artifact/old-loogle-shortdep-qa-bdc356116a09.parquet",
+      "dataset_sha256": "065e2036eada3513c02835137a4c83e483fbfbf8922740b7f14c6a22542dbc8e",
+      "preparation_script_sha256": "8e9ea45d7aba1a16293dab6fd8d50a39775153d65f076889a884bc6fa2ea09ad",
+      "model_path": "$MODEL",
+      "tokenizer_files_sha256": {
+        "tokenizer.json": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4",
+        "tokenizer_config.json": "a5036bfb48523661f15d50c664e8dfc0e9b0b4c9a20eba3180782d52a1b94a8d",
+        "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910",
+        "merges.txt": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3",
+        "config.json": "ad59a339665ee1c68cbff06ac72c9e59f5183ebfaf3698c98737e003a870e9e2"
+      },
+      "config": {
+        "source_root": "$RUN/artifact/preble-reference-source",
+        "dataset": "$RUN/artifact/old-loogle-shortdep-qa-bdc356116a09.parquet",
+        "model_path": "$MODEL",
+        "output_dir": "$RUN/artifact/reference-trace",
+        "patterns": 24,
+        "requests": 393,
+        "max_new_tokens": 45,
+        "seed": 10,
+        "uuid_seed": 10,
+        "arrival_seed": 10,
+        "rates": [
+          0.7,
+          1.4
+        ]
+      },
+      "workload_path": "$RUN/artifact/reference-trace/loogle-24-393-reference.jsonl",
+      "workload_sha256": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+      "actual_requests": 393,
+      "actual_patterns": 24,
+      "generated_before_final_slice": 393,
+      "selected_documents": [
+        {
+          "source_document_index": 84,
+          "context_sha256": "28d4a013be09880b48417e350e5b92253e3c1af203b5b10d8703180b51ca2035",
+          "title": "Projects of DRDO",
+          "qa_pairs": 18,
+          "generated_requests": 18
+        },
+        {
+          "source_document_index": 42,
+          "context_sha256": "c73c6ad0b12d552fad8b5107481837a18311d0e89b8e4595cf5cca5d5e9b68c6",
+          "title": "Chapters of 2 Maccabees",
+          "qa_pairs": 22,
+          "generated_requests": 22
+        },
+        {
+          "source_document_index": 11,
+          "context_sha256": "a3f18bb57def7e42afcb47719b0ac697a3a70743c199865599582c2b598bc3a4",
+          "title": "2023 NBA playoffs",
+          "qa_pairs": 19,
+          "generated_requests": 19
+        },
+        {
+          "source_document_index": 83,
+          "context_sha256": "b2ea4a169cb69044af8c8d94fe228afc094e74d3fa5eebaea4516b3d06bbd88a",
+          "title": "Glossary of lichen terms",
+          "qa_pairs": 10,
+          "generated_requests": 10
+        },
+        {
+          "source_document_index": 48,
+          "context_sha256": "bf38fe040256db062e803759e7e690b437258145f45bb579bb0738dabff37019",
+          "title": "History of the Puerta del Sol",
+          "qa_pairs": 14,
+          "generated_requests": 14
+        },
+        {
+          "source_document_index": 28,
+          "context_sha256": "52e890153481b680ae035412c2a498353272b1fa89a618f3ae4aa5878c1dffd6",
+          "title": "History of Berliner FC Dynamo (1978–1989)",
+          "qa_pairs": 27,
+          "generated_requests": 27
+        },
+        {
+          "source_document_index": 66,
+          "context_sha256": "1258e629a0344f665858bfc1948af8eb241a987f3d5bd081459a3fdd9380938b",
+          "title": "List of Komi Can't Communicate characters",
+          "qa_pairs": 16,
+          "generated_requests": 16
+        },
+        {
+          "source_document_index": 63,
+          "context_sha256": "01daf8776a4346c291a14ab58e48459823332e15de649e08f1f3066d64f344d5",
+          "title": "History of the Choctaw",
+          "qa_pairs": 12,
+          "generated_requests": 12
+        },
+        {
+          "source_document_index": 91,
+          "context_sha256": "a1f1d2b0bfd2e0a72660f44903a67f0e1bc8a0f2cb3a9a18028bc115f2aadf43",
+          "title": "Sociedade Partenon Literário",
+          "qa_pairs": 9,
+          "generated_requests": 9
+        },
+        {
+          "source_document_index": 38,
+          "context_sha256": "cee980d6a9d7c2db7c9ae86b3e68c43e83bcedcb811409ecf3984640c6fef70f",
+          "title": "Reign of Juan Carlos I of Spain",
+          "qa_pairs": 18,
+          "generated_requests": 18
+        },
+        {
+          "source_document_index": 30,
+          "context_sha256": "a920b1758b3fcd37cb3fff6516720760bfb02ec5f85705891f4ded7bc171125c",
+          "title": "Crusades after Acre, 1291–1399",
+          "qa_pairs": 24,
+          "generated_requests": 24
+        },
+        {
+          "source_document_index": 69,
+          "context_sha256": "11fddadb075bb02af22e58150619e9b657047e48b54717f2f8a88687667ab26f",
+          "title": "List of people legally executed in New South Wales",
+          "qa_pairs": 15,
+          "generated_requests": 15
+        },
+        {
+          "source_document_index": 57,
+          "context_sha256": "191132f1e271a88fb662dc371fae604f7fd01d63c0670055b2fe377020715820",
+          "title": "Premiership of Maurice Duplessis",
+          "qa_pairs": 12,
+          "generated_requests": 12
+        },
+        {
+          "source_document_index": 5,
+          "context_sha256": "cdb3c58af4d6d230d01a43e1f0b215587e6ccd44916649ad9fd05406b016b46e",
+          "title": "Light in painting",
+          "qa_pairs": 22,
+          "generated_requests": 22
+        },
+        {
+          "source_document_index": 54,
+          "context_sha256": "64832b9026408eeeb5102ed35bae8e1bcc2f42f1407350949447f9a7da9226d2",
+          "title": "The King of the Snakes",
+          "qa_pairs": 25,
+          "generated_requests": 25
+        },
+        {
+          "source_document_index": 13,
+          "context_sha256": "88346ff491aea3e1397da4e173de316b43b4462f2e2448929860dd7d8a72f60c",
+          "title": "Rock Machine MC criminal allegations and incidents",
+          "qa_pairs": 20,
+          "generated_requests": 20
+        },
+        {
+          "source_document_index": 103,
+          "context_sha256": "693ec8f5608eca7b1ecfe054d93b4c3b842f31dd01b3d9c8a91881fc76cf7ee0",
+          "title": "2022 deaths in the United States (July–December)",
+          "qa_pairs": 9,
+          "generated_requests": 9
+        },
+        {
+          "source_document_index": 87,
+          "context_sha256": "110dcee238fe92c6130603031b4cd5b3ccea4890c844770a9c508e738cbc439b",
+          "title": "2022–23 NFL playoffs",
+          "qa_pairs": 8,
+          "generated_requests": 8
+        },
+        {
+          "source_document_index": 79,
+          "context_sha256": "d2c6aec9f86fa10a424bca214b0929f2a580b7cef14f299ba98e7b5e8324c78f",
+          "title": "2022 Deir ez-Zor attack",
+          "qa_pairs": 14,
+          "generated_requests": 14
+        },
+        {
+          "source_document_index": 60,
+          "context_sha256": "b011f23e5b6a143ecfda751d1c5e9e02218950c9caf396a93bcc645484270b09",
+          "title": "Historiography of the Eighty Years' War",
+          "qa_pairs": 11,
+          "generated_requests": 11
+        },
+        {
+          "source_document_index": 58,
+          "context_sha256": "db5eaf2361bde359685aa7967c0c103c5f361ab8fcc1a221667da0bd497eb49c",
+          "title": "2023 Kazakh legislative election",
+          "qa_pairs": 22,
+          "generated_requests": 22
+        },
+        {
+          "source_document_index": 71,
+          "context_sha256": "951bf45fd38f7a434c16e9bd2a2d315daf157ee222da5d9533fe4818a1605fd7",
+          "title": "Islamist Shi'ism",
+          "qa_pairs": 15,
+          "generated_requests": 15
+        },
+        {
+          "source_document_index": 56,
+          "context_sha256": "16c3a886201e225d82dc2ed7f3729f18c5d2d21b4b768c0c6f258e0ebf538ce4",
+          "title": "2022–23 Arsenal F.C. season",
+          "qa_pairs": 17,
+          "generated_requests": 17
+        },
+        {
+          "source_document_index": 37,
+          "context_sha256": "1c8c37d86a52eea4ccf69b203ba64896c6a7cec5af2e74dae7b556bdc4c22e00",
+          "title": "Timeline of the Mahsa Amini protests",
+          "qa_pairs": 14,
+          "generated_requests": 14
+        }
+      ],
+      "prompt_length": {
+        "min": 13559,
+        "mean": 21103.531806615778,
+        "max": 32722
+      },
+      "arrival_artifacts": [
+        {
+          "rate": 0.7,
+          "path": "$RUN/artifact/reference-trace/arrivals-r0.7.json",
+          "sha256": "512c9c8d3144e47202637b022433bca671e4e843761f15726a28cba8376781cc",
+          "requests": 393,
+          "first_seconds": 0,
+          "last_seconds": 512.9371178914982
+        },
+        {
+          "rate": 1.4,
+          "path": "$RUN/artifact/reference-trace/arrivals-r1.4.json",
+          "sha256": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+          "requests": 393,
+          "first_seconds": 0,
+          "last_seconds": 256.4685589457491
+        }
+      ],
+      "versions": {
+        "python": "3.13.13",
+        "datasets": "4.8.4",
+        "numpy": "2.4.3",
+        "transformers": "5.8.1",
+        "tokenizers": "0.22.2",
+        "pyarrow": "23.0.1"
+      },
+      "differences_from_upstream": [
+        "Pinned legacy parquet replaces the unversioned HF loader; row contents/schema are preserved.",
+        "Qwen3-235B tokenizer replaces the reference Mistral-7B tokenizer; no model weights are loaded here.",
+        "UUID4 entropy uses an independent fixed Python RNG and standard UUIDv4 version/variant bits; upstream uses OS entropy.",
+        "Python and NumPy are explicitly seeded immediately before preparation, instead of relying on entrypoint import order.",
+        "NumPy MT19937 seed is explicitly reset before arrival generation; upstream shares global NumPy state with dataset shuffle.",
+        "Archived arrivals omit only the upstream dummy final sleep entry; there is one deadline per request.",
+        "Added document/request metadata and archived text/input_ids do not change generation or ordering.",
+        "Current recorded dependency versions replace the original unpinned dependency environment."
+      ]
+    }
+  },
+  "public_byte_regeneration": {
+    "source": {
+      "file": "$RUN/artifact/reference-trace-public-validation.json",
+      "sha256": "b2b879289bfb6022d8dd37155afb148590507ceef5ea158f469267a1ddeaa0d0"
+    },
+    "data": {
+      "host": "gpu-lg-cmc-h-h200-1727.host.h.pjlab.org.cn",
+      "cpu_only": true,
+      "cuda_visible_devices": "",
+      "script": "$REPOSITORY/benchmark/preble/prepare_reference_loogle.py",
+      "script_sha256": "74110c9290cf80bfe3da0c74230bb26a0be849f3a90b95ab950c2760eeab3347",
+      "files": [
+        {
+          "file": "loogle-24-393-reference.jsonl",
+          "reference_sha256": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+          "public_sha256": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+          "bytes": 81328845,
+          "identical": true
+        },
+        {
+          "file": "arrivals-r0.7.json",
+          "reference_sha256": "512c9c8d3144e47202637b022433bca671e4e843761f15726a28cba8376781cc",
+          "public_sha256": "512c9c8d3144e47202637b022433bca671e4e843761f15726a28cba8376781cc",
+          "bytes": 8399,
+          "identical": true
+        },
+        {
+          "file": "arrivals-r1.4.json",
+          "reference_sha256": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+          "public_sha256": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+          "bytes": 8426,
+          "identical": true
+        }
+      ],
+      "manifest_parity": {
+        "reference_commit": true,
+        "source_files": true,
+        "executed_definitions_ast_sha256": true,
+        "dataset_sha256": true,
+        "tokenizer_files_sha256": true,
+        "selected_documents": true,
+        "prompt_length": true,
+        "versions": true
+      },
+      "all_identical": true,
+      "format_only_final_script_sha256": "bd2035525bf151ca5a3443a356787492e8e557483ba24e792f81d344950221ef",
+      "post_validation_change": "Removed one blank line after imports to satisfy repository isort; executable AST unchanged."
+    }
+  },
+  "legacy_parquet_comparison_source": {
+    "file": "$RUN/artifact/comparison.json",
+    "sha256": "c32e4133583873856979037e82cf074ca4f77638bfa08e4a07654d911c0ab7d8"
+  },
+  "calibration_frozen_at": "2026-10-15T04:34:34.267473+00:00",
+  "calibration_sha256": "b9a93683d8e47498af24030166e9ec17ab6ab5bc7493798e10c873057a066fc0",
+  "analysis_completion_gate": {
+    "aggregate_source": {
+      "file": "$RUN/artifact/aggregate.json",
+      "sha256": "101ae60ae6841c566580f5c099dadfc857d33ab2e5a552ee79f850d2db3f3c21"
+    },
+    "validated_trials": 8,
+    "requests_per_trial": 393,
+    "total_successful_requests": 3144,
+    "static_backend_settings_match_except_schedule_policy": true
+  },
+  "operational_note": "One failed preflight before sending requests was archived separately. The runner resumed after enabling SO_REUSEADDR. The first completed trial retains the original phase/runner manifest; later trials also reference a separate execution manifest. No completed trial was replaced.",
+  "comparison_scope": "Full reference Preble global routing with virtual eviction cost and rebalancing + MPQ, versus round-robin global routing + native LPM. Both use the same modern worker runtime, chunked prefill 512, real BF16 235B weights, effective seeds, and backend settings. All MPQ trials precede LPM; baseline rates run in reverse order. This does not isolate global routing alone and is not the paper hardware/model/trace."
+}
