@@ -305,7 +305,10 @@ class PrebleScheduler:
             self.handle_split_node_histogram(split_nodes)
             important_node = self.get_important_node(leaf_node)
             if leaf_node.num_tokens < leaf_node.context_so_far:
-                candidates = self.get_parent_gpu_allocation(leaf_node) & available
+                candidates = self.get_parent_gpu_allocation(leaf_node)
+                if available != self.all_gpus:
+                    # Intersect only for cooldown; it can reorder healthy owners.
+                    candidates = candidates & available
                 if not candidates:
                     candidates = available
                 if len(candidates) > 1:
