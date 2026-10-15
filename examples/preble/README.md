@@ -2,7 +2,7 @@
 
 本项目把 [WukLab/Preble](https://github.com/WukLab/preble) 的**公开服务默认路径**移植到当前 SGLang。参考 commit 固定为 [`1a35eae20c416f7062ca81775aab72890323fd97`](https://github.com/WukLab/preble/tree/1a35eae20c416f7062ca81775aab72890323fd97)，SGLang base 为 `ef11e3904885c8050f167a4a6f805da03e9e9bae`，不安装旧版 SGLang fork。
 
-论文：[Preble: Efficient Distributed Prompt Scheduling for LLM Serving](https://arxiv.org/abs/2407.00023)。大模型实测、逐轮数据及局限见 [RESULTS.md](RESULTS.md)。
+论文：[Preble: Efficient Distributed Prompt Scheduling for LLM Serving](https://arxiv.org/abs/2407.00023)。修正前的大模型实测、逐轮数据及局限保留在[历史报告](RESULTS.md)。
 
 ## 请求经过哪里
 
@@ -50,7 +50,9 @@ select(prompt_ids, output_budget):
 finish(request):
     向 important node 记录 TTFT
     释放原 worker 的路径引用和请求预算（只释放一次）
-    用实际输出长度与时延更新 worker 的 TPOT 样本
+    若实际输出长度 > 1:
+        TPOT = (latency - ttft) / output_len
+        把 TPOT 加入该 worker 的样本窗口
 ```
 
 E2 判断使用**插入后的节点段长度**，没有改成“精确重复请求必定命中既有归属”。候选选择中原版的 worker ID 缺陷也保留，见下文。
@@ -64,7 +66,7 @@ decode(g, w) = 在途引用数(g, w) × 预计输出长度(g) × median(TPOT[w])
 load(w) = Σ [prefill(g) + decode(g, w)]，g 属于 w
 ```
 
-预计输出长度的代码优先读取 `node.decode_length` 的中位数，但原版公开服务把收集该序列的语句注释掉了，本移植也保持这一行为，因此实际回退到该组最近记录的输出预算。实际完成长度用于更新 worker TPOT。保留原版窗口 expiry、split rename 和代价累积顺序。
+预计输出长度的代码优先读取 `node.decode_length` 的中位数，但原版公开服务把收集该序列的语句注释掉了，本移植也保持这一行为，因此实际回退到该组最近记录的输出预算。实际完成长度用于更新 worker TPOT，分母按[原公开 HTTP 路径](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/server/server.py#L120)使用 `output_len`，单 token 输出不加入样本；另一条统计路径的 `output_len - 1` 公式不用于此处。保留原版窗口 expiry、split rename 和代价累积顺序。
 
 **驱逐代价已经移植，CLI 默认开启。** 对每个候选，原版始终按“cache 已满”模拟释放新 leaf 段所需空间，并非只在虚拟容量满时才计罚。每个大 victim 的代价是 `miss_rate × count × T(segment, context)`，小节点为零；缺少窗口数据时按原版回退。它估计未来重算损失，不执行远端内存读写。
 
@@ -85,19 +87,34 @@ load(w) = Σ [prefill(g) + decode(g, w)]，g 属于 w
 ## Worker 本地 MPQ
 
 ```text
-请求首次进入 / 重新进入等待队列:
-    hit_rate = 本地匹配 token 数 / 请求 token 数
-    固定分入 10 个组之一：0–10%、(10%,20%]、…、(90%,100%]
-
 每次 prefill 决策:
+    按当前 SGLang 的 slot / token / chunk 预算初始化 PrefillAdder
+    先续跑已有 chunk，扣除预算并加入本轮 batch（最后一个 chunk 也计入）
+    若没有剩余预算，或已有 chunk 已用完全局请求上限：
+        返回本轮 batch；不分类新 waiting，不推进 MPQ cursor
+
+    将首次进入 / 重新进入等待队列的未分组请求按原始匹配分桶:
+        hit_rate = 本地匹配 token 数 / 请求 token 数
+        固定分入 10 组：0–10%、(10%,20%]、…、(90%,100%]
     从 cursor 开始按 9→0 循环找第一个非空组
-    组内按首次 scheduler 接收时间 FIFO 排序
+    组内按分词前的到达时间 FIFO 排序
     刷新所选组的匹配结果，但不重新分组
-    最多取 10 × (group_index + 1) 个请求
-    交给当前 SGLang PrefillAdder 检查 slot / token / chunk 预算
+    新请求配额 = min(组内请求数, 10 × (group_index + 1))
+    adder.prefill_max_requests = min(全局上限, 已有 chunk 数 + 新请求配额)
+    # 未配置的全局上限视为无限
+
+    依次尝试组内请求:
+        result = PrefillAdder.add_one_req(req, allow_skip=True)
+        若实际准入：扣减新请求配额
+        若 result == SKIP：清理未准入资源，继续尝试同组后项
+        若 result != CONTINUE：停止本轮扫描
+        # 普通容量/输入/对齐不满足可 SKIP；锁后容量不足仍 NO_TOKEN
+        # NO_TOKEN 停止本轮，但不因此设置 MPQ 的全局 batch_is_full
 ```
 
-组成员是持久的，已经等待的请求不会因 cache 变化而每轮换组。实际 batch 仍受当前 runtime 预算约束；continuing chunk 保留原有准入路径。
+组成员是持久的，已经等待的请求不会因 cache 变化而每轮换组。续 chunk 消耗本轮资源和全局请求上限，但不占所选组的新请求配额；实际准入后耗尽预算时立即停止。非 MPQ 策略保留原有准入失败的 break / full 行为。
+
+FIFO 使用 tokenization 前记录的 `created_time`，经 API→Scheduler 或 API→DP→Scheduler 的 IPC 保存，并复用现有跨进程时钟转换；缺失时才退回 `scheduler_recv_time`。普通 retract 保留原到达时间，重新入队后重新分组。请求准入、取消、waiting timeout 或 PD bootstrap 失败离队时，立即清理 MPQ membership 和候选快照，避免等待下一轮调度才释放请求引用。
 
 ## 与原版对应的位置
 
@@ -106,10 +123,13 @@ load(w) = Σ [prefill(g) + decode(g, w)]，g 属于 w
 | [global_scheduler_with_time.py](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/global_scheduler_with_time.py) 的 E2、窗口代价、全局驱逐、重平衡 | [preble.py](../../python/sglang/srt/routing/preble.py)、[preble_cost.py](../../python/sglang/srt/routing/preble_cost.py) |
 | [global_lru_cache.py](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/global_lru_cache.py) 的压缩树与虚拟 LRU | [preble_cache.py](../../python/sglang/srt/routing/preble_cache.py) |
 | [ttft_overload_detector.py](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/ttft_overload_detector.py) | [preble_cost.py](../../python/sglang/srt/routing/preble_cost.py) |
-| [model_rpc.py 的 MPQ](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/python/sglang/srt/managers/router/model_rpc.py#L934) | [schedule_policy.py](../../python/sglang/srt/managers/schedule_policy.py)、[scheduler.py](../../python/sglang/srt/managers/scheduler.py) |
-| [公开 HTTP 服务](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/server/server.py) | [launch_preble.py](../../python/sglang/launch_preble.py) |
+| [model_rpc.py 的 chunk 预算顺序](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/python/sglang/srt/managers/router/model_rpc.py#L422)与[组内扫描 / quota](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/python/sglang/srt/managers/router/model_rpc.py#L803) | [schedule_policy.py](../../python/sglang/srt/managers/schedule_policy.py)、[scheduler.py](../../python/sglang/srt/managers/scheduler.py) |
+| [分词前 arrival](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/python/sglang/srt/managers/tokenizer_manager.py#L258)与[组内 FIFO](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/python/sglang/srt/managers/router/scheduler.py#L30) | [tokenizer_manager.py](../../python/sglang/srt/managers/tokenizer_manager.py)、[req_time_stats.py](../../python/sglang/srt/observability/req_time_stats.py)、[schedule_policy.py](../../python/sglang/srt/managers/schedule_policy.py) |
+| [公开 HTTP 服务与 TPOT 反馈](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/server/server.py#L120) | [launch_preble.py](../../python/sglang/launch_preble.py)、[preble.py](../../python/sglang/srt/routing/preble.py) |
 
-必要适配：当前 `Req` / radix API、首次 scheduler receipt timestamp、`PrefillAdder` 和 continuing chunk 控制流；HTTP 使用现代累计 SSE，补充不可用 worker 过滤、取消清理与幂等 release；硬件容量与时间模型参数化。容量不足时的实际 batch 不承诺与旧 runtime 逐批相同。
+必要适配：保留当前 `Req` / radix API、页级容量预留、对齐、SWA/Mamba 资源校验及单个 continuing chunk 控制流。文本请求 retract 由当前 runtime 释放物理 KV、保留已生成 token 并重新匹配前缀；最后 token、logprob 和 embedding 的安全限制继续生效。HTTP 使用现代累计 SSE，保留不可用 worker 过滤、取消清理与幂等 release；waiting 离队清理也覆盖 [PD bootstrap 生命周期](../../python/sglang/srt/disaggregation/prefill.py)。这些约束决定实际准入与执行时机，不承诺与旧 runtime 逐 batch 相同。
+
+旧 5000 次 MPQ 差分使用受控准入数量隔离分组 / 轮转逻辑，覆盖 membership、桶、quota 及给定 arrival 下的排序；没有验证真实 `PrefillAdder` token budget、续 chunk 或时间戳 IPC。本轮新增验证执行真实源码 AST：准入与 chunk **41 项**、FIFO 与 pickle **8 项**、waiting 取消生命周期另 **41 项**、原公开 HTTP TPOT **3 个场景**，均已通过；chunk 轮转和取消引用释放还包含旧行为负对照。脚本与 JSON 保存在外部实验记录，不作为仓库单元测试提交。这些使用 CPU 和基础设施桩的语义验证不构成 GPU 性能结论；[历史报告](RESULTS.md) 使用修正前的 runtime，也不作为本轮修正的 GPU 验证。
 
 原公开服务 [固定 `highest_idx=None`](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/server/server.py#L179)。模拟器 [依据窗口命中率传入的可选 hint](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/simulator.py#L349) 未暴露；不能据此声称覆盖官方模拟器全部分支。
 

@@ -1,5 +1,7 @@
 # 完整 Preble + MPQ：Qwen3-235B 验证
 
+**历史实验。** 以下八轮使用本轮五项 runtime 修正之前的实现，并按策略分阶段执行。原始数据保留；这些结果不作为 `c773f3e560` 中 TPOT、准入扫描、FIFO、chunk 轮转与取消引用修正的 GPU 验证。
+
 本次比较已移植全局驱逐代价的 **Preble + MPQ** 与原版主要基线 **round-robin + LPM**。旧版“不含 eviction cost、两方都用 MPQ”的实验不作为此次对齐证据。
 
 参考实现是 [WukLab/Preble `1a35eae20c416f7062ca81775aab72890323fd97`](https://github.com/WukLab/preble/tree/1a35eae20c416f7062ca81775aab72890323fd97) 的公开服务默认路径。模型、GPU、runtime、随机流与论文不同，以下衡量当前大模型部署的行为与性能，不声称复现论文的数值加速比。
