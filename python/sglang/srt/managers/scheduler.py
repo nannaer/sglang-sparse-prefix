@@ -165,6 +165,7 @@ from sglang.srt.managers.schedule_batch import (
 )
 from sglang.srt.managers.schedule_policy import (
     AddReqResult,
+    CacheAwarePolicy,
     PrefillAdder,
     SchedulePolicy,
 )
@@ -2830,13 +2831,17 @@ class Scheduler(
                 req,
                 has_chunked_req=(self.chunked_req is not None),
                 truncation_align_size=self.truncation_align_size,
+                allow_skip=(self.policy.policy == CacheAwarePolicy.FCFS_MPQ),
             )
 
             if self.enable_lora:
                 running_loras.add(req.lora_id)
 
             if res != AddReqResult.CONTINUE:
-                if res == AddReqResult.NO_TOKEN:
+                if (
+                    res == AddReqResult.NO_TOKEN
+                    and self.policy.policy != CacheAwarePolicy.FCFS_MPQ
+                ):
                     if self.enable_hierarchical_cache:
                         # Set batch_is_full after making sure there are requests that can be served
                         self.running_batch.batch_is_full = len(
@@ -2858,6 +2863,10 @@ class Scheduler(
                         req.mamba_pool_idx.unsqueeze(-1)
                     )
                     req.mamba_pool_idx = None
+                if res == AddReqResult.SKIP:
+                    # Preble scans the rest of this group for requests that fit.
+                    # A failed request must not mark every group as full.
+                    continue
                 break
 
         if mamba_allocator is not None:

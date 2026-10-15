@@ -485,6 +485,7 @@ class AddReqResult(Enum):
     CONTINUE = auto()  # Continue to add requests
     NO_TOKEN = auto()  # No token left
     OTHER = auto()  # Other reasons to stop adding requests
+    SKIP = auto()  # This request does not fit; try the next request
 
 
 class PrefillAdder:
@@ -921,7 +922,12 @@ class PrefillAdder:
         return self.budget_state()
 
     def add_one_req(
-        self, req: Req, has_chunked_req: bool, truncation_align_size: Optional[int]
+        self,
+        req: Req,
+        has_chunked_req: bool,
+        truncation_align_size: Optional[int],
+        *,
+        allow_skip: bool = False,
     ):
         if (self.prefill_delayer_single_pass is not None) and (
             not self.prefill_delayer_single_pass.negotiate_should_allow_prefill(
@@ -962,14 +968,14 @@ class PrefillAdder:
         prefix_len = len(req.prefix_indices)
 
         if total_tokens >= self.rem_total_tokens:
-            return AddReqResult.NO_TOKEN
+            return AddReqResult.SKIP if allow_skip else AddReqResult.NO_TOKEN
 
         if self.is_hybrid_swa:
             swa_needed = self._swa_budget_for_req(
                 req.extend_input_len, swa_host_hit_length=req.swa_host_hit_length
             )
             if swa_needed >= self.rem_swa_tokens:
-                return AddReqResult.NO_TOKEN
+                return AddReqResult.SKIP if allow_skip else AddReqResult.NO_TOKEN
 
         if (
             self.rem_chunk_tokens is None
@@ -979,7 +985,7 @@ class PrefillAdder:
             # If without chunked prefill:
             # - if the can_run_list is not empty, we satisfy the constraint of (max_prefill_tokens)
             # - if the can_run_list is empty, always accept the first prefill request
-            return AddReqResult.OTHER
+            return AddReqResult.SKIP if allow_skip else AddReqResult.OTHER
 
         with self._lock_node(req.last_node):
             # self.rem_total_tokens may decrease after the lock acquisition
@@ -1018,7 +1024,7 @@ class PrefillAdder:
                 # If without chunked prefill:
                 # - if the can_run_list is not empty, we satisfy the constraint of (max_prefill_tokens)
                 # - if the can_run_list is empty, always accept the first prefill request
-                return AddReqResult.OTHER
+                return AddReqResult.SKIP if allow_skip else AddReqResult.OTHER
 
             if self.dllm_config is not None:
                 if self.rem_dllm_tokens <= 0:
@@ -1060,7 +1066,7 @@ class PrefillAdder:
                 # we need the prefill prefix length to be multiple of attention split size
                 if truncation_align_size is not None:
                     if trunc_len < truncation_align_size:
-                        return AddReqResult.OTHER
+                        return AddReqResult.SKIP if allow_skip else AddReqResult.OTHER
                     else:
                         trunc_len = truncation_align_size * (
                             trunc_len // truncation_align_size
@@ -1071,7 +1077,7 @@ class PrefillAdder:
                 trunc_len = now_input_len - len(req.prefix_indices)
 
                 if trunc_len <= 0:
-                    return AddReqResult.OTHER
+                    return AddReqResult.SKIP if allow_skip else AddReqResult.OTHER
 
                 # Chunked prefill
                 req.set_extend_input_len(trunc_len)
