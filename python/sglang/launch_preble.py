@@ -130,7 +130,7 @@ def create_app(worker_urls, tokenizer, scheduler):
             raise HTTPException(503, "All workers temporarily unavailable")
         assignment = scheduler.select(tokens, budget, available)
         url = urls[assignment.worker]
-        stream = payload.get("stream", False)
+        stream = payload.get("stream", True)
         # Forward exactly the tokens used for routing; avoid independent retokenization.
         payload.pop("text", None)
         payload["input_ids"] = tokens
