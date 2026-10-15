@@ -1,246 +1,203 @@
-# SGLang Prefix Load Balancing
+# Preble 实现与运行方法
 
-This integration adds Preble's global exploration/exploitation (E2) routing and
-local cache-hit priority queues to the current SGLang runtime. It uses this
-checkout's native `/generate` API and scheduler interfaces; it does not install
-the older SGLang fork shipped with Preble.
+本项目把 [WukLab/Preble](https://github.com/WukLab/preble) 的**公开服务默认路径**移植到当前 SGLang。参考 commit 固定为 [`1a35eae20c416f7062ca81775aab72890323fd97`](https://github.com/WukLab/preble/tree/1a35eae20c416f7062ca81775aab72890323fd97)，SGLang base 为 `ef11e3904885c8050f167a4a6f805da03e9e9bae`，不安装旧版 SGLang fork。
 
-The reference is [WukLab/Preble](https://github.com/WukLab/preble) at commit
-[`1a35eae20c416f7062ca81775aab72890323fd97`](https://github.com/WukLab/preble/tree/1a35eae20c416f7062ca81775aab72890323fd97),
-released with [Preble: Efficient Distributed Prompt Scheduling for LLM Serving
-(ICLR 2025)](https://iclr.cc/virtual/2025/poster/28456)
-([arXiv preprint](https://arxiv.org/abs/2407.00023)). Benchmark measurements and their
-environment details belong in [RESULTS.md](RESULTS.md); the workload below does
-not by itself establish reproduction of the paper's performance.
+论文：[Preble: Efficient Distributed Prompt Scheduling for LLM Serving](https://arxiv.org/abs/2407.00023)。大模型实测、逐轮数据及局限见 [RESULTS.md](RESULTS.md)。
 
-## Implementation
+## 请求经过哪里
 
-| Component | Reference implementation | Current integration |
-| --- | --- | --- |
-| Global E2 routing and rebalancing | [global_scheduler_with_time.py](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/global_scheduler_with_time.py) | [PrebleScheduler](../../python/sglang/srt/routing/preble.py) |
-| Compressed token radix and request references | [global_lru_cache.py](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/global_lru_cache.py) | `PrefixNode` and `Assignment` in the scheduler |
-| TTFT overload detection | [ttft_overload_detector.py](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/ttft_overload_detector.py) | `PrebleScheduler._overloaded` |
-| Local multi-priority queues | [model_rpc.py](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/python/sglang/srt/managers/router/model_rpc.py) | [SchedulePolicy](../../python/sglang/srt/managers/schedule_policy.py), selected with `--schedule-policy fcfs-mpq` |
-| HTTP forwarding and completion feedback | [server/server.py](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/server/server.py) | [sglang.launch_preble](../../python/sglang/launch_preble.py) |
+```mermaid
+flowchart LR
+    C[请求与 prompt token IDs] --> G[全局 Preble frontend]
+    G --> A[副本 0：MPQ → SGLang → 本地 HBM KV]
+    G --> B[副本 1：MPQ → SGLang → 本地 HBM KV]
+    A -. 完成反馈：TTFT / 输出长度 / 时延 .-> G
+    B -. 完成反馈：TTFT / 输出长度 / 时延 .-> G
+```
 
-The frontend inserts prompt token IDs into a compressed radix tree. A node is
-large when its segment contains more tokens than all preceding context:
-`segment_tokens > context_tokens - segment_tokens`. Each request belongs to its
-closest large ancestor, called its important node. Splitting a radix node copies
-its assignments and active references, and regroups historical observations
-against the updated tree.
+Frontend 用 token radix tree 记录前缀归属，用窗口统计估计负载，再把同一份 token IDs 发给选中的 worker。每个 worker 独立维护真正的 KV cache。
 
-E2 exploits locality when the assigned matching prefix is longer than the
-unmatched suffix: it chooses the least-cost worker among that prefix's assigned,
-available workers. Otherwise it explores all available workers. Estimated worker
-cost combines windowed prefix prefill cost with outstanding output-token budgets
-multiplied by measured time per output token (TPOT). The frontend forwards exactly
-the token IDs used for this decision, so workers do not independently retokenize
-the prompt.
+全局树中有两类独立状态：`gpu_allocations` 表示将来的路由归属；`cached_gpus` / `evicted_gpus` 表示原版虚拟 GPU cache 的估计状态。两者都不是 worker 实际 KV 驻留的权威记录。容量不足时，全局模型模拟驱逐；实际 HBM 分配与驱逐由当前 SGLang radix cache 负责。Frontend 不接收真实 eviction 事件，也不计入生成输出的全部实际 KV 占用。
 
-| Mechanism | Default behavior |
+这里的 migration / replication 修改的是**未来请求的归属**。迁到另一副本后，由新请求重新计算并缓存前缀；没有跨 worker 搬 KV tensor，也没有接 Mooncake 或共享 DRAM。
+
+## 全局调度伪代码
+
+`segment` 是压缩 radix 节点自身的 token 段；`context_before` 是它之前的路径长度。大节点满足 `segment > context_before`；请求的 important node 是从叶子向上找到的第一个大节点。
+
+```text
+select(prompt_ids, output_budget):
+    leaf, splits = virtual_radix.insert(prompt_ids)
+    按原版规则继承 split 的归属、引用和窗口统计
+    group = 最近的大祖先(leaf)
+
+    if leaf.segment_tokens < leaf.context_before:
+        candidates = leaf 向上找到的第一个非空归属集合   # exploitation
+    else:
+        candidates = 全部 worker                      # exploration
+
+    对每个候选 w:
+        load[w] = 所属前缀组的窗口 prefill 代价 + 在途 decode 代价
+        victims = 按原版 virtual LRU 模拟释放 leaf.segment_tokens
+        eviction[w] = victims 中大节点的预期重新 prefill 代价之和
+    w = 原版最小代价选择(load + eviction)
+
+    更新路由归属、虚拟缓存和路径引用；登记本次窗口统计
+    若虚拟占用超过 w 的容量：执行虚拟驱逐
+    若达到 warmup 且满足链深条件：按原版做 migration / replication
+    转发 prompt_ids 到 w
+
+finish(request):
+    向 important node 记录 TTFT
+    释放原 worker 的路径引用和请求预算（只释放一次）
+    用实际输出长度与时延更新 worker 的 TPOT 样本
+```
+
+E2 判断使用**插入后的节点段长度**，没有改成“精确重复请求必定命中既有归属”。候选选择中原版的 worker ID 缺陷也保留，见下文。
+
+设 `T(new_tokens, full_context)` 为 prefill 时间模型，前缀组 `g` 的路由负载为：
+
+```text
+prefill(g) = 窗口 miss_rate(g) × 请求数(g) × T(g.segment, g.context)
+             / 归属 worker 数(g)
+decode(g, w) = 在途引用数(g, w) × 预计输出长度(g) × median(TPOT[w])
+load(w) = Σ [prefill(g) + decode(g, w)]，g 属于 w
+```
+
+预计输出长度的代码优先读取 `node.decode_length` 的中位数，但原版公开服务把收集该序列的语句注释掉了，本移植也保持这一行为，因此实际回退到该组最近记录的输出预算。实际完成长度用于更新 worker TPOT。保留原版窗口 expiry、split rename 和代价累积顺序。
+
+**驱逐代价已经移植，CLI 默认开启。** 对每个候选，原版始终按“cache 已满”模拟释放新 leaf 段所需空间，并非只在虚拟容量满时才计罚。每个大 victim 的代价是 `miss_rate × count × T(segment, context)`，小节点为零；缺少窗口数据时按原版回退。它估计未来重算损失，不执行远端内存读写。
+
+| 配置 / 机制 | 默认与原版行为 |
 | --- | --- |
-| Prefix request history | 180-second sliding window; `--window-seconds` changes it |
-| Prefill estimate | Request count × estimated miss fraction × prefill time, divided among assigned workers |
-| Decode estimate | Outstanding requested output-token budgets × each worker's median TPOT |
-| TPOT feedback | Up to 200 samples per worker, seeded with the required initial measurement |
-| Rebalancing warmup | Starts after `50 × number_of_workers` scheduled requests |
-| Rebalancing eligibility | Prefix groups observed at least twice; request-to-important-node chain shorter than three edges |
-| Load threshold | Consider rebalancing when the highest estimated load exceeds `1.5 ×` the lowest |
-| Group migration | Move smaller groups while the move does not reverse the two workers' estimated load order |
-| Hotspot replication | For one indivisible group, add an assignment when recent-half mean TTFT is at least `2 ×` older-half mean TTFT; both halves need observations |
+| 历史窗口 | 180 秒；`--window-seconds` 可改 |
+| Prefill 模型 | 原 Mistral-7B / A6000 二维回归；`--prefill-time-scale` 整体缩放 |
+| 初始 TPOT | 0.15 秒；实测可传 `--initial-tpot`，每 worker 保留最多 200 样本 |
+| 虚拟容量 | 每 worker 198516 tokens；应传部署实际的 token 池容量 |
+| Eviction | launch CLI 开启；`--disable-eviction` 为消融。类构造器默认 False 与原版一致 |
+| Rebalancing | 默认开启；累计调度 `50 × worker 数` 后尝试，当前请求到 important node 链深小于 3 |
+| 负载差阈值 | 最高 worker 的估计总负载不低于最低的 1.5 倍时考虑调整；仅计至少观察两次的组 |
+| 多组 migration | 从小代价组开始迁，迁移不得反转两端估计负载顺序 |
+| 单组 replication | 只有一个可拆热点时，后半窗 TTFT 均值至少为前半窗 2 倍才添加归属；两半均需样本 |
 
-With the default window, the TTFT halves are 90 seconds each. Rebalancing changes
-where future requests run. In-flight requests keep their original worker, and an
-additional assignment causes that worker to compute/cache the prefix as requests
-arrive.
+默认 TTFT 窗口为两个 90 秒区间。迁移不改变在途请求所在 worker。`--disable-rebalancing`、`--disable-eviction` 可分别做消融；`--prefill-tokens-per-second` 是可选线性模型入口，本次对齐实验**没有使用**它。
 
-The local `fcfs-mpq` policy uses ten cache-hit-rate groups. Zero-hit requests and
-requests with up to 10% hits are in group 0; subsequent 10% bands reach group 9.
-The policy visits nonempty groups from 9 down to 0 in a repeating cycle, preserves
-FIFO by queue-entry time within each group, and permits up to `10 × (group + 1)`
-requests from the selected group per prefill decision. Existing SGLang token,
-request and chunked-prefill budgets can reduce admission. Membership is refreshed
-from current prefix matches, and a continuing chunked request retains the
-runtime's existing admission path.
+## Worker 本地 MPQ
 
-## Scope and differences from upstream
+```text
+请求首次进入 / 重新进入等待队列:
+    hit_rate = 本地匹配 token 数 / 请求 token 数
+    固定分入 10 个组之一：0–10%、(10%,20%]、…、(90%,100%]
 
-The global scheduler implements the upstream constructor's
-`enable_eviction=False` variant. It does not simulate GPU cache capacity or add
-the upstream virtual-LRU victim recomputation penalty to routing cost. The
-upstream public serving entry and its two-worker LooGLE simulation config enable
-that optional penalty, so this is not a complete port of those configurations.
-Each worker still performs normal GPU radix-cache eviction. The frontend's tree
-records routing assignments and estimated locality, rather than authoritative
-KV residency.
+每次 prefill 决策:
+    从 cursor 开始按 9→0 循环找第一个非空组
+    组内按首次 scheduler 接收时间 FIFO 排序
+    刷新所选组的匹配结果，但不重新分组
+    最多取 10 × (group_index + 1) 个请求
+    交给当前 SGLang PrefillAdder 检查 slot / token / chunk 预算
+```
 
-The integration does not move KV tensors between workers and does not add
-Mooncake, a shared DRAM store, or a KV connector. Routing migration and replication
-refer to assignments, not memory transfers.
+组成员是持久的，已经等待的请求不会因 cache 变化而每轮换组。实际 batch 仍受当前 runtime 预算约束；continuing chunk 保留原有准入路径。
 
-The following corrections and adaptations are deliberate:
+## 与原版对应的位置
 
-- Exact repeated prompts exploit an existing assignment. Upstream classifies the
-  existing endpoint by its radix segment length and can explore again on a full
-  match. Hit estimates here use the selected worker's existing assignment path;
-  actual worker `cached_tokens` remain the benchmark's cache measurement.
-- Outstanding decode budgets survive history expiry and assignment migration,
-  and are released once on completion, errors or cancellation.
-- Idle assignments expire with the history window; in-flight paths remain
-  protected. Local MPQ groups are refreshed at each scheduling decision, with
-  FIFO preservation and admission restricted to the chosen group.
-- The frontend requires a measured prefill rate and initial TPOT. The launch CLI
-  uses `tokens / measured_rate` for prefill cost; it does not use Preble's
-  Mistral-7B/A6000 regression for the 235B model below. This linear estimate does
-  not model context-dependent attention cost.
+| 原版组件 | 当前文件 |
+| --- | --- |
+| [global_scheduler_with_time.py](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/global_scheduler_with_time.py) 的 E2、窗口代价、全局驱逐、重平衡 | [preble.py](../../python/sglang/srt/routing/preble.py)、[preble_cost.py](../../python/sglang/srt/routing/preble_cost.py) |
+| [global_lru_cache.py](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/global_lru_cache.py) 的压缩树与虚拟 LRU | [preble_cache.py](../../python/sglang/srt/routing/preble_cache.py) |
+| [ttft_overload_detector.py](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/ttft_overload_detector.py) | [preble_cost.py](../../python/sglang/srt/routing/preble_cost.py) |
+| [model_rpc.py 的 MPQ](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/python/sglang/srt/managers/router/model_rpc.py#L934) | [schedule_policy.py](../../python/sglang/srt/managers/schedule_policy.py)、[scheduler.py](../../python/sglang/srt/managers/scheduler.py) |
+| [公开 HTTP 服务](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/server/server.py) | [launch_preble.py](../../python/sglang/launch_preble.py) |
 
-The frontend supports a fixed pool of identical models/tokenizers and one shared
-cache namespace. Its inference endpoint is native `POST /generate`, with one
-text string or token-ID list and `sampling_params.n=1`. It also exposes `/health`
-and `/routing_stats`. OpenAI-compatible endpoints, batch generation, LoRA,
-multimodal input, stateful sessions and `extra_key/cache_salt` namespaces are not
-supported. Startup queries every worker's `/server_info` and rejects
-`incremental_streaming_output=True`; cumulative streaming is required to return
-complete nonstream responses. Client disconnects abort the backend request and
-release routing references, including disconnects while waiting for HTTP headers.
+必要适配：当前 `Req` / radix API、首次 scheduler receipt timestamp、`PrefillAdder` 和 continuing chunk 控制流；HTTP 使用现代累计 SSE，补充不可用 worker 过滤、取消清理与幂等 release；硬件容量与时间模型参数化。容量不足时的实际 batch 不承诺与旧 runtime 逐批相同。
 
-## Launch two 235B replicas on eight H200 GPUs
+原公开服务 [固定 `highest_idx=None`](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/server/server.py#L179)。模拟器 [依据窗口命中率传入的可选 hint](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/simulator.py#L349) 未暴露；不能据此声称覆盖官方模拟器全部分支。
 
-Use an environment with the CUDA and kernel dependencies required by this
-checkout. For CUDA 12.8 or 12.9, follow the CUDA 12 branches in
-[docker/Dockerfile](../../docker/Dockerfile): use the
-`sglang-kernel==0.4.4+cu129` wheel and `torch==2.11.0` from the corresponding
-CUDA 12 PyTorch index (`cu128` for CUDA 12.8). Match FlashInfer's JIT-cache build
-to that CUDA environment and record the installed versions with the results.
-Run the commands from the repository root, with a complete BF16
-[Qwen3-235B-A22B-Instruct-2507](https://huggingface.co/Qwen/Qwen3-235B-A22B-Instruct-2507)
-checkpoint. Both replicas, the frontend and the workload generator must use the
-same tokenizer directory. These are two independent tensor-parallel replicas,
-each using four GPUs.
+为了保持原版行为，没有顺手修复以下原始缺陷：
+
+- [多候选 argmin 返回列表位置而非 worker ID](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/global_scheduler_with_time.py#L291)。健康池超过两 worker 且候选为子集时可能选错；本次两副本实验不触发该情形。
+- [Virtual eviction 可把父节点重复入堆](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/global_lru_cache.py#L323)，节点顺序还比较整个 ref-counter 向量，可能重复计数。
+- [特定连续 split / expiry 下 finish 可能触发原断言](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/global_scheduler_with_time.py#L372)。差分验证记录双方共同失败，不把它算成成功处理。
+
+Frontend 只支持同模型、同 tokenizer、单共享 cache namespace 的固定 worker 池。接口为原生 `POST /generate`，单条 text 或 input_ids、`n=1`；另有 `/health` 与 `/routing_stats`。不支持 OpenAI 路由接口、batch、LoRA、多模态、session 或 cache_salt；worker 必须使用累计 streaming 输出。
+
+## 启动两份真实 235B 副本
+
+以下对应 8×H200、两份 TP4 BF16 `Qwen/Qwen3-235B-A22B-Instruct-2507`。安装当前 checkout 的兼容环境；本次使用 Torch 2.11.0+cu128、sglang-kernel 0.4.4+cu129、FlashInfer 0.6.12，完整版本见结果。模型、frontend 和准备脚本必须使用同一 tokenizer。
 
 ```bash
 export PYTHONPATH="$PWD/python${PYTHONPATH:+:$PYTHONPATH}"
 export PREBLE_MODEL_PATH=/path/to/Qwen3-235B-A22B-Instruct-2507
 ```
 
-Run worker 0 in one terminal:
+分别在两个终端启动，下列 worker 0 的命令在 worker 1 改为 `CUDA_VISIBLE_DEVICES=4,5,6,7`、`--port 31001`、`--random-seed 556540270`：
 
 ```bash
 CUDA_VISIBLE_DEVICES=0,1,2,3 python -m sglang.launch_server \
-  --model-path "$PREBLE_MODEL_PATH" --tp-size 4 \
-  --host 127.0.0.1 --port 31000 \
+  --model-path "$PREBLE_MODEL_PATH" --tp-size 4 --dtype bfloat16 \
+  --host 127.0.0.1 --port 31000 --random-seed 659938497 \
   --mem-fraction-static 0.90 --context-length 32768 \
-  --max-running-requests 64 --chunked-prefill-size 1024 \
+  --max-running-requests 64 --chunked-prefill-size 512 \
   --schedule-policy fcfs-mpq --attention-backend triton \
   --moe-runner-backend flashinfer_cutlass --disable-cuda-graph
 ```
 
-Run worker 1 in another terminal, using the same configuration:
-
-```bash
-CUDA_VISIBLE_DEVICES=4,5,6,7 python -m sglang.launch_server \
-  --model-path "$PREBLE_MODEL_PATH" --tp-size 4 \
-  --host 127.0.0.1 --port 31001 \
-  --mem-fraction-static 0.90 --context-length 32768 \
-  --max-running-requests 64 --chunked-prefill-size 1024 \
-  --schedule-policy fcfs-mpq --attention-backend triton \
-  --moe-runner-backend flashinfer_cutlass --disable-cuda-graph
-```
-
-`flashinfer_cutlass` is the BF16 MoE backend here; attention uses Triton. Wait for
-both workers' `/health` endpoints to succeed. Measure cold prefill and decode on
-this model and worker configuration, after kernel warmup, with an idle request
-queue and representative prompt lengths. Use the cold prompt token count divided
-by its prefill duration for tokens/second; estimate TPOT from
-`(generation_latency - TTFT) / (completion_tokens - 1)` over several requests.
-Set `PREBLE_PREFILL_TOKENS_PER_SECOND` and `PREBLE_INITIAL_TPOT` to those positive
-measurements, then start the frontend in a third terminal:
+等待 `/health` 就绪并完成内核 warmup / 时间校准后，读取每端 `/server_info` 的 `internal_states[0].memory_usage.token_capacity`。TP4 的容量是整个副本的 token 池，**不能乘 4**。本次两端均为 328506 tokens；其他部署请用实际值。
 
 ```bash
 python -m sglang.launch_preble \
   --worker-urls http://127.0.0.1:31000 http://127.0.0.1:31001 \
-  --model-path "$PREBLE_MODEL_PATH" --host 127.0.0.1 --port 8000 \
-  --prefill-tokens-per-second "${PREBLE_PREFILL_TOKENS_PER_SECOND:?Set the measured prefill rate}" \
-  --initial-tpot "${PREBLE_INITIAL_TPOT:?Set the measured decode TPOT}"
+  --model-path "$PREBLE_MODEL_PATH" --host 127.0.0.1 --port 18000 \
+  --max-tokens-per-worker 328506 328506 \
+  --prefill-time-scale 2.387698396256729 --initial-tpot 0.06731290138453584
 ```
 
-Use `--disable-rebalancing` for an E2 routing ablation. Example native request:
+这里的时间参数是本次硬件上、正式实验前冻结的测量值，不是跨模型通用常数。可用 [calibrate.py](../../benchmark/preble/calibrate.py) 在自己的部署先 warmup，再用 cold 8K/16K/32K 与三种部分命中 profile 测量；输出保留 `T(new_tokens, context)` 的二维结构，只拟合一个整体 scale。
 
-```bash
-curl --fail http://127.0.0.1:8000/generate \
-  -H 'Content-Type: application/json' \
-  -d '{"text":"Explain prefix caching.","sampling_params":{"temperature":0,"max_new_tokens":45}}'
-```
+## 重放固定的原版 LooGLE 生成器
 
-## LooGLE workload and comparison
-
-The [benchmark driver](../../benchmark/preble/bench_loogle.py) adapts the official
-[LooGLEDataset generator](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/benchmarks/benchmark_workload_gen.py#L830)
-and [create_loogle_dataset helper](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/benchmarks/multi_exp_configs/multi_exp_utils.py#L69).
-The upstream [two-worker LooGLE simulation config](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/benchmarks/multi_exp_configs/e2e_234r_loogle_config.py#L109)
-supplies 24 document prefixes, 393 requests, 0.7 requests/second, a 45-token
-output cap and a prompt truncation target of `32768 - 45 = 32723` tokens. It sets
-`simulate=True` and `load_format='dummy'` for Mistral-7B; the commands below adapt
-its workload parameters to two real BF16 235B replicas. Also run 1.4
-requests/second with the same workload as a higher-load comparison.
-
-The current public short-dependency QA JSONL has one QA per row, with `doc_id`,
-`context`, `question` and `answer`, rather than the older `input` plus stringified
-`qa_pairs` schema. The driver groups rows by `doc_id`, samples documents, replicates
-their QA pairs in proportion to available QA counts, and inserts a random
-128-bit hexadecimal nonce before each question. It preserves the official prompt
-template and head/tail decode-and-retokenize truncation. A fixed seed of 42 makes
-document selection, nonces, request shuffling and exponential interarrival times
-repeatable; this is a deterministic adaptation, not the same random trace as the
-upstream unseeded dataset shuffle/UUID generation. Preparation writes dataset and
-workload SHA-256 hashes to a manifest.
+[prepare_reference_loogle.py](../../benchmark/preble/prepare_reference_loogle.py) 校验原 commit、源文件与旧 schema parquet 的 SHA，再直接执行原生成器的 AST 定义，包括原模板、QA 比例复制、两次 shuffle 和首尾截断。它只读取 tokenizer，不安装旧 runtime、不加载小模型。
 
 ```bash
 mkdir -p preble-bench
+git clone https://github.com/WukLab/preble.git preble-bench/reference
+git -C preble-bench/reference checkout 1a35eae20c416f7062ca81775aab72890323fd97
 curl --fail --location \
-  https://huggingface.co/datasets/bigai-nlco/LooGLE/resolve/4b50b4cb9333b48b3f7ddfd307c1d13369be5d1e/data/shortdep_qa.jsonl \
-  --output preble-bench/shortdep_qa.jsonl
-
-python benchmark/preble/bench_loogle.py --prepare-only \
-  --dataset preble-bench/shortdep_qa.jsonl --model-path "$PREBLE_MODEL_PATH" \
-  --workload preble-bench/loogle-24-393.jsonl \
-  --patterns 24 --requests 393 --max-input-tokens 32723 \
-  --max-new-tokens 45 --seed 42
+  https://huggingface.co/datasets/bigai-nlco/LooGLE/resolve/bdc356116a09a6a3d552e28a9f330878915b1696/shortdep_qa/test-00000-of-00001.parquet \
+  --output preble-bench/shortdep_qa.parquet
+python benchmark/preble/prepare_reference_loogle.py \
+  --source-root preble-bench/reference --dataset preble-bench/shortdep_qa.parquet \
+  --model-path "$PREBLE_MODEL_PATH" --output-dir preble-bench/reference-trace \
+  --patterns 24 --requests 393 --max-new-tokens 45 \
+  --seed 10 --uuid-seed 10 --arrival-seed 10 --rates 0.7 1.4
 ```
 
-Keep worker settings identical to compare global routing: round-robin sends
-directly to alternating workers, while Preble sends through the frontend, so
-Preble's frontend overhead is included. Wait for all requests to finish and flush
-both worker caches before each trial; restart the frontend before each Preble
-trial to clear its history and assignments.
+固定 UUIDv4 随机源，并显式设置 Python / NumPy seed 和 arrival RNG 边界，使当前依赖环境可重生成同一轨迹；这些是随机流适配，**不等同恢复论文当年的逐请求 trace**。正式轨迹为 24 文档、393 请求、13559–32722 input tokens、输出上限 45、temperature 0；`manifest.json` 包含数据/源码/tokenizer/生成版本及 SHA。
+
+新部署可在正式重放前独立测量时间参数：
 
 ```bash
-curl --fail http://127.0.0.1:31000/flush_cache
-curl --fail http://127.0.0.1:31001/flush_cache
-
-python benchmark/preble/bench_loogle.py \
-  --workload preble-bench/loogle-24-393.jsonl --requests 393 \
-  --policy round-robin \
+python benchmark/preble/calibrate.py \
+  --workload preble-bench/reference-trace/loogle-24-393-reference.jsonl \
   --worker-urls http://127.0.0.1:31000 http://127.0.0.1:31001 \
-  --rate 0.7 --concurrency 256 --seed 42 --output preble-bench/rr-0.7
+  --max-new-tokens 45 --output preble-bench/calibration.json
 ```
 
-After flushing again and starting a fresh frontend, run:
+把输出的 `prefill_time_scale` / `initial_tpot` 用于 frontend，并在正式实验前冻结。该命令测量新的校准值；本次已归档实验的校准使用另一份独立的 seed42 输入，具体来源和复现参数见 [RESULTS.md](RESULTS.md)。
+
+每轮先等待在途请求归零，再 POST `/flush_cache?timeout=30` 到两端，确认返回 `Cache flushed.`；Preble 每轮重启全新 frontend。然后重放：
 
 ```bash
 python benchmark/preble/bench_loogle.py \
-  --workload preble-bench/loogle-24-393.jsonl --requests 393 \
-  --policy preble --router-url http://127.0.0.1:8000 \
+  --workload preble-bench/reference-trace/loogle-24-393-reference.jsonl \
+  --arrivals preble-bench/reference-trace/arrivals-r0.7.json \
+  --policy preble --router-url http://127.0.0.1:18000 \
   --worker-urls http://127.0.0.1:31000 http://127.0.0.1:31001 \
-  --rate 0.7 --concurrency 256 --seed 42 --output preble-bench/preble-0.7
+  --requests 393 --rate 0.7 --concurrency 256 --output preble-bench/preble-r0.7-rep1
 ```
 
-Repeat both trials with `--rate 1.4` and separate output directories. Each trial
-writes `requests.jsonl` and `summary.json`: successful/failed requests, observed
-TTFT and latency percentiles, completed requests/second, output tokens/second and
-the actual worker-reported cached-token fraction. Client semaphore waiting is
-included in TTFT/latency and also recorded separately. A failed or incomplete
-generation makes the driver exit unsuccessfully. Compare workload hashes and
-record model revision, worker commands, runtime dependencies and warmup/reset
-procedure alongside results.
+每档 0.7 / 1.4 RPS 各做两轮，使用对应的 `--arrivals` 文件和新 output 目录。`--arrivals` 决定实际计划到达，`--rate` 仅记录该档标签。输出文件已存在时不要复用。
+
+主对照是 **Preble + MPQ 对 RR + LPM**：重启两 worker，把 `--schedule-policy` 改为 `lpm`，保留有效随机种子及其他参数；对相同 profile warmup 后冷启 cache，重放时用 `--policy round-robin` 直连两 worker，按请求 index 轮流选端。这个比较同时改变全局与本地策略，不能单独归因于全局路由。
+
+每轮保存 `requests.jsonl` / `summary.json`，Preble 另保存最终 `/routing_stats`，核验 393 次成功、393 个 TTFT 及 `active=[0,0]`。TTFT / E2E 从计划到达 sleep 醒后起钟，包含客户端 semaphore 等候、HTTP 与 frontend 开销，但不包含 sleep 超时的唤醒迟延。吞吐分母是含到达等待和尾部排空的整轮时长，不是饱和吞吐估计。具体本次执行顺序与统计方法见 [RESULTS.md](RESULTS.md)。
