@@ -5,6 +5,7 @@
 import argparse
 import asyncio
 import json
+import math
 import time
 import uuid
 from contextlib import asynccontextmanager
@@ -17,6 +18,7 @@ from starlette.background import BackgroundTask
 from transformers import AutoTokenizer
 
 from sglang.srt.routing.preble import PrebleScheduler
+from sglang.srt.routing.preble_cost import a6000_prefill_time
 
 
 def create_app(worker_urls, tokenizer, scheduler):
@@ -117,6 +119,8 @@ def create_app(worker_urls, tokenizer, scheduler):
         budget = params.get("max_new_tokens", 16)
         if type(budget) is not int or budget < 0:
             raise HTTPException(400, "max_new_tokens must be nonnegative")
+        # The reference frontend defaults to 16; current workers default to 128.
+        payload["sampling_params"] = {**params, "max_new_tokens": budget}
         if type(payload.get("stream", False)) is not bool:
             raise HTTPException(400, "stream must be a boolean")
         available = [
@@ -284,27 +288,59 @@ def main():
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--window-seconds", type=float, default=180)
     parser.add_argument("--disable-rebalancing", action="store_true")
+    parser.add_argument("--disable-eviction", action="store_true")
     parser.add_argument(
+        "--max-tokens-per-worker",
+        nargs="+",
+        type=int,
+        help="Virtual KV capacities in tokens; reference default is 198516 per worker",
+    )
+    prefill_model = parser.add_mutually_exclusive_group()
+    prefill_model.add_argument(
         "--prefill-tokens-per-second",
         type=float,
-        required=True,
-        help="Measured prefill rate for this model and worker hardware",
+        help="Optional linear prefill model; otherwise use the reference A6000 model",
+    )
+    prefill_model.add_argument(
+        "--prefill-time-scale",
+        type=float,
+        default=1.0,
+        help="Hardware calibration scale for the reference two-argument prefill model",
     )
     parser.add_argument(
         "--initial-tpot",
         type=float,
-        required=True,
+        default=0.15,
         help="Measured initial decode seconds per output token",
     )
     args = parser.parse_args()
-    if args.prefill_tokens_per_second <= 0:
-        parser.error("Prefill rate must be positive")
+    if args.prefill_tokens_per_second is not None and (
+        not math.isfinite(args.prefill_tokens_per_second)
+        or args.prefill_tokens_per_second <= 0
+    ):
+        parser.error("Prefill rate must be finite and positive")
+    if not math.isfinite(args.prefill_time_scale) or args.prefill_time_scale <= 0:
+        parser.error("Prefill time scale must be finite and positive")
+    if not math.isfinite(args.initial_tpot) or args.initial_tpot <= 0:
+        parser.error("Initial TPOT must be finite and positive")
+    prefill_kwargs = {}
+    if args.prefill_tokens_per_second is not None:
+        prefill_kwargs["prefill_time"] = (
+            lambda tokens, context: tokens / args.prefill_tokens_per_second
+        )
+    elif args.prefill_time_scale != 1:
+        prefill_kwargs["prefill_time"] = (
+            lambda tokens, context: args.prefill_time_scale
+            * a6000_prefill_time(tokens, context)
+        )
     scheduler = PrebleScheduler(
         len(args.worker_urls),
         window_seconds=args.window_seconds,
-        prefill_time=lambda tokens, context: tokens / args.prefill_tokens_per_second,
         initial_tpot=args.initial_tpot,
         enable_rebalancing=not args.disable_rebalancing,
+        enable_eviction=not args.disable_eviction,
+        max_tokens_gpu=args.max_tokens_per_worker,
+        **prefill_kwargs,
     )
     tokenizer = AutoTokenizer.from_pretrained(args.model_path)
     uvicorn.run(
