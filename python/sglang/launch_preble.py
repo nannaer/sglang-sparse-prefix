@@ -62,7 +62,7 @@ def create_app(worker_urls, tokenizer, scheduler):
             "replications": scheduler.replications,
             "nodes": len(scheduler.nodes),
             "active": [
-                sum(n.active[w] for n in scheduler.root.children.values())
+                sum(n.ref_counter[w] for n in scheduler.root.children.values())
                 for w in range(len(urls))
             ],
         }
