@@ -354,9 +354,7 @@ class PrebleScheduler:
             )
             self.cache.remove_completed_input_ids(assignment.tokens, worker)
             if output_tokens > 1 and latency > ttft > 0:
-                self.avg_topt_per_gpu[worker].append(
-                    (latency - ttft) / (output_tokens - 1)
-                )
+                self.avg_topt_per_gpu[worker].append((latency - ttft) / output_tokens)
             self.histogram.current_decode_lengths_per_gpu[
                 worker
             ] -= assignment.output_budget
