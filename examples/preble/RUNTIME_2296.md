@@ -2,6 +2,8 @@
 
 运行版本 [`091d70e1e7`](https://github.com/nannaer/sglang-sparse-prefix/commit/091d70e1e73955a2cd4f26bc5e9e7c9acf519db5)，Preble 参考 `1a35eae20c`。**Preble + MPQ 与 RR + LPM 各一轮**，先 Preble 后 RR。
 
+最新零输出完成反馈另由[源码差分](results/reaudit-20261015/zero-count-feedback.json)覆盖；本轮 Preble 最短输出 22 tokens，不覆盖该边界。
+
 ## 结果
 
 两轮均 **393/393 成功**，各 393 个 TTFT。时延单位为秒。

@@ -1,0 +1,696 @@
+{
+  "all_passed": true,
+  "reference_commit": "1a35eae20c416f7062ca81775aab72890323fd97",
+  "baseline_commit": "0618c7a219781064fe37b3e14d8d7f1aa0b71ff7",
+  "baseline_scheduler_sha256": "492a90289a06c58e95c00cd621276562cf737ff511fcf116e81b9158a5f3541a",
+  "execution": {
+    "host": "gpu-lg-cmc-h-h200-2296.host.h.pjlab.org.cn",
+    "container": "sglang_chenjiefei_ds4",
+    "python_executable": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/env/bin/python",
+    "python_version": "3.13.13 | packaged by conda-forge | (main, Apr  8 2026, 02:00:33) [GCC 14.3.0]",
+    "platform": "Linux-5.15.0-89-generic-x86_64-with-glibc2.35",
+    "utc": "2026-10-15T10:16:04.196395+00:00"
+  },
+  "method": "Unchanged reference/current HTTP and scheduler ASTs with real FastAPI StreamingResponse; CPU fake HTTP/logical clocks; compare TPOT, active refs, legacy ledgers and assertions.",
+  "limitations": [
+    "Injected response counts are independent of request budgets; no claim old GPU backend returns count0 for budget0.",
+    "Failures/cancellation compare pre/post modern cleanup, not old broken transport behavior.",
+    "No GPU inference, allocator validation or performance claim; no pre-existing evidence overwritten."
+  ],
+  "counts": {
+    "normal_success_matrix": 48,
+    "baseline_tpot_mismatches_detected": 6,
+    "baseline_expired_assertion_mismatches_detected": 4,
+    "error_cancel_idempotency_controls": 24
+  },
+  "negative_cases": [
+    "count0-gap2.0-budget0-omitted",
+    "count0-gap2.0-budget0-true",
+    "count0-gap2.0-budget0-false",
+    "count0-gap2.0-budget45-omitted",
+    "count0-gap2.0-budget45-true",
+    "count0-gap2.0-budget45-false"
+  ],
+  "source_sha256": {
+    "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/verify_zero_count_feedback.py": "fddf5f81bb5029095af70d9d9482c9fd0fd1331b4092bbac9527513eac41be9c",
+    "/mnt/nvme1n1/ml_research/chenjiefei/sglang-prefix-load-balancing/python/sglang/srt/routing/preble.py": "689ab6d676f826a37cf31321bd064871636814e2b13e3a6714a3fb90050d66fb",
+    "/mnt/nvme1n1/ml_research/chenjiefei/sglang-prefix-load-balancing/python/sglang/launch_preble.py": "5a17f0d773f07a6da2aa2d9872c1552fcb3f5a77c19e7c5c4b1544181b7e694d",
+    "/tmp/preble-source/preble/global_scheduler_with_time.py": "712b88a5eeefae6aa4092299dd04204cc501457349c0236d9d453a55635e5c9e",
+    "/tmp/preble-source/preble/server/server.py": "23dbcaa5ff82e9593097a5ead4f4ca0030039c4c89780a106c642fd4358f36fb",
+    "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/verify_http_feedback_timing.py": "198eb9b33017ed6cf4af0a75a74515ec11f96f108f85597bd02f784777c55ef5",
+    "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reference-runtime-validation-20261015/verify_public_http_tpot.py": "d34bb3eefc5bd6df544245c915208ebfca92aa1d7219e3e8828d44de7541aca9",
+    "/mnt/nvme1n1/ml_research/chenjiefei/sglang-prefix-load-balancing/python/sglang/srt/routing/preble_cache.py": "12c6ba78d219dc296919f76415194b0c6571099a3c126943be133b49c73f9003",
+    "/mnt/nvme1n1/ml_research/chenjiefei/sglang-prefix-load-balancing/python/sglang/srt/routing/preble_cost.py": "c438285d82b811777ec9919b8aa54106b987cfbef5bfb076645999eea26a47e8"
+  },
+  "implementation_commit": "9e289eb76877558e5eea5e2506e04910e372ea32",
+  "selected_successes": [
+    {
+      "case": {
+        "name": "count0-gap2.0-budget45-omitted",
+        "output": 0,
+        "budget": 45,
+        "gap": 2.0,
+        "stream": true,
+        "expire": false,
+        "mode": "success",
+        "omit_stream": true,
+        "backpressure": false,
+        "done_at": 8,
+        "close_delay": 7
+      },
+      "reference": {
+        "state": {
+          "decode_ledger_per_worker": [
+            45
+          ],
+          "decode_ledger_per_node": [
+            45
+          ],
+          "active": [
+            0
+          ],
+          "tpot": [
+            [
+              0.15,
+              2.0
+            ]
+          ],
+          "histogram_groups": 1
+        },
+        "exception": null,
+        "feedback": {
+          "output": 0,
+          "ttft": 1.0,
+          "latency": 3.0,
+          "tpot": 2.0,
+          "reported_budget": 0
+        }
+      },
+      "baseline": {
+        "state": {
+          "decode_ledger_per_worker": [
+            45
+          ],
+          "decode_ledger_per_node": [
+            45
+          ],
+          "active": [
+            0
+          ],
+          "tpot": [
+            [
+              0.15
+            ]
+          ],
+          "histogram_groups": 1
+        },
+        "exception": null,
+        "feedback": [
+          {
+            "output": 0,
+            "ttft": 1.0,
+            "latency": 3.0,
+            "reported_budget": 0
+          },
+          {
+            "output": 0,
+            "ttft": 0,
+            "latency": 0,
+            "reported_budget": null
+          }
+        ],
+        "abort_calls": 0,
+        "finish_calls": 1,
+        "status": 200,
+        "idempotent": true
+      },
+      "current": {
+        "state": {
+          "decode_ledger_per_worker": [
+            45
+          ],
+          "decode_ledger_per_node": [
+            45
+          ],
+          "active": [
+            0
+          ],
+          "tpot": [
+            [
+              0.15,
+              2.0
+            ]
+          ],
+          "histogram_groups": 1
+        },
+        "exception": null,
+        "feedback": [
+          {
+            "output": 0,
+            "ttft": 1.0,
+            "latency": 3.0,
+            "reported_budget": 0
+          },
+          {
+            "output": 0,
+            "ttft": 0,
+            "latency": 0,
+            "reported_budget": null
+          }
+        ],
+        "abort_calls": 0,
+        "finish_calls": 1,
+        "status": 200,
+        "idempotent": true
+      }
+    },
+    {
+      "case": {
+        "name": "count1-gap2.0-budget45-omitted",
+        "output": 1,
+        "budget": 45,
+        "gap": 2.0,
+        "stream": true,
+        "expire": false,
+        "mode": "success",
+        "omit_stream": true,
+        "backpressure": false,
+        "done_at": 8,
+        "close_delay": 7
+      },
+      "reference": {
+        "state": {
+          "decode_ledger_per_worker": [
+            45
+          ],
+          "decode_ledger_per_node": [
+            45
+          ],
+          "active": [
+            0
+          ],
+          "tpot": [
+            [
+              0.15
+            ]
+          ],
+          "histogram_groups": 1
+        },
+        "exception": null,
+        "feedback": {
+          "output": 1,
+          "ttft": 1.0,
+          "latency": 3.0,
+          "tpot": 2.0,
+          "reported_budget": 0
+        }
+      },
+      "baseline": {
+        "state": {
+          "decode_ledger_per_worker": [
+            45
+          ],
+          "decode_ledger_per_node": [
+            45
+          ],
+          "active": [
+            0
+          ],
+          "tpot": [
+            [
+              0.15
+            ]
+          ],
+          "histogram_groups": 1
+        },
+        "exception": null,
+        "feedback": [
+          {
+            "output": 1,
+            "ttft": 1.0,
+            "latency": 3.0,
+            "reported_budget": 0
+          },
+          {
+            "output": 0,
+            "ttft": 0,
+            "latency": 0,
+            "reported_budget": null
+          }
+        ],
+        "abort_calls": 0,
+        "finish_calls": 1,
+        "status": 200,
+        "idempotent": true
+      },
+      "current": {
+        "state": {
+          "decode_ledger_per_worker": [
+            45
+          ],
+          "decode_ledger_per_node": [
+            45
+          ],
+          "active": [
+            0
+          ],
+          "tpot": [
+            [
+              0.15
+            ]
+          ],
+          "histogram_groups": 1
+        },
+        "exception": null,
+        "feedback": [
+          {
+            "output": 1,
+            "ttft": 1.0,
+            "latency": 3.0,
+            "reported_budget": 0
+          },
+          {
+            "output": 0,
+            "ttft": 0,
+            "latency": 0,
+            "reported_budget": null
+          }
+        ],
+        "abort_calls": 0,
+        "finish_calls": 1,
+        "status": 200,
+        "idempotent": true
+      }
+    }
+  ],
+  "selected_shared_assertion": {
+    "case": {
+      "name": "expired-zero-budget0-gap0.0",
+      "output": 0,
+      "budget": 0,
+      "gap": 0.0,
+      "stream": true,
+      "expire": true,
+      "mode": "success",
+      "omit_stream": true,
+      "backpressure": false,
+      "done_at": 8,
+      "close_delay": 7
+    },
+    "reference": {
+      "state": {
+        "decode_ledger_per_worker": [
+          0
+        ],
+        "decode_ledger_per_node": [
+          0
+        ],
+        "active": [
+          0
+        ],
+        "tpot": [
+          [
+            0.15
+          ]
+        ],
+        "histogram_groups": 0
+      },
+      "exception": "AssertionError",
+      "feedback": {
+        "output": 0,
+        "ttft": 1.0,
+        "latency": 1.0,
+        "tpot": 0.0,
+        "reported_budget": 0
+      }
+    },
+    "baseline": {
+      "state": {
+        "decode_ledger_per_worker": [
+          0
+        ],
+        "decode_ledger_per_node": [
+          0
+        ],
+        "active": [
+          0
+        ],
+        "tpot": [
+          [
+            0.15
+          ]
+        ],
+        "histogram_groups": 0
+      },
+      "exception": null,
+      "feedback": [
+        {
+          "output": 0,
+          "ttft": 1.0,
+          "latency": 1.0,
+          "reported_budget": 0
+        },
+        {
+          "output": 0,
+          "ttft": 0,
+          "latency": 0,
+          "reported_budget": null
+        }
+      ],
+      "abort_calls": 0,
+      "finish_calls": 1,
+      "status": 200,
+      "idempotent": true
+    },
+    "current": {
+      "state": {
+        "decode_ledger_per_worker": [
+          0
+        ],
+        "decode_ledger_per_node": [
+          0
+        ],
+        "active": [
+          0
+        ],
+        "tpot": [
+          [
+            0.15
+          ]
+        ],
+        "histogram_groups": 0
+      },
+      "exception": "AssertionError",
+      "feedback": [
+        {
+          "output": 0,
+          "ttft": 1.0,
+          "latency": 1.0,
+          "reported_budget": 0
+        },
+        {
+          "output": 0,
+          "ttft": 0,
+          "latency": 0,
+          "reported_budget": null
+        }
+      ],
+      "abort_calls": 0,
+      "finish_calls": 1,
+      "status": null,
+      "idempotent": true
+    }
+  },
+  "selected_cleanup": [
+    {
+      "case": {
+        "name": "cancel-count0-budget45",
+        "output": 0,
+        "budget": 45,
+        "gap": 2.0,
+        "stream": true,
+        "expire": false,
+        "mode": "cancel",
+        "omit_stream": true,
+        "backpressure": false,
+        "done_at": 8,
+        "close_delay": 7
+      },
+      "before": {
+        "state": {
+          "decode_ledger_per_worker": [
+            0
+          ],
+          "decode_ledger_per_node": [
+            0
+          ],
+          "active": [
+            0
+          ],
+          "tpot": [
+            [
+              0.15
+            ]
+          ],
+          "histogram_groups": 1
+        },
+        "exception": null,
+        "feedback": [
+          {
+            "output": 0,
+            "ttft": 0,
+            "latency": 0,
+            "reported_budget": null
+          },
+          {
+            "output": 0,
+            "ttft": 0,
+            "latency": 0,
+            "reported_budget": null
+          }
+        ],
+        "abort_calls": 1,
+        "finish_calls": 1,
+        "status": null,
+        "idempotent": true
+      },
+      "current": {
+        "state": {
+          "decode_ledger_per_worker": [
+            0
+          ],
+          "decode_ledger_per_node": [
+            0
+          ],
+          "active": [
+            0
+          ],
+          "tpot": [
+            [
+              0.15
+            ]
+          ],
+          "histogram_groups": 1
+        },
+        "exception": null,
+        "feedback": [
+          {
+            "output": 0,
+            "ttft": 0,
+            "latency": 0,
+            "reported_budget": null
+          },
+          {
+            "output": 0,
+            "ttft": 0,
+            "latency": 0,
+            "reported_budget": null
+          }
+        ],
+        "abort_calls": 1,
+        "finish_calls": 1,
+        "status": null,
+        "idempotent": true
+      }
+    },
+    {
+      "case": {
+        "name": "sse-error-count0-budget45",
+        "output": 0,
+        "budget": 45,
+        "gap": 2.0,
+        "stream": true,
+        "expire": false,
+        "mode": "sse-error",
+        "omit_stream": true,
+        "backpressure": false,
+        "done_at": 8,
+        "close_delay": 7
+      },
+      "before": {
+        "state": {
+          "decode_ledger_per_worker": [
+            0
+          ],
+          "decode_ledger_per_node": [
+            0
+          ],
+          "active": [
+            0
+          ],
+          "tpot": [
+            [
+              0.15
+            ]
+          ],
+          "histogram_groups": 1
+        },
+        "exception": null,
+        "feedback": [
+          {
+            "output": 0,
+            "ttft": 1.0,
+            "latency": 3.0,
+            "reported_budget": null
+          },
+          {
+            "output": 0,
+            "ttft": 0,
+            "latency": 0,
+            "reported_budget": null
+          }
+        ],
+        "abort_calls": 0,
+        "finish_calls": 1,
+        "status": 200,
+        "idempotent": true
+      },
+      "current": {
+        "state": {
+          "decode_ledger_per_worker": [
+            0
+          ],
+          "decode_ledger_per_node": [
+            0
+          ],
+          "active": [
+            0
+          ],
+          "tpot": [
+            [
+              0.15
+            ]
+          ],
+          "histogram_groups": 1
+        },
+        "exception": null,
+        "feedback": [
+          {
+            "output": 0,
+            "ttft": 1.0,
+            "latency": 3.0,
+            "reported_budget": null
+          },
+          {
+            "output": 0,
+            "ttft": 0,
+            "latency": 0,
+            "reported_budget": null
+          }
+        ],
+        "abort_calls": 0,
+        "finish_calls": 1,
+        "status": 200,
+        "idempotent": true
+      }
+    },
+    {
+      "case": {
+        "name": "sse-abort-count0-budget45",
+        "output": 0,
+        "budget": 45,
+        "gap": 2.0,
+        "stream": true,
+        "expire": false,
+        "mode": "sse-abort",
+        "omit_stream": true,
+        "backpressure": false,
+        "done_at": 8,
+        "close_delay": 7
+      },
+      "before": {
+        "state": {
+          "decode_ledger_per_worker": [
+            0
+          ],
+          "decode_ledger_per_node": [
+            0
+          ],
+          "active": [
+            0
+          ],
+          "tpot": [
+            [
+              0.15
+            ]
+          ],
+          "histogram_groups": 1
+        },
+        "exception": null,
+        "feedback": [
+          {
+            "output": 0,
+            "ttft": 1.0,
+            "latency": 3.0,
+            "reported_budget": null
+          },
+          {
+            "output": 0,
+            "ttft": 0,
+            "latency": 0,
+            "reported_budget": null
+          }
+        ],
+        "abort_calls": 0,
+        "finish_calls": 1,
+        "status": 200,
+        "idempotent": true
+      },
+      "current": {
+        "state": {
+          "decode_ledger_per_worker": [
+            0
+          ],
+          "decode_ledger_per_node": [
+            0
+          ],
+          "active": [
+            0
+          ],
+          "tpot": [
+            [
+              0.15
+            ]
+          ],
+          "histogram_groups": 1
+        },
+        "exception": null,
+        "feedback": [
+          {
+            "output": 0,
+            "ttft": 1.0,
+            "latency": 3.0,
+            "reported_budget": null
+          },
+          {
+            "output": 0,
+            "ttft": 0,
+            "latency": 0,
+            "reported_budget": null
+          }
+        ],
+        "abort_calls": 0,
+        "finish_calls": 1,
+        "status": 200,
+        "idempotent": true
+      }
+    }
+  ],
+  "evidence": {
+    "full_report": "zero-count-feedback.json.gz",
+    "source_path": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/zero-count-feedback-fixed.json",
+    "source_sha256": "e6d68662d96a77f2859e89adfded77d1e6ec1640fc6050ed75dbeb8206c997a0",
+    "archive_sha256": "30735e0502515b8f1a1653d71f0e169ac4bb76c4462097f29279f5f09812c402",
+    "before_report": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/zero-count-feedback-before.json",
+    "before_report_sha256": "4d21eee116eee8832256754931ca92bcdd2077df0259a70614440992dc2ce544",
+    "feedback_note": "Each stored feedback list also contains the explicit low-level repeat used for the idempotency check; finish_calls counts the one HTTP finish before that repeat."
+  },
+  "gpu_validation": {
+    "tested_runtime_commit": "091d70e1e73955a2cd4f26bc5e9e7c9acf519db5",
+    "contains_this_fix": false,
+    "new_gpu_replays": 0,
+    "archived_preble_min_output_tokens": 22,
+    "archived_rr_min_output_tokens": 14,
+    "normal_positive_feedback_formula_unchanged": true
+  }
+}

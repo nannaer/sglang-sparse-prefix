@@ -1,6 +1,6 @@
 # SGLang Prefix Load Balancing
 
-把 [Preble](https://github.com/WukLab/preble/tree/1a35eae20c416f7062ca81775aab72890323fd97) 的全局前缀路由与本地 MPQ 调度接入当前 SGLang。参考 commit `1a35eae20c`，当前 runtime `091d70e1e7`，SGLang base `ef11e39048`。
+把 [Preble](https://github.com/WukLab/preble/tree/1a35eae20c416f7062ca81775aab72890323fd97) 的全局前缀路由与本地 MPQ 调度接入当前 SGLang。参考 commit `1a35eae20c`，当前 runtime `9e289eb768`，SGLang base `ef11e39048`。
 
 ## 请求执行流程
 
@@ -61,7 +61,9 @@ worker_retract_if_decode_oom():
 
 finish(request):
     释放原副本路径引用，记录组 TTFT
-    output_len > 1 且 latency > TTFT > 0 时：TPOT[w].append((latency - TTFT) / output_len)
+    若收到成功反馈：
+        TPOT = (latency - TTFT) / max(1, output_len)
+        output_len != 1 且 TPOT != 0 时：TPOT[w].append(TPOT)
 ```
 
 ## 与 Preble 的一致性
@@ -76,7 +78,7 @@ finish(request):
 | --- | --- |
 | 全局源码差分 | 9012 次选择 / 完成尝试状态一致；9006 正常完成，6 次双方同一原断言。 |
 | 本地调度 | 准入 / chunk 41 项、FIFO / IPC 8 项、取消 41 项；retract 306 项对原版、1200 项既有路径、1 项现代保护通过。 |
-| 服务与候选 | 健康池 960、部分池 1200、HTTP 计时与预算差分通过，含修前负对照。 |
+| 服务与候选 | 健康池 960、部分池 1200、HTTP 计时、预算及零输出反馈差分通过，含修前负对照。 |
 | 真实推理 | 2296 指定容器，BF16 Qwen3-235B-A22B、8×H200、2×TP4；Preble + MPQ 与 RR + LPM 各一轮，均 393/393 成功。 |
 
 同一 LooGLE 输入与到达轨迹，时延单位为秒：
