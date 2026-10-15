@@ -1,0 +1,264 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-15T09:32:58.073729+00:00",
+  "reviewer": "Independent HTTP/protocol review agent; separate from runtime runner owner",
+  "environment": {
+    "hostname": "gpu-lg-cmc-h-h200-2296.host.h.pjlab.org.cn",
+    "container": "sglang_chenjiefei_ds4",
+    "python": "3.13.13 | packaged by conda-forge | (main, Apr  8 2026, 02:00:33) [GCC 14.3.0]",
+    "executable": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/env/bin/python"
+  },
+  "method": "Persist the completed read-only source/plan review. No runner imports/execution, inference, GPU work, unit tests, source edits, or old-evidence edits. SHA256 and AST dumps only identify reviewed files/functions.",
+  "protocol_comparison_sources": {
+    "preble": "preble_actual_run_manifest",
+    "rr": "rr_final_plan",
+    "preble_final_plan": "Archived alongside its actual run manifest; actual manifest was the source used in the independent comparison."
+  },
+  "artifacts": {
+    "preble_final_plan": {
+      "path": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/2296-ready-gated-final-plan.json",
+      "sha256": "874fe9408d3f0f5a973e56d0e5021b9dbbca304120a1df09110c82b1d8aa45f1"
+    },
+    "rr_final_plan": {
+      "path": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/2296-rr-ready-gated-final-plan.json",
+      "sha256": "58522f5f6931612ab1735544914489cbf67a6b1c90b7f487fb573006dff17970"
+    },
+    "preble_actual_run_manifest": {
+      "path": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/run-manifest.json",
+      "sha256": "11a391ce76a009e2d7ee4cd197052533bfb2e9296de58ab7b47aa958965b102b"
+    },
+    "preble_runner": {
+      "path": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/run_2296_once.py",
+      "sha256": "cabce6bd9cad37544a54c8ce9e372bcb8c9e3d28bad31d8bcccc2cf7b1214dbc"
+    },
+    "rr_runner": {
+      "path": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/run_2296_rr_once.py",
+      "sha256": "442843021ae6337eb49d0d85ae272dc4235ce956e34635a14a66259c27f27187"
+    },
+    "rr_runner_diff": {
+      "path": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/2296-rr-single-runner.diff",
+      "sha256": "b2ecc3b4a3659e555dd0ecab8454bac94ad56832aa44331e4beb2cf0bcf46ede"
+    },
+    "shared_measured_replay": {
+      "path": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/bench_loogle_measured.py",
+      "sha256": "89dd567fb80a6b112987c4978f01926bcef5b35450f633850f90c286e9ace350"
+    }
+  },
+  "identical_functions": [
+    {
+      "function": "verify_sources",
+      "preble_ast_sha256": "cc82c940687ea9c88173c35c08e122cb74b3f14a13e6ab43dfd2caa9d90de786",
+      "rr_ast_sha256": "cc82c940687ea9c88173c35c08e122cb74b3f14a13e6ab43dfd2caa9d90de786",
+      "identical": true
+    },
+    {
+      "function": "worker_spec",
+      "preble_ast_sha256": "842be75cfc0fe80cf7d2678bba393da930fee9f638af5e2c0fe9f1fbb9c978ea",
+      "rr_ast_sha256": "842be75cfc0fe80cf7d2678bba393da930fee9f638af5e2c0fe9f1fbb9c978ea",
+      "identical": true
+    },
+    {
+      "function": "replay_command",
+      "preble_ast_sha256": "df3b3e55db191d8476d88065d14451d8ffc5d3704bff685c0590d723893a9ad3",
+      "rr_ast_sha256": "df3b3e55db191d8476d88065d14451d8ffc5d3704bff685c0590d723893a9ad3",
+      "identical": true
+    },
+    {
+      "function": "verify_stage",
+      "preble_ast_sha256": "d2126afe9b1a982d722dded595c618ccf62bc64f8e558a73c3a6ad4aac775d39",
+      "rr_ast_sha256": "d2126afe9b1a982d722dded595c618ccf62bc64f8e558a73c3a6ad4aac775d39",
+      "identical": true
+    },
+    {
+      "function": "validate_info",
+      "preble_ast_sha256": "af207b33b65d061c3c608f57506cfe6eff3cc221a81c0a617e566993fc8c8216",
+      "rr_ast_sha256": "af207b33b65d061c3c608f57506cfe6eff3cc221a81c0a617e566993fc8c8216",
+      "identical": true
+    },
+    {
+      "function": "completed_ready_marker",
+      "preble_ast_sha256": "8872bdfc0878771aabb75438a347939745947a54722c76d0184639ad2199c5ca",
+      "rr_ast_sha256": "8872bdfc0878771aabb75438a347939745947a54722c76d0184639ad2199c5ca",
+      "identical": true
+    },
+    {
+      "function": "wait_workers",
+      "preble_ast_sha256": "b74e123b8d65f6058c9a9bbcc7316feb0c76c83e11c72d9d57f3c17bd140b514",
+      "rr_ast_sha256": "b74e123b8d65f6058c9a9bbcc7316feb0c76c83e11c72d9d57f3c17bd140b514",
+      "identical": true
+    },
+    {
+      "function": "flush",
+      "preble_ast_sha256": "c3a6468276ffc18d782219d2ceb36c4b61145025ee337069d559085ba62aadab",
+      "rr_ast_sha256": "c3a6468276ffc18d782219d2ceb36c4b61145025ee337069d559085ba62aadab",
+      "identical": true
+    },
+    {
+      "function": "warmup_request",
+      "preble_ast_sha256": "ad134e2be5cdf89958422657683a887ca8c8c4cba4ae4768935df29e297eaad3",
+      "rr_ast_sha256": "ad134e2be5cdf89958422657683a887ca8c8c4cba4ae4768935df29e297eaad3",
+      "identical": true
+    },
+    {
+      "function": "warmup",
+      "preble_ast_sha256": "120e863ef8cbed540ace0c667189ff01f305839593f14d78922bef869f83fdae",
+      "rr_ast_sha256": "120e863ef8cbed540ace0c667189ff01f305839593f14d78922bef869f83fdae",
+      "identical": true
+    }
+  ],
+  "ast_hash_definition": "SHA256 of ast.dump(function, include_attributes=False).encode(); parsed from the exact runner sources, not executed.",
+  "same_configuration": {
+    "host": "gpu-lg-cmc-h-h200-2296.host.h.pjlab.org.cn",
+    "commit": "091d70e1e73955a2cd4f26bc5e9e7c9acf519db5",
+    "source_stage": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/sglang-2296-preble-reaudit-stage",
+    "python_executable": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/env/bin/python",
+    "model_snapshot": "/models/qwen3-235b-agentic/snapshots/56e16a623ffb2855ca901a65166a9170e99df127",
+    "model": "Qwen3-235B-A22B-Instruct-2507 BF16; full model, no dummy weights",
+    "replicas": 2,
+    "tensor_parallel_size": 4,
+    "gpu_assignments": [
+      [
+        0,
+        1,
+        2,
+        3
+      ],
+      [
+        4,
+        5,
+        6,
+        7
+      ]
+    ],
+    "worker_seeds": [
+      659938497,
+      556540270
+    ],
+    "attention_backend": "triton",
+    "moe_runner_backend": "flashinfer_cutlass",
+    "chunked_prefill_size": 512,
+    "context_length": 32768,
+    "max_running_requests": 64,
+    "mem_fraction_static": 0.9,
+    "disable_cuda_graph": true,
+    "token_capacity_per_worker": [
+      328505,
+      328505
+    ],
+    "requests": 393,
+    "offered_rate_label": 1.4,
+    "arrival_file_controls_actual_planned_schedule": true,
+    "replay_concurrency": 256,
+    "replay_default_seed": 42,
+    "sampling": "Exact frozen input_ids and per-request sampling_params; stream=True in both replay paths",
+    "input_sha256": {
+      "workload": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+      "arrivals": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+      "calibration": "b9a93683d8e47498af24030166e9ec17ab6ab5bc7493798e10c873057a066fc0",
+      "replay_original": "66963c75c29b37e054ab13dd9fc89baaf53f892b4322b3fa1f8446d6a2332983",
+      "replay": "89dd567fb80a6b112987c4978f01926bcef5b35450f633850f90c286e9ace350",
+      "frontend_wrapper": "e8c32ffb2c1046a799fc0eecfee3fa02aef0146b8d495e01f62923534c4defa7",
+      "observer": "9dc1911bcca09dc11e92c5ed8f02ad1a203d7485e09878cad5ee29d74610df86",
+      "replay_measurement_diff": "149d23fb06550231d27c786f425bd8fb067cfb5a2bd8656e10a65b379d16aaa3",
+      "host_driver_preflight": "6e132d30ce0ea3f73f5885ae65b9e7ce26df9f607413f9013be559cfd56b8d35",
+      "warmup_workload": "b9fbf417c3f588e7b92dd134fff42eead61b7bf3aa10ff3c7020db2f96b74d68"
+    },
+    "production_source_sha256": {
+      "python/sglang/launch_preble.py": "5a17f0d773f07a6da2aa2d9872c1552fcb3f5a77c19e7c5c4b1544181b7e694d",
+      "python/sglang/srt/routing/preble.py": "492a90289a06c58e95c00cd621276562cf737ff511fcf116e81b9158a5f3541a",
+      "python/sglang/srt/managers/schedule_policy.py": "e6a5f01caf262bd774a0015479add06845d7bdd684022ddb45df788c8071fa38",
+      "python/sglang/srt/managers/schedule_batch.py": "16df0e46f3db73236b3655c5ebae324dd5b68601a3697cf11ec70316bb2b0de1",
+      "python/sglang/srt/managers/scheduler.py": "780f973a83535c53914d68f887c00ed750263df095fba6d9bf4f8db4d618373c",
+      "python/sglang/srt/observability/req_time_stats.py": "5487e638bbe6a83b990e8c72940586c20479e5c0317ee40bec68612826206f34",
+      "python/sglang/srt/managers/tokenizer_manager.py": "f2c2bc1da72eb5587a0663cd2bf24fc2d57c63c2d74dec218029b849bd6a0711",
+      "benchmark/preble/bench_loogle.py": "66963c75c29b37e054ab13dd9fc89baaf53f892b4322b3fa1f8446d6a2332983"
+    },
+    "warmup_profiles": [
+      [
+        8192,
+        0
+      ],
+      [
+        16384,
+        0
+      ],
+      [
+        32722,
+        0
+      ],
+      [
+        16896,
+        16384
+      ],
+      [
+        18432,
+        16384
+      ],
+      [
+        32722,
+        30674
+      ]
+    ],
+    "profiles_per_worker": 6,
+    "warmup_inputs_and_output_budget": "Same frozen warmup workload; cold 8K/16K/32K and same three prefix-hit profiles; per-profile flush, 1-token prime for prefix profiles, requested budget45 with normal model/context limits",
+    "readiness_gate": "Complete physical LF ready marker from both workers, then validated server_info, before every external flush/profile",
+    "formal_trial_flush": "After all warmup profiles, successful POST /flush_cache?timeout=30 on both workers before replay",
+    "calibration": {
+      "prefill_time_scale": 2.387698396256729,
+      "initial_tpot": 0.06731290138453584
+    },
+    "warmup_refits_calibration": false,
+    "fresh_worker_processes_each_policy": true,
+    "same_shared_kernel_cache_paths": true
+  },
+  "expected_differences": {
+    "worker_command": {
+      "only_changed_argument": "--schedule-policy",
+      "preble": "fcfs-mpq",
+      "baseline": "lpm",
+      "command_length": 31,
+      "changed_positions": [
+        23
+      ],
+      "all_other_argument_positions_equal": true
+    },
+    "global_route": {
+      "preble": "Preble global prefix/cost scheduler through frontend",
+      "baseline": "Replay assigns request index modulo2 directly to worker URLs"
+    },
+    "frontend": {
+      "preble": true,
+      "baseline": false,
+      "baseline_router_url_argument": "Retained but unused: replay chooses direct worker URL when policy is round-robin"
+    },
+    "worker_explicit_environment": {
+      "only_changed_key": "SGLANG_CACHE_DIR",
+      "reason": "Each run uses its own output-root/cache-workerN/sglang; same isolation policy, other explicit values match",
+      "preble": [
+        "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/cache-worker0/sglang",
+        "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/cache-worker1/sglang"
+      ],
+      "baseline": [
+        "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/cache-worker0/sglang",
+        "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/cache-worker1/sglang"
+      ]
+    },
+    "replay_environment": "Baseline omits unused PREBLE_OVERHEAD_OUTPUT; same interpreter/PYTHONPATH/LD_PRELOAD and shared measured replay script",
+    "management": "Separate output/session/trial names and runner adaptation diff; baseline does not require port18000; no frontend process/statistics/overhead artifacts",
+    "postrun_evidence": "Baseline collects and validates server-info-after outside the frontend condition; extra validation occurs after timed replay",
+    "input_manifest": "Only runner_adaptation_diff hash changes; every frozen workload/arrival/replay/warmup/calibration/observer hash is identical"
+  },
+  "conclusion": {
+    "protocol_review_passed": true,
+    "unexpected_algorithm_or_parameter_differences_found": false,
+    "scope": "Suitable for one matched-configuration end-to-end comparison of Preble+MPQ versus RR+LPM. This record validates plan/source comparability, not baseline completion or performance; final observed ready/server_info/flush/output evidence belongs in postrun audit."
+  },
+  "limitations": [
+    "One run per policy, fixed order: the stored Preble run precedes the new RR+LPM run. No repetition, randomized order, ABBA pairing, or confidence interval.",
+    "Shared compilation cache paths match, but cache contents, process-local initialization, CPU/GPU state, temperature, clocks, and external host activity may change with time. Same recorded settings and warmup do not prove identical service speed.",
+    "RR changes global routing, local scheduling and frontend traversal together; end-to-end differences cannot isolate each component contribution.",
+    "Routing/scheduling changes batch shapes and cache reuse. Temperature0 and fixed seeds do not guarantee identical generated text or EOS length; actual output/cache/worker counts must be reported.",
+    "Actual wake/send times can differ despite an identical planned arrival trace; shared measured replay records these clocks for retrospective assessment.",
+    "This independent record is a read-only runner/plan review before baseline completion; it does not assert all runtime or result checks have passed, and it does not claim paper-level reproduction or stable speedup."
+  ]
+}

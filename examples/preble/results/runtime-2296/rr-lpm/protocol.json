@@ -1,0 +1,669 @@
+{
+  "created_at": "2026-10-15T09:39:23.608613+00:00",
+  "host": "gpu-lg-cmc-h-h200-2296.host.h.pjlab.org.cn",
+  "container": "sglang_chenjiefei_ds4",
+  "source_commit": "091d70e1e73955a2cd4f26bc5e9e7c9acf519db5",
+  "model": "Qwen3-235B-A22B-Instruct-2507 BF16",
+  "deployment": "Two TP4 replicas on8xH200",
+  "policy": "RR+LPM",
+  "core_checks_passed": true,
+  "all_passed": true,
+  "checks_passed": 37,
+  "checks_total": 37,
+  "metrics": {
+    "requests": 393,
+    "successful": 393,
+    "duration_seconds": 329.1901261867024,
+    "completed_rps": 1.1938389664127027,
+    "output_tokens_per_second": 53.15469270811571,
+    "cached_token_fraction": 0.8104804521221439,
+    "workload_sha256": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+    "arrivals_sha256": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+    "ttft_observations": 393,
+    "ttft_mean": 42.3224715966537,
+    "ttft_p50": 21.57690818607807,
+    "ttft_p95": 147.95463419444854,
+    "ttft_p99": 177.33685450945046,
+    "latency_observations": 393,
+    "latency_mean": 76.5538616470848,
+    "latency_p50": 62.70446686912328,
+    "latency_p95": 171.76795994583517,
+    "latency_p99": 209.2220327032356
+  },
+  "worker_counts": {
+    "0": 197,
+    "1": 196
+  },
+  "output_token_counts": {
+    "14": 1,
+    "20": 1,
+    "22": 1,
+    "23": 1,
+    "25": 1,
+    "29": 1,
+    "32": 1,
+    "40": 2,
+    "43": 1,
+    "44": 25,
+    "45": 358
+  },
+  "routing": {
+    "method": "direct worker index modulo2",
+    "worker_counts": {
+      "0": 197,
+      "1": 196
+    },
+    "frontend": null
+  },
+  "protocol": {
+    "worker_ready_physical_lf_lines": [
+      92,
+      92
+    ],
+    "worker_ready_log_lines": [
+      "[2026-10-15 09:31:22] The server is fired up and ready to roll!",
+      "[2026-10-15 09:31:25] The server is fired up and ready to roll!"
+    ],
+    "gate_completed_at": "2026-10-15T09:31:26.036990+00:00",
+    "first_flush_started_utc": "2026-10-15T09:31:26.498637+00:00",
+    "profiles_per_worker": [
+      6,
+      6
+    ],
+    "last_external_profile_finished_utc": "2026-10-15T09:32:41.473334+00:00",
+    "formal_replay_process_start": "2026-10-15T09:32:43.453966+00:00",
+    "formal_client_clock_anchor_utc": "2026-10-15T09:32:48.214044+00:00",
+    "runner_completed_at": "2026-10-15T09:38:27.991107+00:00",
+    "exactly_one_formal_rr_replay": true,
+    "preble_rerun": false,
+    "routing": "Request index modulo2, directly to worker URLs; no frontend",
+    "warmup_refits_calibration": false
+  },
+  "capacity_adaptation": {
+    "historical_1727_tokens_per_worker": [
+      328506,
+      328506
+    ],
+    "expected_2296_tokens_per_worker": [
+      328505,
+      328505
+    ],
+    "difference_tokens_per_worker": [
+      -1,
+      -1
+    ],
+    "reason": "Actual hardware/runtime-profiled capacity; mem_fraction_static remains0.90 and memory policy is unchanged; frontend uses the same actual capacity",
+    "driver_only_idle_memory_mib_per_gpu": 4,
+    "driver_memory_explains_difference": "Not established"
+  },
+  "warmup_comparison": {
+    "preble_root": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated",
+    "rr_root": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated",
+    "profile_count": 12,
+    "all_input_output_hashes_and_counts_equal": true,
+    "samples": [
+      {
+        "worker": 0,
+        "prompt_tokens": 8192,
+        "intended_prefix": 0,
+        "same_input_sha256": true,
+        "same_output_sha256": true,
+        "preble_output_tokens": 45,
+        "rr_output_tokens": 45,
+        "preble_cached_tokens": 0,
+        "rr_cached_tokens": 0,
+        "preble_ttft_seconds": 2.874708589166403,
+        "rr_ttft_seconds": 2.8874642057344317,
+        "ttft_ratio_rr_over_preble": 1.00443718595203,
+        "preble_latency_seconds": 6.092021783348173,
+        "rr_latency_seconds": 5.93915740493685
+      },
+      {
+        "worker": 0,
+        "prompt_tokens": 16384,
+        "intended_prefix": 0,
+        "same_input_sha256": true,
+        "same_output_sha256": true,
+        "preble_output_tokens": 45,
+        "rr_output_tokens": 45,
+        "preble_cached_tokens": 0,
+        "rr_cached_tokens": 0,
+        "preble_ttft_seconds": 6.418965350836515,
+        "rr_ttft_seconds": 6.421246210578829,
+        "ttft_ratio_rr_over_preble": 1.000355331368476,
+        "preble_latency_seconds": 9.703666300047189,
+        "rr_latency_seconds": 9.512582215014845
+      },
+      {
+        "worker": 0,
+        "prompt_tokens": 32722,
+        "intended_prefix": 0,
+        "same_input_sha256": true,
+        "same_output_sha256": true,
+        "preble_output_tokens": 44,
+        "rr_output_tokens": 44,
+        "preble_cached_tokens": 0,
+        "rr_cached_tokens": 0,
+        "preble_ttft_seconds": 15.94919948419556,
+        "rr_ttft_seconds": 15.948688168078661,
+        "ttft_ratio_rr_over_preble": 0.9999679409541898,
+        "preble_latency_seconds": 18.980541561264545,
+        "rr_latency_seconds": 18.894858710002154
+      },
+      {
+        "worker": 0,
+        "prompt_tokens": 16896,
+        "intended_prefix": 16384,
+        "same_input_sha256": true,
+        "same_output_sha256": true,
+        "preble_output_tokens": 45,
+        "rr_output_tokens": 45,
+        "preble_cached_tokens": 16385,
+        "rr_cached_tokens": 16385,
+        "preble_ttft_seconds": 0.30417835572734475,
+        "rr_ttft_seconds": 0.3023688718676567,
+        "ttft_ratio_rr_over_preble": 0.9940512405777155,
+        "preble_latency_seconds": 3.607142698019743,
+        "rr_latency_seconds": 3.653350338805467
+      },
+      {
+        "worker": 0,
+        "prompt_tokens": 18432,
+        "intended_prefix": 16384,
+        "same_input_sha256": true,
+        "same_output_sha256": true,
+        "preble_output_tokens": 45,
+        "rr_output_tokens": 45,
+        "preble_cached_tokens": 16385,
+        "rr_cached_tokens": 16385,
+        "preble_ttft_seconds": 1.1409493973478675,
+        "rr_ttft_seconds": 1.0519533911719918,
+        "ttft_ratio_rr_over_preble": 0.9219982881074774,
+        "preble_latency_seconds": 4.403791528195143,
+        "rr_latency_seconds": 4.220570906996727
+      },
+      {
+        "worker": 0,
+        "prompt_tokens": 32722,
+        "intended_prefix": 30674,
+        "same_input_sha256": true,
+        "same_output_sha256": true,
+        "preble_output_tokens": 44,
+        "rr_output_tokens": 44,
+        "preble_cached_tokens": 30675,
+        "rr_cached_tokens": 30675,
+        "preble_ttft_seconds": 1.4194368128664792,
+        "rr_ttft_seconds": 1.4199941069819033,
+        "ttft_ratio_rr_over_preble": 1.0003926163604977,
+        "preble_latency_seconds": 4.444106288254261,
+        "rr_latency_seconds": 4.5298023712821305
+      },
+      {
+        "worker": 1,
+        "prompt_tokens": 8192,
+        "intended_prefix": 0,
+        "same_input_sha256": true,
+        "same_output_sha256": true,
+        "preble_output_tokens": 45,
+        "rr_output_tokens": 45,
+        "preble_cached_tokens": 0,
+        "rr_cached_tokens": 0,
+        "preble_ttft_seconds": 2.8621667958796024,
+        "rr_ttft_seconds": 2.873446976300329,
+        "ttft_ratio_rr_over_preble": 1.0039411331432415,
+        "preble_latency_seconds": 6.056529861874878,
+        "rr_latency_seconds": 6.050316289998591
+      },
+      {
+        "worker": 1,
+        "prompt_tokens": 16384,
+        "intended_prefix": 0,
+        "same_input_sha256": true,
+        "same_output_sha256": true,
+        "preble_output_tokens": 45,
+        "rr_output_tokens": 45,
+        "preble_cached_tokens": 0,
+        "rr_cached_tokens": 0,
+        "preble_ttft_seconds": 6.396430353168398,
+        "rr_ttft_seconds": 6.400514358654618,
+        "ttft_ratio_rr_over_preble": 1.0006384819752157,
+        "preble_latency_seconds": 9.672681231983006,
+        "rr_latency_seconds": 9.566958506591618
+      },
+      {
+        "worker": 1,
+        "prompt_tokens": 32722,
+        "intended_prefix": 0,
+        "same_input_sha256": true,
+        "same_output_sha256": true,
+        "preble_output_tokens": 44,
+        "rr_output_tokens": 44,
+        "preble_cached_tokens": 0,
+        "rr_cached_tokens": 0,
+        "preble_ttft_seconds": 15.915390025824308,
+        "rr_ttft_seconds": 15.89836579374969,
+        "ttft_ratio_rr_over_preble": 0.9989303289428035,
+        "preble_latency_seconds": 19.146684850100428,
+        "rr_latency_seconds": 19.21823462098837
+      },
+      {
+        "worker": 1,
+        "prompt_tokens": 16896,
+        "intended_prefix": 16384,
+        "same_input_sha256": true,
+        "same_output_sha256": true,
+        "preble_output_tokens": 45,
+        "rr_output_tokens": 45,
+        "preble_cached_tokens": 16385,
+        "rr_cached_tokens": 16385,
+        "preble_ttft_seconds": 0.3041597451083362,
+        "rr_ttft_seconds": 0.30021486105397344,
+        "ttft_ratio_rr_over_preble": 0.9870302230396805,
+        "preble_latency_seconds": 3.527349137235433,
+        "rr_latency_seconds": 3.3542591971345246
+      },
+      {
+        "worker": 1,
+        "prompt_tokens": 18432,
+        "intended_prefix": 16384,
+        "same_input_sha256": true,
+        "same_output_sha256": true,
+        "preble_output_tokens": 45,
+        "rr_output_tokens": 45,
+        "preble_cached_tokens": 16385,
+        "rr_cached_tokens": 16385,
+        "preble_ttft_seconds": 1.1029681069776416,
+        "rr_ttft_seconds": 1.0498709119856358,
+        "ttft_ratio_rr_over_preble": 0.9518597186481638,
+        "preble_latency_seconds": 4.343223105650395,
+        "rr_latency_seconds": 4.198405530303717
+      },
+      {
+        "worker": 1,
+        "prompt_tokens": 32722,
+        "intended_prefix": 30674,
+        "same_input_sha256": true,
+        "same_output_sha256": true,
+        "preble_output_tokens": 44,
+        "rr_output_tokens": 44,
+        "preble_cached_tokens": 30675,
+        "rr_cached_tokens": 30675,
+        "preble_ttft_seconds": 1.419444383122027,
+        "rr_ttft_seconds": 1.418735709041357,
+        "ttft_ratio_rr_over_preble": 0.9995007383951803,
+        "preble_latency_seconds": 4.519273493438959,
+        "rr_latency_seconds": 4.46066549513489
+      }
+    ],
+    "interpretation": "Isolated warmup cold-prefill speed is close in these runs; this supports comparability, but does not establish identical formal-batch performance or repeated statistical stability."
+  },
+  "one_run_ratios_rr_over_preble": {
+    "duration_seconds": 1.177682873172325,
+    "ttft_mean": 1.4948237654151835,
+    "ttft_p95": 1.842862421344086,
+    "latency_mean": 1.2261359568660901,
+    "latency_p95": 1.3601367807959368
+  },
+  "client_timings_seconds": {
+    "wake_lag": {
+      "count": 393,
+      "mean": 0.0011921845762765287,
+      "p50": 0.0010058656334877014,
+      "p95": 0.0023121437989175315,
+      "p99": 0.002955275531858204,
+      "max": 0.029473967850208282,
+      "sum": 0.46852853847667575
+    },
+    "semaphore_queue": {
+      "count": 393,
+      "mean": 9.887913388908667e-06,
+      "p50": 9.465031325817108e-06,
+      "p95": 1.4767795801162716e-05,
+      "p99": 1.8753726035356515e-05,
+      "max": 8.065206930041313e-05,
+      "sum": 0.0038859499618411064
+    },
+    "send_to_headers": {
+      "count": 393,
+      "mean": 0.005275815731250982,
+      "p50": 0.00423865532502532,
+      "p95": 0.006905780173838139,
+      "p99": 0.03408189447596654,
+      "max": 0.08348406106233597,
+      "sum": 2.073395582381636
+    }
+  },
+  "telemetry": {
+    "total_samples": 33,
+    "formal_samples": 22,
+    "formal_gpu_samples": 176,
+    "formal_sm_clock_mhz": {
+      "min": 1980.0,
+      "max": 1980.0
+    },
+    "formal_mem_clock_mhz": {
+      "min": 3201.0,
+      "max": 3201.0
+    },
+    "formal_power_draw_watts": {
+      "min": 123.61,
+      "max": 496.3
+    },
+    "formal_gpu_utilization_percent": {
+      "min": 0.0,
+      "max": 100.0
+    },
+    "formal_temperature_celsius": {
+      "min": 30.0,
+      "max": 48.0
+    },
+    "gpu_errors": 0,
+    "observer_ended": true
+  },
+  "worker_error_oom_abort_log_markers": [],
+  "normal_kv_retraction_events": [],
+  "normal_kv_retracted_request_occurrences": 0,
+  "cleanup": {
+    "replay_remaining": [],
+    "workers_remaining": [],
+    "final_gpu_snapshot": {
+      "utc": "2026-10-15T09:38:25.773883+00:00",
+      "gpus": "0, NVIDIA H200, 4, 143771, 0\n1, NVIDIA H200, 4, 143771, 0\n2, NVIDIA H200, 4, 143771, 0\n3, NVIDIA H200, 4, 143771, 0\n4, NVIDIA H200, 4, 143771, 0\n5, NVIDIA H200, 4, 143771, 0\n6, NVIDIA H200, 4, 143771, 0\n7, NVIDIA H200, 4, 143771, 0",
+      "compute_apps": ""
+    },
+    "observer_ended": true
+  },
+  "software": {
+    "runtime_python": "3.13.13 | packaged by conda-forge | (main, Apr  8 2026, 02:00:33) [GCC 14.3.0]",
+    "runtime_python_executable": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/env/bin/python",
+    "dependencies": {
+      "torch": "2.11.0+cu128",
+      "triton": "3.6.0",
+      "sglang-kernel": "0.4.4+cu129",
+      "transformers": "5.8.1",
+      "apache-tvm-ffi": "0.1.9",
+      "flashinfer-python": "0.6.12",
+      "flashinfer-cubin": "0.6.12",
+      "flashinfer-jit-cache": "0.6.12+cu128",
+      "nvidia-cutlass-dsl": "4.5.2",
+      "nvidia-nccl-cu12": "2.28.9"
+    },
+    "uvicorn": "0.44.0",
+    "nvidia_driver": "570.133.20"
+  },
+  "model_provenance": {
+    "model": "Qwen3-235B-A22B-Instruct-2507",
+    "model_path": "/models/qwen3-235b-agentic/snapshots/56e16a623ffb2855ca901a65166a9170e99df127",
+    "resolved_model_path": "/models/qwen3-235b-agentic/snapshots/56e16a623ffb2855ca901a65166a9170e99df127",
+    "snapshot": "56e16a623ffb2855ca901a65166a9170e99df127",
+    "model_type": "qwen3_moe",
+    "architectures": [
+      "Qwen3MoeForCausalLM"
+    ],
+    "config_dtype": "bfloat16",
+    "quantization_config": null,
+    "shards": 118,
+    "all_indexed_tensors_present": true,
+    "tensor_count": 36945,
+    "tensor_dtype_counts": {
+      "BF16": 36945
+    },
+    "element_counts_by_dtype": {
+      "BF16": 235093634560
+    },
+    "total_shard_bytes": 470191875040,
+    "all_shards_outside_development_tree": true,
+    "storage_mount": "/dev/nvme1n1[/models] /models xfs",
+    "config_sha256": "ad59a339665ee1c68cbff06ac72c9e59f5183ebfaf3698c98737e003a870e9e2",
+    "index_sha256": "821d06bca7fdd15b787dfd5ac169815ecaf0fa0b6952e143fff472df26072f03",
+    "index_metadata": {
+      "total_size": 470187269120
+    },
+    "verification_method": "Read all118safetensors headers and stat full shard sizes; verify every indexed tensor, BF16 dtype, offsets, and external resolved location. Header/config/index SHA256 only; full470GB payload hashes not computed. No GPU/model execution."
+  },
+  "model_config_and_index_unchanged_since_preble": true,
+  "source_file_sha256": {
+    "python/sglang/launch_preble.py": "5a17f0d773f07a6da2aa2d9872c1552fcb3f5a77c19e7c5c4b1544181b7e694d",
+    "python/sglang/srt/routing/preble.py": "492a90289a06c58e95c00cd621276562cf737ff511fcf116e81b9158a5f3541a",
+    "python/sglang/srt/managers/schedule_policy.py": "e6a5f01caf262bd774a0015479add06845d7bdd684022ddb45df788c8071fa38",
+    "python/sglang/srt/managers/schedule_batch.py": "16df0e46f3db73236b3655c5ebae324dd5b68601a3697cf11ec70316bb2b0de1",
+    "python/sglang/srt/managers/scheduler.py": "780f973a83535c53914d68f887c00ed750263df095fba6d9bf4f8db4d618373c",
+    "python/sglang/srt/observability/req_time_stats.py": "5487e638bbe6a83b990e8c72940586c20479e5c0317ee40bec68612826206f34",
+    "python/sglang/srt/managers/tokenizer_manager.py": "f2c2bc1da72eb5587a0663cd2bf24fc2d57c63c2d74dec218029b849bd6a0711",
+    "benchmark/preble/bench_loogle.py": "66963c75c29b37e054ab13dd9fc89baaf53f892b4322b3fa1f8446d6a2332983"
+  },
+  "input_sha256": {
+    "workload": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+    "arrivals": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+    "calibration": "b9a93683d8e47498af24030166e9ec17ab6ab5bc7493798e10c873057a066fc0",
+    "replay_original": "66963c75c29b37e054ab13dd9fc89baaf53f892b4322b3fa1f8446d6a2332983",
+    "replay": "89dd567fb80a6b112987c4978f01926bcef5b35450f633850f90c286e9ace350",
+    "frontend_wrapper": "e8c32ffb2c1046a799fc0eecfee3fa02aef0146b8d495e01f62923534c4defa7",
+    "observer": "9dc1911bcca09dc11e92c5ed8f02ad1a203d7485e09878cad5ee29d74610df86",
+    "runner_adaptation_diff": "b2ecc3b4a3659e555dd0ecab8454bac94ad56832aa44331e4beb2cf0bcf46ede",
+    "replay_measurement_diff": "149d23fb06550231d27c786f425bd8fb067cfb5a2bd8656e10a65b379d16aaa3",
+    "host_driver_preflight": "6e132d30ce0ea3f73f5885ae65b9e7ce26df9f607413f9013be559cfd56b8d35",
+    "warmup_workload": "b9fbf417c3f588e7b92dd134fff42eead61b7bf3aa10ff3c7020db2f96b74d68"
+  },
+  "runner_script_sha256": "442843021ae6337eb49d0d85ae272dc4235ce956e34635a14a66259c27f27187",
+  "evidence_paths": {
+    "run_manifest": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/run-manifest.json",
+    "postrun_audit": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/postrun-audit.json",
+    "requests": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/rr-lpm-r1.4-once/requests.jsonl",
+    "summary": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/rr-lpm-r1.4-once/summary.json",
+    "ready_evidence": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/sessions/01-lpm/workers-ready.json",
+    "warmup": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/sessions/01-lpm/warmup.json",
+    "warmup_comparison": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/warmup-comparison.json",
+    "telemetry": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/system-telemetry.jsonl",
+    "final_source_verification": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/final-source-verification.json",
+    "final_gpu_snapshot": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/final-gpu-snapshot.json",
+    "worker0_log": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/sessions/01-lpm/worker0.log",
+    "worker1_log": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/sessions/01-lpm/worker1.log",
+    "replay_log": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/rr-lpm-r1.4-once/replay.log",
+    "replay_cleanup": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/rr-lpm-r1.4-once/replay-stop.json",
+    "workers_cleanup": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/sessions/01-lpm/workers-stop.json",
+    "runner_source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/run_2296_rr_once.py",
+    "runner_adaptation_diff": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/2296-rr-single-runner.diff",
+    "postrun_validation_source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/verify_2296_rr_ready_gated.py",
+    "replay_measured_source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/bench_loogle_measured.py",
+    "observer_source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/observe_2296.py",
+    "model_provenance_reference": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/model-provenance.json",
+    "preble_summary_reference": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/compact-summary-v2.json",
+    "driver_host_preflight": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/2296-host-driver-preflight.json"
+  },
+  "evidence_sha256": {
+    "run_manifest": "0a084b7c543ef790c4862eb131ca8acc2f00ce687021ddb02de761f8fd2e6165",
+    "postrun_audit": "d866eca15fb01401f3aebef8dfe0414677000e2419dbac452ac1908772ce4c3b",
+    "requests": "e16e4254e541584afcb77e523fd8e60a2031bb357cc2f300d840709bb3e68958",
+    "summary": "22683ba54c4e6711fad9e720be6a02573da1232a27e5cad28b2712119bec91c2",
+    "ready_evidence": "8f6f078386d8c2b7d625c5ddc5c20fc1dcde3bf82e711ccb940f5af54b2b5084",
+    "warmup": "e8e1b547fef96e2f42aadd3f25cb0b076e26ab44c13cfcb6c3071a26dd5c0572",
+    "warmup_comparison": "be0bc4680db4de47d152aa1ced41c30137ceba7969019d622ce279cec56af718",
+    "telemetry": "b38ee28d5c40709245f7c022f2f52fbaeb67a336a85c9ba12c8775ade773f300",
+    "final_source_verification": "eda28bd196708f207445b7c2c07e31e3a4457032beb7a13de01c8bb179d28e54",
+    "final_gpu_snapshot": "024234027ce9e4ce481b4cf972953c7b62606b1360869c473d47b13cd33ab983",
+    "worker0_log": "23587a5bf4994ac43fb79642696e980e1543837a4e38ebd6da12028306fd51e3",
+    "worker1_log": "e8c8050852966c25b9e32d27589a6b13abadf5ad4b0fff68c089e6421cd35257",
+    "replay_log": "99f3566492c5c46d0d63bcd43b6f3277dded1259a696e4a25925f63de887d2bc",
+    "replay_cleanup": "05f13d72b05e273a5c23587f47cb718df01247c92421c6b891df171e269b0515",
+    "workers_cleanup": "986db911c707e4e3065508f12366dac085f832d28a556e1e1d64ad89263acee5",
+    "runner_source": "442843021ae6337eb49d0d85ae272dc4235ce956e34635a14a66259c27f27187",
+    "runner_adaptation_diff": "b2ecc3b4a3659e555dd0ecab8454bac94ad56832aa44331e4beb2cf0bcf46ede",
+    "postrun_validation_source": "0b31b8e7a4cb40c2d71905bdfcffc5bd5f99d465d0e8f0d1a93b8c33ae1765b8",
+    "replay_measured_source": "89dd567fb80a6b112987c4978f01926bcef5b35450f633850f90c286e9ace350",
+    "observer_source": "9dc1911bcca09dc11e92c5ed8f02ad1a203d7485e09878cad5ee29d74610df86",
+    "model_provenance_reference": "76ea4d4ebbbc8fa7c1e772b5e5ee5386d034fa855b7c3848b61ab995c296d3c3",
+    "preble_summary_reference": "bcb0442e41d11fb8e2413ae44b58a299192b3a727750cd5e3b13c11fd0a239cc",
+    "driver_host_preflight": "6e132d30ce0ea3f73f5885ae65b9e7ce26df9f607413f9013be559cfd56b8d35"
+  },
+  "limitations": [
+    "Each policy was run exactly once, in Preble-then-RR order; this comparison does not establish stable gains or statistical significance.",
+    "This compares Preble routing plus MPQ against RR routing plus LPM; it does not isolate routing alone.",
+    "Shared backend compilation caches were retained; full-ready six-profile warmup was performed for both runs; formal batch shapes and outputs may differ.",
+    "RR has no frontend; exact Preble select/finish overhead was lost at its atexit-only writer, as documented in the separate Preble evidence.",
+    "Capacity328505 per worker is1token below the historical1727 run; memory policy is unchanged.",
+    "Original model verification covers config/index/header hashes, complete118shards and sizes, allBF16 tensors; full470GB payload hashes were not computed."
+  ],
+  "worker_launches": [
+    {
+      "worker": 0,
+      "command": [
+        "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/env/bin/python",
+        "-B",
+        "-m",
+        "sglang.launch_server",
+        "--model-path",
+        "/models/qwen3-235b-agentic/snapshots/56e16a623ffb2855ca901a65166a9170e99df127",
+        "--tp-size",
+        "4",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "31000",
+        "--dtype",
+        "bfloat16",
+        "--mem-fraction-static",
+        "0.90",
+        "--context-length",
+        "32768",
+        "--max-running-requests",
+        "64",
+        "--chunked-prefill-size",
+        "512",
+        "--schedule-policy",
+        "lpm",
+        "--attention-backend",
+        "triton",
+        "--moe-runner-backend",
+        "flashinfer_cutlass",
+        "--disable-cuda-graph",
+        "--random-seed",
+        "659938497"
+      ],
+      "environment": {
+        "PYTHONPATH": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/sglang-2296-preble-reaudit-stage/python",
+        "PYTHONUNBUFFERED": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "CUDA_VISIBLE_DEVICES": "0,1,2,3",
+        "TVM_FFI_CACHE_DIR": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/cache-worker0-cutlass/tvm-ffi",
+        "TRITON_CACHE_DIR": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/cache-worker0-cutlass/triton",
+        "FLASHINFER_WORKSPACE_BASE": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/cache-worker0-cutlass/flashinfer",
+        "TORCH_EXTENSIONS_DIR": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/cache-worker0-cutlass/torch-extensions",
+        "SGLANG_CACHE_DIR": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/cache-worker0/sglang",
+        "LD_PRELOAD": "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6:/mnt/nvme1n1/ml_research/chenjiefei/preble-results/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2"
+      },
+      "expected_random_seed": 659938497,
+      "original_launch_sha256": "b9f88f86055ba3f81d53a8921ff25120b22016fef0624c77027c92ea4896df18",
+      "original_server_info_sha256": "b55b8051a7ba28737204fe946a019c49094cfea9a1eab00f8e6608f610a3c5b6",
+      "differences_from_original": {
+        "schedule_policy": "lpm",
+        "random_seed": "Explicitly preserve the originally resolved seed",
+        "SGLANG_CACHE_DIR": "New artifact directory; shared compilation cache paths unchanged",
+        "PYTHONPATH": "New isolated worktree pinned to the reviewed runtime commit"
+      }
+    },
+    {
+      "worker": 1,
+      "command": [
+        "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/env/bin/python",
+        "-B",
+        "-m",
+        "sglang.launch_server",
+        "--model-path",
+        "/models/qwen3-235b-agentic/snapshots/56e16a623ffb2855ca901a65166a9170e99df127",
+        "--tp-size",
+        "4",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "31001",
+        "--dtype",
+        "bfloat16",
+        "--mem-fraction-static",
+        "0.90",
+        "--context-length",
+        "32768",
+        "--max-running-requests",
+        "64",
+        "--chunked-prefill-size",
+        "512",
+        "--schedule-policy",
+        "lpm",
+        "--attention-backend",
+        "triton",
+        "--moe-runner-backend",
+        "flashinfer_cutlass",
+        "--disable-cuda-graph",
+        "--random-seed",
+        "556540270"
+      ],
+      "environment": {
+        "PYTHONPATH": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/sglang-2296-preble-reaudit-stage/python",
+        "PYTHONUNBUFFERED": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "CUDA_VISIBLE_DEVICES": "4,5,6,7",
+        "TVM_FFI_CACHE_DIR": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/cache-worker1-cutlass/tvm-ffi",
+        "TRITON_CACHE_DIR": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/cache-worker1-cutlass/triton",
+        "FLASHINFER_WORKSPACE_BASE": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/cache-worker1-cutlass/flashinfer",
+        "TORCH_EXTENSIONS_DIR": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/cache-worker1-cutlass/torch-extensions",
+        "SGLANG_CACHE_DIR": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/cache-worker1/sglang",
+        "LD_PRELOAD": "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6:/mnt/nvme1n1/ml_research/chenjiefei/preble-results/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2"
+      },
+      "expected_random_seed": 556540270,
+      "original_launch_sha256": "aad423aae3da61e13f9df3462acc3d00469f8daf375b9d25efb72fba06aeb767",
+      "original_server_info_sha256": "b139bacf58af37b67ed3aee65cba023e1176ab579694b94de84dcce4d0199f27",
+      "differences_from_original": {
+        "schedule_policy": "lpm",
+        "random_seed": "Explicitly preserve the originally resolved seed",
+        "SGLANG_CACHE_DIR": "New artifact directory; shared compilation cache paths unchanged",
+        "PYTHONPATH": "New isolated worktree pinned to the reviewed runtime commit"
+      }
+    }
+  ],
+  "derived_from": {
+    "compact_summary_sha256": "ada15509c18063c19e4ba84bbdca638dd12b8d922b30256ad472409e1a4d0dbe",
+    "run_manifest_sha256": "0a084b7c543ef790c4862eb131ca8acc2f00ce687021ddb02de761f8fd2e6165"
+  },
+  "public_artifacts": {
+    "rr-lpm/summary.json": {
+      "source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/rr-lpm-r1.4-once/summary.json",
+      "source_sha256": "22683ba54c4e6711fad9e720be6a02573da1232a27e5cad28b2712119bec91c2",
+      "archive_sha256": "22683ba54c4e6711fad9e720be6a02573da1232a27e5cad28b2712119bec91c2"
+    },
+    "rr-lpm/audit.json": {
+      "source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/postrun-audit.json",
+      "source_sha256": "d866eca15fb01401f3aebef8dfe0414677000e2419dbac452ac1908772ce4c3b",
+      "archive_sha256": "d866eca15fb01401f3aebef8dfe0414677000e2419dbac452ac1908772ce4c3b"
+    },
+    "rr-lpm/warmup.json": {
+      "source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/sessions/01-lpm/warmup.json",
+      "source_sha256": "e8e1b547fef96e2f42aadd3f25cb0b076e26ab44c13cfcb6c3071a26dd5c0572",
+      "archive_sha256": "e8e1b547fef96e2f42aadd3f25cb0b076e26ab44c13cfcb6c3071a26dd5c0572"
+    },
+    "warmup.json": {
+      "source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/sessions/01-mpq/warmup.json",
+      "source_sha256": "710c27611057b269069b1026805f3352b5f026a9af85fe597e59b05a6089f7fd",
+      "archive_sha256": "710c27611057b269069b1026805f3352b5f026a9af85fe597e59b05a6089f7fd"
+    },
+    "comparison.json": {
+      "source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/2296-comparison.json",
+      "source_sha256": "9288b387e0f0fb92509cb81be599ad0bd07f321d1c6c9c1bbf3a613ce1a4b7d5",
+      "archive_sha256": "9288b387e0f0fb92509cb81be599ad0bd07f321d1c6c9c1bbf3a613ce1a4b7d5"
+    },
+    "protocol-review.json": {
+      "source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/2296-pair-protocol-review.json",
+      "source_sha256": "5d8c24dd975d31a61df6a9bf7e6244257e509fe7340f2c15c4ee67ef12d24a6b",
+      "archive_sha256": "5d8c24dd975d31a61df6a9bf7e6244257e509fe7340f2c15c4ee67ef12d24a6b"
+    },
+    "rr-lpm/requests.jsonl.gz": {
+      "source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/rr-lpm-r1.4-once/requests.jsonl",
+      "source_sha256": "e16e4254e541584afcb77e523fd8e60a2031bb357cc2f300d840709bb3e68958",
+      "archive_sha256": "fb58200af77bed62dd921c3cf9a28c4df1a4c63d106ff568ad6f0fca76b6e108"
+    },
+    "rr-lpm/telemetry.jsonl.gz": {
+      "source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/system-telemetry.jsonl",
+      "source_sha256": "b38ee28d5c40709245f7c022f2f52fbaeb67a336a85c9ba12c8775ade773f300",
+      "archive_sha256": "c889339a501eaed22c742b137570f28a94cae9b0dd7fafbdb5a1cc64cd01de64"
+    }
+  }
+}

@@ -1,0 +1,403 @@
+{
+  "root": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated",
+  "checks": [
+    {
+      "name": "exactly_one_formal_trial",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "completed_without_failure",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "runtime_commit",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "393_successful_unique_requests",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "all_393_summary_observations",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "trace_sha256",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "explicit_1token_hardware_adaptation",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "frozen_model_calibration",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "final_source_hashes",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker0_six_profiles",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker0_first_flush_after_both_ready",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker0_actual_capacity_config",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker1_six_profiles",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker1_first_flush_after_both_ready",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker1_actual_capacity_config",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "physical_lf_ready_evidence",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "no_worker_error_oom_abort_log_markers",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "formal_after_all_profiles",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "formal_flush_after_both_ready",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "rr_routes_index_modulo2",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "rr_has_no_frontend",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "round_robin_replay_policy",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "same_runtime_sources_dependencies_as_preble",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "same_workload_arrival_replay_as_preble",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker0_only_command_change_is_lpm",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker0_only_env_change_is_cache_root",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker0_all_http_generate_requests_accounted",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker1_only_command_change_is_lpm",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker1_only_env_change_is_cache_root",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker1_all_http_generate_requests_accounted",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "client_clock_order",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "client_timing_matches_metrics",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "backend_ids_present",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "own_workers_cleaned",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "gpus_idle_after_run",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "telemetry_collected",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "observer_ended",
+      "pass": true,
+      "detail": null
+    }
+  ],
+  "all_passed": true,
+  "core_checks_passed": true,
+  "summary": {
+    "config": {
+      "workload": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reference-1727-20261015/artifact/reference-trace/loogle-24-393-reference.jsonl",
+      "prepare_only": false,
+      "dataset": null,
+      "model_path": null,
+      "patterns": 105,
+      "requests": 393,
+      "max_input_tokens": 4096,
+      "max_new_tokens": null,
+      "seed": 42,
+      "arrivals": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reference-1727-20261015/artifact/reference-trace/arrivals-r1.4.json",
+      "policy": "round-robin",
+      "router_url": "http://127.0.0.1:18000",
+      "worker_urls": [
+        "http://127.0.0.1:31000",
+        "http://127.0.0.1:31001"
+      ],
+      "rate": 1.4,
+      "concurrency": 256,
+      "output": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/rr-lpm-r1.4-once"
+    },
+    "measurement": {
+      "enhancement": "External replay copy adds planned/wake/semaphore/send/headers/first-token/finish timestamps in memory; request payload, arrival schedule and routing unchanged",
+      "clock": {
+        "start_perf_seconds": 3895091.969628434,
+        "wall_anchor_ns": 1792056768214043572,
+        "perf_anchor_seconds": 3895091.9696296
+      },
+      "original_replay_sha256": "66963c75c29b37e054ab13dd9fc89baaf53f892b4322b3fa1f8446d6a2332983"
+    },
+    "requests": 393,
+    "successful": 393,
+    "duration_seconds": 329.1901261867024,
+    "completed_rps": 1.1938389664127027,
+    "output_tokens_per_second": 53.15469270811571,
+    "cached_token_fraction": 0.8104804521221439,
+    "workload_sha256": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+    "arrivals_sha256": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+    "ttft_observations": 393,
+    "ttft_mean": 42.3224715966537,
+    "ttft_p50": 21.57690818607807,
+    "ttft_p95": 147.95463419444854,
+    "ttft_p99": 177.33685450945046,
+    "latency_observations": 393,
+    "latency_mean": 76.5538616470848,
+    "latency_p50": 62.70446686912328,
+    "latency_p95": 171.76795994583517,
+    "latency_p99": 209.2220327032356
+  },
+  "routing_stats": {
+    "method": "direct worker index modulo2",
+    "worker_counts": {
+      "0": 197,
+      "1": 196
+    },
+    "frontend": null
+  },
+  "ready_gate": {
+    "gate_completed_at": "2026-10-15T09:31:26.036990+00:00",
+    "gate_completed_wall_ns": 1792056686036997350,
+    "gate_completed_perf_seconds": 3895009.792583556,
+    "requirement": "Both complete physical LF ready markers and validated server_info precede every flush and external profile",
+    "workers": [
+      {
+        "log": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/sessions/01-lpm/worker0.log",
+        "physical_lf_line": 92,
+        "line": "[2026-10-15 09:31:22] The server is fired up and ready to roll!",
+        "completed_line_end_byte": 37915,
+        "log_sha256_when_observed": "4c504a0d36d3e6ec9d77191364b308b6687a276f3648a5c32c8f9c62f006271c",
+        "observed_at": "2026-10-15T09:31:23.023635+00:00",
+        "observed_wall_ns": 1792056683023647639,
+        "observed_perf_seconds": 3895006.779234503
+      },
+      {
+        "log": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/sessions/01-lpm/worker1.log",
+        "physical_lf_line": 92,
+        "line": "[2026-10-15 09:31:25] The server is fired up and ready to roll!",
+        "completed_line_end_byte": 37588,
+        "log_sha256_when_observed": "230d470fdc12813c9b39f9370f177571bfca47579484b627962808ea5a5b3a1d",
+        "observed_at": "2026-10-15T09:31:26.029306+00:00",
+        "observed_wall_ns": 1792056686029319620,
+        "observed_perf_seconds": 3895009.784906078
+      }
+    ]
+  },
+  "warmup_ttft": [
+    {
+      "worker": 0,
+      "prompt_tokens": 8192,
+      "intended_prefix": 0,
+      "ttft_seconds": 2.8874642057344317,
+      "latency_seconds": 5.93915740493685
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 16384,
+      "intended_prefix": 0,
+      "ttft_seconds": 6.421246210578829,
+      "latency_seconds": 9.512582215014845
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 32722,
+      "intended_prefix": 0,
+      "ttft_seconds": 15.948688168078661,
+      "latency_seconds": 18.894858710002154
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 16896,
+      "intended_prefix": 16384,
+      "ttft_seconds": 0.3023688718676567,
+      "latency_seconds": 3.653350338805467
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 18432,
+      "intended_prefix": 16384,
+      "ttft_seconds": 1.0519533911719918,
+      "latency_seconds": 4.220570906996727
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 32722,
+      "intended_prefix": 30674,
+      "ttft_seconds": 1.4199941069819033,
+      "latency_seconds": 4.5298023712821305
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 8192,
+      "intended_prefix": 0,
+      "ttft_seconds": 2.873446976300329,
+      "latency_seconds": 6.050316289998591
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 16384,
+      "intended_prefix": 0,
+      "ttft_seconds": 6.400514358654618,
+      "latency_seconds": 9.566958506591618
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 32722,
+      "intended_prefix": 0,
+      "ttft_seconds": 15.89836579374969,
+      "latency_seconds": 19.21823462098837
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 16896,
+      "intended_prefix": 16384,
+      "ttft_seconds": 0.30021486105397344,
+      "latency_seconds": 3.3542591971345246
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 18432,
+      "intended_prefix": 16384,
+      "ttft_seconds": 1.0498709119856358,
+      "latency_seconds": 4.198405530303717
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 32722,
+      "intended_prefix": 30674,
+      "ttft_seconds": 1.418735709041357,
+      "latency_seconds": 4.46066549513489
+    }
+  ],
+  "frontend_overhead_milliseconds": null,
+  "client_timings_seconds": {
+    "wake_lag": {
+      "count": 393,
+      "mean": 0.0011921845762765287,
+      "p50": 0.0010058656334877014,
+      "p95": 0.0023121437989175315,
+      "p99": 0.002955275531858204,
+      "max": 0.029473967850208282,
+      "sum": 0.46852853847667575
+    },
+    "semaphore_queue": {
+      "count": 393,
+      "mean": 9.887913388908667e-06,
+      "p50": 9.465031325817108e-06,
+      "p95": 1.4767795801162716e-05,
+      "p99": 1.8753726035356515e-05,
+      "max": 8.065206930041313e-05,
+      "sum": 0.0038859499618411064
+    },
+    "send_to_headers": {
+      "count": 393,
+      "mean": 0.005275815731250982,
+      "p50": 0.00423865532502532,
+      "p95": 0.006905780173838139,
+      "p99": 0.03408189447596654,
+      "max": 0.08348406106233597,
+      "sum": 2.073395582381636
+    }
+  },
+  "telemetry_samples": 33,
+  "worker_counts": {
+    "0": 197,
+    "1": 196
+  },
+  "validation_script_sha256": "0b31b8e7a4cb40c2d71905bdfcffc5bd5f99d465d0e8f0d1a93b8c33ae1765b8",
+  "worker_log_anomalies": [],
+  "normal_kv_retraction_events": [],
+  "normal_kv_retracted_requests": 0
+}

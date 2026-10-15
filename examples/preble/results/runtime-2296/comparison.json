@@ -1,0 +1,363 @@
+{
+  "runtime_commit": "091d70e1e73955a2cd4f26bc5e9e7c9acf519db5",
+  "host": "gpu-lg-cmc-h-h200-2296.host.h.pjlab.org.cn",
+  "formal_trials_per_policy": 1,
+  "total_successful_requests": 786,
+  "input_source_and_protocol_checks_passed": true,
+  "metrics": {
+    "preble_mpq": {
+      "requests": 393,
+      "successful": 393,
+      "duration_seconds": 279.5235743727535,
+      "completed_rps": 1.4059637040699906,
+      "output_tokens_per_second": 62.878417462427876,
+      "cached_token_fraction": 0.8353874657450341,
+      "workload_sha256": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+      "arrivals_sha256": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+      "ttft_observations": 393,
+      "ttft_mean": 28.31268312415326,
+      "ttft_p50": 18.764610182959586,
+      "ttft_p95": 80.28523045498876,
+      "ttft_p99": 96.8524278761073,
+      "latency_observations": 393,
+      "latency_mean": 62.43505152785065,
+      "latency_p50": 57.41149803670123,
+      "latency_p95": 126.28726931810378,
+      "latency_p99": 138.41974014464765,
+      "total_prompt_tokens": 8293688,
+      "total_cached_tokens": 6928443,
+      "total_output_tokens": 17576,
+      "worker_counts": {
+        "0": 184,
+        "1": 209
+      },
+      "output_length_counts": {
+        "45": 360,
+        "44": 25,
+        "43": 2,
+        "40": 3,
+        "22": 1,
+        "25": 1,
+        "23": 1
+      }
+    },
+    "rr_lpm": {
+      "requests": 393,
+      "successful": 393,
+      "duration_seconds": 329.1901261867024,
+      "completed_rps": 1.1938389664127027,
+      "output_tokens_per_second": 53.15469270811571,
+      "cached_token_fraction": 0.8104804521221439,
+      "workload_sha256": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+      "arrivals_sha256": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+      "ttft_observations": 393,
+      "ttft_mean": 42.3224715966537,
+      "ttft_p50": 21.57690818607807,
+      "ttft_p95": 147.95463419444854,
+      "ttft_p99": 177.33685450945046,
+      "latency_observations": 393,
+      "latency_mean": 76.5538616470848,
+      "latency_p50": 62.70446686912328,
+      "latency_p95": 171.76795994583517,
+      "latency_p99": 209.2220327032356,
+      "total_prompt_tokens": 8293688,
+      "total_cached_tokens": 6721872,
+      "total_output_tokens": 17498,
+      "worker_counts": {
+        "0": 197,
+        "1": 196
+      },
+      "output_length_counts": {
+        "45": 358,
+        "44": 25,
+        "43": 1,
+        "29": 1,
+        "40": 2,
+        "32": 1,
+        "22": 1,
+        "20": 1,
+        "25": 1,
+        "14": 1,
+        "23": 1
+      }
+    }
+  },
+  "relative_latency_reduction_preble_vs_rr": {
+    "ttft_mean": 0.3310248183522474,
+    "ttft_p50": 0.13033832182374705,
+    "ttft_p95": 0.4573658953495545,
+    "latency_mean": 0.18442975723840305,
+    "latency_p50": 0.08441135212056783,
+    "latency_p95": 0.26477982647097364
+  },
+  "expected_differences": [
+    {
+      "worker": 0,
+      "schedule_policy": [
+        "fcfs-mpq",
+        "lpm"
+      ],
+      "isolated_runtime_cache_directories": [
+        "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/cache-worker0/sglang",
+        "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/cache-worker0/sglang"
+      ]
+    },
+    {
+      "worker": 1,
+      "schedule_policy": [
+        "fcfs-mpq",
+        "lpm"
+      ],
+      "isolated_runtime_cache_directories": [
+        "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/cache-worker1/sglang",
+        "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/cache-worker1/sglang"
+      ]
+    },
+    {
+      "routing": [
+        "Preble frontend",
+        "index % 2 direct to workers"
+      ]
+    }
+  ],
+  "warmup_comparison": [
+    {
+      "worker": 0,
+      "prompt_tokens": 8192,
+      "intended_prefix": 0,
+      "preble_ttft": 2.874708589166403,
+      "rr_ttft": 2.8874642057344317,
+      "rr_over_preble_ttft": 1.00443718595203,
+      "output_tokens": [
+        45,
+        45
+      ],
+      "same_output_sha256": true
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 16384,
+      "intended_prefix": 0,
+      "preble_ttft": 6.418965350836515,
+      "rr_ttft": 6.421246210578829,
+      "rr_over_preble_ttft": 1.000355331368476,
+      "output_tokens": [
+        45,
+        45
+      ],
+      "same_output_sha256": true
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 32722,
+      "intended_prefix": 0,
+      "preble_ttft": 15.94919948419556,
+      "rr_ttft": 15.948688168078661,
+      "rr_over_preble_ttft": 0.9999679409541898,
+      "output_tokens": [
+        44,
+        44
+      ],
+      "same_output_sha256": true
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 16896,
+      "intended_prefix": 16384,
+      "preble_ttft": 0.30417835572734475,
+      "rr_ttft": 0.3023688718676567,
+      "rr_over_preble_ttft": 0.9940512405777155,
+      "output_tokens": [
+        45,
+        45
+      ],
+      "same_output_sha256": true
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 18432,
+      "intended_prefix": 16384,
+      "preble_ttft": 1.1409493973478675,
+      "rr_ttft": 1.0519533911719918,
+      "rr_over_preble_ttft": 0.9219982881074774,
+      "output_tokens": [
+        45,
+        45
+      ],
+      "same_output_sha256": true
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 32722,
+      "intended_prefix": 30674,
+      "preble_ttft": 1.4194368128664792,
+      "rr_ttft": 1.4199941069819033,
+      "rr_over_preble_ttft": 1.0003926163604977,
+      "output_tokens": [
+        44,
+        44
+      ],
+      "same_output_sha256": true
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 8192,
+      "intended_prefix": 0,
+      "preble_ttft": 2.8621667958796024,
+      "rr_ttft": 2.873446976300329,
+      "rr_over_preble_ttft": 1.0039411331432415,
+      "output_tokens": [
+        45,
+        45
+      ],
+      "same_output_sha256": true
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 16384,
+      "intended_prefix": 0,
+      "preble_ttft": 6.396430353168398,
+      "rr_ttft": 6.400514358654618,
+      "rr_over_preble_ttft": 1.0006384819752157,
+      "output_tokens": [
+        45,
+        45
+      ],
+      "same_output_sha256": true
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 32722,
+      "intended_prefix": 0,
+      "preble_ttft": 15.915390025824308,
+      "rr_ttft": 15.89836579374969,
+      "rr_over_preble_ttft": 0.9989303289428035,
+      "output_tokens": [
+        44,
+        44
+      ],
+      "same_output_sha256": true
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 16896,
+      "intended_prefix": 16384,
+      "preble_ttft": 0.3041597451083362,
+      "rr_ttft": 0.30021486105397344,
+      "rr_over_preble_ttft": 0.9870302230396805,
+      "output_tokens": [
+        45,
+        45
+      ],
+      "same_output_sha256": true
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 18432,
+      "intended_prefix": 16384,
+      "preble_ttft": 1.1029681069776416,
+      "rr_ttft": 1.0498709119856358,
+      "rr_over_preble_ttft": 0.9518597186481638,
+      "output_tokens": [
+        45,
+        45
+      ],
+      "same_output_sha256": true
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 32722,
+      "intended_prefix": 30674,
+      "preble_ttft": 1.419444383122027,
+      "rr_ttft": 1.418735709041357,
+      "rr_over_preble_ttft": 0.9995007383951803,
+      "output_tokens": [
+        44,
+        44
+      ],
+      "same_output_sha256": true
+    }
+  ],
+  "output_comparison": {
+    "matching_output_sha256": 273,
+    "different_output_sha256": 120,
+    "different_output_length": 4,
+    "different_length_requests": [
+      {
+        "index": 38,
+        "preble_tokens": 43,
+        "rr_tokens": 29,
+        "preble_finish_reason": {
+          "type": "stop",
+          "matched": 151643
+        },
+        "rr_finish_reason": {
+          "type": "stop",
+          "matched": 151643
+        }
+      },
+      {
+        "index": 113,
+        "preble_tokens": 45,
+        "rr_tokens": 32,
+        "preble_finish_reason": {
+          "type": "length",
+          "length": 45
+        },
+        "rr_finish_reason": {
+          "type": "stop",
+          "matched": 151643
+        }
+      },
+      {
+        "index": 159,
+        "preble_tokens": 45,
+        "rr_tokens": 20,
+        "preble_finish_reason": {
+          "type": "length",
+          "length": 45
+        },
+        "rr_finish_reason": {
+          "type": "stop",
+          "matched": 151643
+        }
+      },
+      {
+        "index": 256,
+        "preble_tokens": 40,
+        "rr_tokens": 14,
+        "preble_finish_reason": {
+          "type": "stop",
+          "matched": 151643
+        },
+        "rr_finish_reason": {
+          "type": "stop",
+          "matched": 151643
+        }
+      }
+    ]
+  },
+  "source_evidence_sha256": {
+    "preble_mpq": {
+      "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/run-manifest.json": "11a391ce76a009e2d7ee4cd197052533bfb2e9296de58ab7b47aa958965b102b",
+      "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/postrun-audit.json": "9488c94bc55c300168b0d01a08115ec1d19a901913d47d2a3142e1b4d3230768",
+      "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/sessions/01-mpq/warmup.json": "710c27611057b269069b1026805f3352b5f026a9af85fe597e59b05a6089f7fd",
+      "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/preble-mpq-r1.4-once/summary.json": "20b88a88a47747e25c6af88feb7ede252c903fa70708b898d63f468cedaeb5df",
+      "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/preble-mpq-r1.4-once/requests.jsonl": "b71fa1462960c50203b61cfb9eab4a445f2a2108bd2b75fd1881550c6706d57a"
+    },
+    "rr_lpm": {
+      "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/run-manifest.json": "0a084b7c543ef790c4862eb131ca8acc2f00ce687021ddb02de761f8fd2e6165",
+      "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/postrun-audit.json": "d866eca15fb01401f3aebef8dfe0414677000e2419dbac452ac1908772ce4c3b",
+      "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/sessions/01-lpm/warmup.json": "e8e1b547fef96e2f42aadd3f25cb0b076e26ab44c13cfcb6c3071a26dd5c0572",
+      "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/rr-lpm-r1.4-once/summary.json": "22683ba54c4e6711fad9e720be6a02573da1232a27e5cad28b2712119bec91c2",
+      "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-rr-lpm-ready-gated/rr-lpm-r1.4-once/requests.jsonl": "e16e4254e541584afcb77e523fd8e60a2031bb357cc2f300d840709bb3e68958"
+    }
+  },
+  "limitations": [
+    "One sequential trial per strategy; no confidence interval or general claim of stable speedup.",
+    "The comparison changes both global routing and local scheduling, and includes Preble frontend overhead.",
+    "Same input token IDs, sampling parameters and output budgets do not imply identical generated output under different batches.",
+    "Warmup profiles and telemetry help assess backend comparability; they do not establish identical hardware state throughout both trials.",
+    "No exact frontend select/finish timing was recovered for the Preble trial."
+  ]
+}

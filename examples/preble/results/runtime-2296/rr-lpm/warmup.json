@@ -1,0 +1,776 @@
+{
+  "utc": "2026-10-15T09:32:41.475850+00:00",
+  "policy": "lpm",
+  "method": "Original six profiles once per replica; no calibration fitting",
+  "original_calibration_sha256": "b9a93683d8e47498af24030166e9ec17ab6ab5bc7493798e10c873057a066fc0",
+  "frozen_prefill_time_scale": 2.387698396256729,
+  "frozen_initial_tpot": 0.06731290138453584,
+  "frozen_random_seeds": [
+    659938497,
+    556540270
+  ],
+  "samples": [
+    {
+      "phase_timing": {
+        "perf_started_seconds": 3895010.547947294,
+        "perf_finished_seconds": 3895016.487104699,
+        "wall_started_ns": 1792056686792361807,
+        "wall_finished_ns": 1792056692731522138
+      },
+      "prompt_tokens": 8192,
+      "cached_tokens": 0,
+      "output_tokens": 45,
+      "ttft": 2.8874642057344317,
+      "latency": 5.93915740493685,
+      "tpot": 0.06935666361823678,
+      "output_sha256": "69cd247e1233708a6fc6e9dfa980616ea6977d91c2d86705c67cd51dd361e463",
+      "input_ids_sha256": "5e832ab558c457b73bbac4f07d662e433077d6494d056291edb9f2c5d5b9541b",
+      "meta_info": {
+        "id": "3ad92c433f274810a96e252aa9cb060e",
+        "finish_reason": {
+          "type": "length",
+          "length": 45
+        },
+        "prompt_tokens": 8192,
+        "weight_version": "default",
+        "num_retractions": 0,
+        "reasoning_tokens": 0,
+        "completion_tokens": 45,
+        "cached_tokens": 0,
+        "cached_tokens_details": null,
+        "dp_rank": null,
+        "e2e_latency": 5.933579936623573
+      },
+      "worker": 0,
+      "intended_prefix": 0,
+      "max_new_tokens": 45,
+      "prime": null,
+      "flush": {
+        "url": "http://127.0.0.1:31000",
+        "utc": "2026-10-15T09:31:26.792311+00:00",
+        "status": 200,
+        "body": "Cache flushed.\nPlease check backend logs for more details. (When there are running or waiting requests, the operation will not be performed.)\n",
+        "wall_started_ns": 1792056686498637160,
+        "wall_finished_ns": 1792056686792321112,
+        "perf_started_seconds": 3895010.25422339,
+        "perf_finished_seconds": 3895010.547907312
+      }
+    },
+    {
+      "phase_timing": {
+        "perf_started_seconds": 3895016.556943564,
+        "perf_finished_seconds": 3895026.069525779,
+        "wall_started_ns": 1792056692801357873,
+        "wall_finished_ns": 1792056702313941720
+      },
+      "prompt_tokens": 16384,
+      "cached_tokens": 0,
+      "output_tokens": 45,
+      "ttft": 6.421246210578829,
+      "latency": 9.512582215014845,
+      "tpot": 0.07025763646445492,
+      "output_sha256": "08041d1c3aa1e85718249c47c32e55d1f7420e1a557cc95014299a7b072f7894",
+      "input_ids_sha256": "9ae0b02b1aff8ed446781a2cf4b577f3d14f0cce8921bf19d502e3af0d69a950",
+      "meta_info": {
+        "id": "99ccaeaec8134b2cb112d8ffcad19c1c",
+        "finish_reason": {
+          "type": "length",
+          "length": 45
+        },
+        "prompt_tokens": 16384,
+        "weight_version": "default",
+        "num_retractions": 0,
+        "reasoning_tokens": 0,
+        "completion_tokens": 45,
+        "cached_tokens": 0,
+        "cached_tokens_details": null,
+        "dp_rank": null,
+        "e2e_latency": 9.509324573911726
+      },
+      "worker": 0,
+      "intended_prefix": 0,
+      "max_new_tokens": 45,
+      "prime": null,
+      "flush": {
+        "url": "http://127.0.0.1:31000",
+        "utc": "2026-10-15T09:31:32.801285+00:00",
+        "status": 200,
+        "body": "Cache flushed.\nPlease check backend logs for more details. (When there are running or waiting requests, the operation will not be performed.)\n",
+        "wall_started_ns": 1792056692733467250,
+        "wall_finished_ns": 1792056692801291185,
+        "perf_started_seconds": 3895016.48905336,
+        "perf_finished_seconds": 3895016.556877204
+      }
+    },
+    {
+      "phase_timing": {
+        "perf_started_seconds": 3895026.074263285,
+        "perf_finished_seconds": 3895044.969121995,
+        "wall_started_ns": 1792056702318677634,
+        "wall_finished_ns": 1792056721213538356
+      },
+      "prompt_tokens": 32722,
+      "cached_tokens": 0,
+      "output_tokens": 44,
+      "ttft": 15.948688168078661,
+      "latency": 18.894858710002154,
+      "tpot": 0.06851559399822077,
+      "output_sha256": "9fac1ad573ce2c451c6e7835561b8cb9b13de0413f958b5f78e16f04ea612e0f",
+      "input_ids_sha256": "6d0fa8fdf46bd83ddc7eda87846c2f536544d38b609a4ca1c17d5697546ec754",
+      "meta_info": {
+        "id": "4df1c698cf0b4edc887f89d131d640ab",
+        "finish_reason": {
+          "type": "length",
+          "length": 44
+        },
+        "prompt_tokens": 32722,
+        "weight_version": "default",
+        "num_retractions": 0,
+        "reasoning_tokens": 0,
+        "completion_tokens": 44,
+        "cached_tokens": 0,
+        "cached_tokens_details": null,
+        "dp_rank": null,
+        "e2e_latency": 18.889895581640303
+      },
+      "worker": 0,
+      "intended_prefix": 0,
+      "max_new_tokens": 45,
+      "prime": null,
+      "flush": {
+        "url": "http://127.0.0.1:31000",
+        "utc": "2026-10-15T09:31:42.318549+00:00",
+        "status": 200,
+        "body": "Cache flushed.\nPlease check backend logs for more details. (When there are running or waiting requests, the operation will not be performed.)\n",
+        "wall_started_ns": 1792056702316198061,
+        "wall_finished_ns": 1792056702318555126,
+        "perf_started_seconds": 3895026.071784167,
+        "perf_finished_seconds": 3895026.074141096
+      }
+    },
+    {
+      "phase_timing": {
+        "perf_started_seconds": 3895051.403300416,
+        "perf_finished_seconds": 3895055.056650755,
+        "wall_started_ns": 1792056727647714875,
+        "wall_finished_ns": 1792056731301067306
+      },
+      "prompt_tokens": 16896,
+      "cached_tokens": 16385,
+      "output_tokens": 45,
+      "ttft": 0.3023688718676567,
+      "latency": 3.653350338805467,
+      "tpot": 0.07615866970313205,
+      "output_sha256": "5a2ec23a0f8ef998318d81eb35b6a1b84a8e537309e841baf3c44df138da575c",
+      "input_ids_sha256": "80485e47d1c89c45a5cc51dbe59945698e9c227e539d3479e28731859c157f01",
+      "meta_info": {
+        "id": "63f9412c3abc4f55972f27cb6238a6b0",
+        "finish_reason": {
+          "type": "length",
+          "length": 45
+        },
+        "prompt_tokens": 16896,
+        "weight_version": "default",
+        "num_retractions": 0,
+        "reasoning_tokens": 0,
+        "completion_tokens": 45,
+        "cached_tokens": 16385,
+        "cached_tokens_details": {
+          "device": 16385,
+          "host": 0
+        },
+        "dp_rank": null,
+        "e2e_latency": 3.6501191849820316
+      },
+      "worker": 0,
+      "intended_prefix": 16384,
+      "max_new_tokens": 45,
+      "prime": {
+        "phase_timing": {
+          "perf_started_seconds": 3895044.976031419,
+          "perf_finished_seconds": 3895051.402280139,
+          "wall_started_ns": 1792056721220445864,
+          "wall_finished_ns": 1792056727646696257
+        },
+        "prompt_tokens": 16384,
+        "cached_tokens": 0,
+        "output_tokens": 1,
+        "ttft": 6.426227218005806,
+        "latency": 6.426248719915748,
+        "tpot": null,
+        "output_sha256": "ea3d47caa38b0766a7331bb8df4102b2861a72be42ea8f2d3114379c8bbcc2f3",
+        "input_ids_sha256": "9ae0b02b1aff8ed446781a2cf4b577f3d14f0cce8921bf19d502e3af0d69a950",
+        "meta_info": {
+          "id": "de9901b8b2634818b2c53dd3105b7ef9",
+          "finish_reason": {
+            "type": "length",
+            "length": 1
+          },
+          "prompt_tokens": 16384,
+          "weight_version": "default",
+          "num_retractions": 0,
+          "reasoning_tokens": 0,
+          "completion_tokens": 1,
+          "cached_tokens": 0,
+          "cached_tokens_details": null,
+          "dp_rank": null,
+          "e2e_latency": 6.422860094811767,
+          "response_sent_to_client_ts": 1792056727.6463223
+        }
+      },
+      "flush": {
+        "url": "http://127.0.0.1:31000",
+        "utc": "2026-10-15T09:32:01.220365+00:00",
+        "status": 200,
+        "body": "Cache flushed.\nPlease check backend logs for more details. (When there are running or waiting requests, the operation will not be performed.)\n",
+        "wall_started_ns": 1792056721216639496,
+        "wall_finished_ns": 1792056721220370847,
+        "perf_started_seconds": 3895044.972225682,
+        "perf_finished_seconds": 3895044.975956825
+      }
+    },
+    {
+      "phase_timing": {
+        "perf_started_seconds": 3895061.897799737,
+        "perf_finished_seconds": 3895066.118370644,
+        "wall_started_ns": 1792056738142214104,
+        "wall_finished_ns": 1792056742362786629
+      },
+      "prompt_tokens": 18432,
+      "cached_tokens": 16385,
+      "output_tokens": 45,
+      "ttft": 1.0519533911719918,
+      "latency": 4.220570906996727,
+      "tpot": 0.07201403445056216,
+      "output_sha256": "8ca2f16515037956a9361fcb310d450862be08fd8a28bbc801d77eace249880b",
+      "input_ids_sha256": "dc418ab68de34f4888306ed12011334995145b0b9015946b0505e4f5dd17e004",
+      "meta_info": {
+        "id": "aad5f9d0a3574ad79ce7e73f5a498e67",
+        "finish_reason": {
+          "type": "length",
+          "length": 45
+        },
+        "prompt_tokens": 18432,
+        "weight_version": "default",
+        "num_retractions": 0,
+        "reasoning_tokens": 0,
+        "completion_tokens": 45,
+        "cached_tokens": 16385,
+        "cached_tokens_details": {
+          "device": 16385,
+          "host": 0
+        },
+        "dp_rank": null,
+        "e2e_latency": 4.216948329936713
+      },
+      "worker": 0,
+      "intended_prefix": 16384,
+      "max_new_tokens": 45,
+      "prime": {
+        "phase_timing": {
+          "perf_started_seconds": 3895055.412112553,
+          "perf_finished_seconds": 3895061.896910718,
+          "wall_started_ns": 1792056731656526864,
+          "wall_finished_ns": 1792056738141326452
+        },
+        "prompt_tokens": 16384,
+        "cached_tokens": 0,
+        "output_tokens": 1,
+        "ttft": 6.484784193802625,
+        "latency": 6.484798165038228,
+        "tpot": null,
+        "output_sha256": "ea3d47caa38b0766a7331bb8df4102b2861a72be42ea8f2d3114379c8bbcc2f3",
+        "input_ids_sha256": "9ae0b02b1aff8ed446781a2cf4b577f3d14f0cce8921bf19d502e3af0d69a950",
+        "meta_info": {
+          "id": "50c9a15b10004fd191514e66ba96bb7d",
+          "finish_reason": {
+            "type": "length",
+            "length": 1
+          },
+          "prompt_tokens": 16384,
+          "weight_version": "default",
+          "num_retractions": 0,
+          "reasoning_tokens": 0,
+          "completion_tokens": 1,
+          "cached_tokens": 0,
+          "cached_tokens_details": null,
+          "dp_rank": null,
+          "e2e_latency": 6.481881997082382,
+          "response_sent_to_client_ts": 1792056738.1410122
+        }
+      },
+      "flush": {
+        "url": "http://127.0.0.1:31000",
+        "utc": "2026-10-15T09:32:11.656465+00:00",
+        "status": 200,
+        "body": "Cache flushed.\nPlease check backend logs for more details. (When there are running or waiting requests, the operation will not be performed.)\n",
+        "wall_started_ns": 1792056731302814949,
+        "wall_finished_ns": 1792056731656472562,
+        "perf_started_seconds": 3895055.058401154,
+        "perf_finished_seconds": 3895055.412058514
+      }
+    },
+    {
+      "phase_timing": {
+        "perf_started_seconds": 3895080.699114829,
+        "perf_finished_seconds": 3895085.2289172,
+        "wall_started_ns": 1792056756943529256,
+        "wall_finished_ns": 1792056761473334201
+      },
+      "prompt_tokens": 32722,
+      "cached_tokens": 30675,
+      "output_tokens": 44,
+      "ttft": 1.4199941069819033,
+      "latency": 4.5298023712821305,
+      "tpot": 0.07232112242558668,
+      "output_sha256": "9fac1ad573ce2c451c6e7835561b8cb9b13de0413f958b5f78e16f04ea612e0f",
+      "input_ids_sha256": "6d0fa8fdf46bd83ddc7eda87846c2f536544d38b609a4ca1c17d5697546ec754",
+      "meta_info": {
+        "id": "cf3fba90a71e4257a776348c2b910dd4",
+        "finish_reason": {
+          "type": "length",
+          "length": 44
+        },
+        "prompt_tokens": 32722,
+        "weight_version": "default",
+        "num_retractions": 0,
+        "reasoning_tokens": 0,
+        "completion_tokens": 44,
+        "cached_tokens": 30675,
+        "cached_tokens_details": {
+          "device": 30675,
+          "host": 0
+        },
+        "dp_rank": null,
+        "e2e_latency": 4.524705468676984
+      },
+      "worker": 0,
+      "intended_prefix": 30674,
+      "max_new_tokens": 45,
+      "prime": {
+        "phase_timing": {
+          "perf_started_seconds": 3895066.123218849,
+          "perf_finished_seconds": 3895080.697521458,
+          "wall_started_ns": 1792056742367633476,
+          "wall_finished_ns": 1792056756941937392
+        },
+        "prompt_tokens": 30674,
+        "cached_tokens": 0,
+        "output_tokens": 1,
+        "ttft": 14.574283570982516,
+        "latency": 14.574302609078586,
+        "tpot": null,
+        "output_sha256": "c8a9fccfec2e5ae0abe96f213c2149cb3a41c31c64a746f83443fc6d4ead7cfc",
+        "input_ids_sha256": "e1dc7b0fe02962fcd00f52e44f74fd92d184dae2f9ff917e3c244551722d433b",
+        "meta_info": {
+          "id": "24a053522c7b40baab15a26c7bb5bad7",
+          "finish_reason": {
+            "type": "length",
+            "length": 1
+          },
+          "prompt_tokens": 30674,
+          "weight_version": "default",
+          "num_retractions": 0,
+          "reasoning_tokens": 0,
+          "completion_tokens": 1,
+          "cached_tokens": 0,
+          "cached_tokens_details": null,
+          "dp_rank": null,
+          "e2e_latency": 14.56886025890708,
+          "response_sent_to_client_ts": 1792056756.9414067
+        }
+      },
+      "flush": {
+        "url": "http://127.0.0.1:31000",
+        "utc": "2026-10-15T09:32:22.367513+00:00",
+        "status": 200,
+        "body": "Cache flushed.\nPlease check backend logs for more details. (When there are running or waiting requests, the operation will not be performed.)\n",
+        "wall_started_ns": 1792056742364514770,
+        "wall_finished_ns": 1792056742367518683,
+        "perf_started_seconds": 3895066.12010078,
+        "perf_finished_seconds": 3895066.123104706
+      }
+    },
+    {
+      "phase_timing": {
+        "perf_started_seconds": 3895010.549447776,
+        "perf_finished_seconds": 3895016.599764066,
+        "wall_started_ns": 1792056686793862117,
+        "wall_finished_ns": 1792056692844180687
+      },
+      "prompt_tokens": 8192,
+      "cached_tokens": 0,
+      "output_tokens": 45,
+      "ttft": 2.873446976300329,
+      "latency": 6.050316289998591,
+      "tpot": 0.07220157531132414,
+      "output_sha256": "69cd247e1233708a6fc6e9dfa980616ea6977d91c2d86705c67cd51dd361e463",
+      "input_ids_sha256": "5e832ab558c457b73bbac4f07d662e433077d6494d056291edb9f2c5d5b9541b",
+      "meta_info": {
+        "id": "88ebcf7c4c754178b51c0764f4b33c7e",
+        "finish_reason": {
+          "type": "length",
+          "length": 45
+        },
+        "prompt_tokens": 8192,
+        "weight_version": "default",
+        "num_retractions": 0,
+        "reasoning_tokens": 0,
+        "completion_tokens": 45,
+        "cached_tokens": 0,
+        "cached_tokens_details": null,
+        "dp_rank": null,
+        "e2e_latency": 6.045614605769515
+      },
+      "worker": 1,
+      "intended_prefix": 0,
+      "max_new_tokens": 45,
+      "prime": null,
+      "flush": {
+        "url": "http://127.0.0.1:31001",
+        "utc": "2026-10-15T09:31:26.793822+00:00",
+        "status": 200,
+        "body": "Cache flushed.\nPlease check backend logs for more details. (When there are running or waiting requests, the operation will not be performed.)\n",
+        "wall_started_ns": 1792056686498808689,
+        "wall_finished_ns": 1792056686793829725,
+        "perf_started_seconds": 3895010.254394711,
+        "perf_finished_seconds": 3895010.549415844
+      }
+    },
+    {
+      "phase_timing": {
+        "perf_started_seconds": 3895016.603593997,
+        "perf_finished_seconds": 3895026.170552504,
+        "wall_started_ns": 1792056692848008361,
+        "wall_finished_ns": 1792056702414968391
+      },
+      "prompt_tokens": 16384,
+      "cached_tokens": 0,
+      "output_tokens": 45,
+      "ttft": 6.400514358654618,
+      "latency": 9.566958506591618,
+      "tpot": 0.0719646397258409,
+      "output_sha256": "08041d1c3aa1e85718249c47c32e55d1f7420e1a557cc95014299a7b072f7894",
+      "input_ids_sha256": "9ae0b02b1aff8ed446781a2cf4b577f3d14f0cce8921bf19d502e3af0d69a950",
+      "meta_info": {
+        "id": "0ed65d7324974cd29bda6fb1580e7936",
+        "finish_reason": {
+          "type": "length",
+          "length": 45
+        },
+        "prompt_tokens": 16384,
+        "weight_version": "default",
+        "num_retractions": 0,
+        "reasoning_tokens": 0,
+        "completion_tokens": 45,
+        "cached_tokens": 0,
+        "cached_tokens_details": null,
+        "dp_rank": null,
+        "e2e_latency": 9.564013493712991
+      },
+      "worker": 1,
+      "intended_prefix": 0,
+      "max_new_tokens": 45,
+      "prime": null,
+      "flush": {
+        "url": "http://127.0.0.1:31001",
+        "utc": "2026-10-15T09:31:32.847951+00:00",
+        "status": 200,
+        "body": "Cache flushed.\nPlease check backend logs for more details. (When there are running or waiting requests, the operation will not be performed.)\n",
+        "wall_started_ns": 1792056692845484675,
+        "wall_finished_ns": 1792056692847955424,
+        "perf_started_seconds": 3895016.601070783,
+        "perf_finished_seconds": 3895016.603541374
+      }
+    },
+    {
+      "phase_timing": {
+        "perf_started_seconds": 3895026.17492453,
+        "perf_finished_seconds": 3895045.393159151,
+        "wall_started_ns": 1792056702419338935,
+        "wall_finished_ns": 1792056721637575017
+      },
+      "prompt_tokens": 32722,
+      "cached_tokens": 0,
+      "output_tokens": 44,
+      "ttft": 15.89836579374969,
+      "latency": 19.21823462098837,
+      "tpot": 0.07720625179624835,
+      "output_sha256": "9fac1ad573ce2c451c6e7835561b8cb9b13de0413f958b5f78e16f04ea612e0f",
+      "input_ids_sha256": "6d0fa8fdf46bd83ddc7eda87846c2f536544d38b609a4ca1c17d5697546ec754",
+      "meta_info": {
+        "id": "3b93d9f3d66744338bdda542e43de5b8",
+        "finish_reason": {
+          "type": "length",
+          "length": 44
+        },
+        "prompt_tokens": 32722,
+        "weight_version": "default",
+        "num_retractions": 0,
+        "reasoning_tokens": 0,
+        "completion_tokens": 44,
+        "cached_tokens": 0,
+        "cached_tokens_details": null,
+        "dp_rank": null,
+        "e2e_latency": 19.213326135650277
+      },
+      "worker": 1,
+      "intended_prefix": 0,
+      "max_new_tokens": 45,
+      "prime": null,
+      "flush": {
+        "url": "http://127.0.0.1:31001",
+        "utc": "2026-10-15T09:31:42.419226+00:00",
+        "status": 200,
+        "body": "Cache flushed.\nPlease check backend logs for more details. (When there are running or waiting requests, the operation will not be performed.)\n",
+        "wall_started_ns": 1792056702417029616,
+        "wall_finished_ns": 1792056702419231170,
+        "perf_started_seconds": 3895026.172615719,
+        "perf_finished_seconds": 3895026.17481714
+      }
+    },
+    {
+      "phase_timing": {
+        "perf_started_seconds": 3895051.789796989,
+        "perf_finished_seconds": 3895055.144056186,
+        "wall_started_ns": 1792056728034211512,
+        "wall_finished_ns": 1792056731388471885
+      },
+      "prompt_tokens": 16896,
+      "cached_tokens": 16385,
+      "output_tokens": 45,
+      "ttft": 0.30021486105397344,
+      "latency": 3.3542591971345246,
+      "tpot": 0.06941009854728525,
+      "output_sha256": "5a2ec23a0f8ef998318d81eb35b6a1b84a8e537309e841baf3c44df138da575c",
+      "input_ids_sha256": "80485e47d1c89c45a5cc51dbe59945698e9c227e539d3479e28731859c157f01",
+      "meta_info": {
+        "id": "b170b6c7e3b14527af66d56fa72c9843",
+        "finish_reason": {
+          "type": "length",
+          "length": 45
+        },
+        "prompt_tokens": 16896,
+        "weight_version": "default",
+        "num_retractions": 0,
+        "reasoning_tokens": 0,
+        "completion_tokens": 45,
+        "cached_tokens": 16385,
+        "cached_tokens_details": {
+          "device": 16385,
+          "host": 0
+        },
+        "dp_rank": null,
+        "e2e_latency": 3.3512841127812862
+      },
+      "worker": 1,
+      "intended_prefix": 16384,
+      "max_new_tokens": 45,
+      "prime": {
+        "phase_timing": {
+          "perf_started_seconds": 3895045.398419573,
+          "perf_finished_seconds": 3895051.788919969,
+          "wall_started_ns": 1792056721642834088,
+          "wall_finished_ns": 1792056728033335701
+        },
+        "prompt_tokens": 16384,
+        "cached_tokens": 0,
+        "output_tokens": 1,
+        "ttft": 6.390485478099436,
+        "latency": 6.390500396024436,
+        "tpot": null,
+        "output_sha256": "ea3d47caa38b0766a7331bb8df4102b2861a72be42ea8f2d3114379c8bbcc2f3",
+        "input_ids_sha256": "9ae0b02b1aff8ed446781a2cf4b577f3d14f0cce8921bf19d502e3af0d69a950",
+        "meta_info": {
+          "id": "07dacc02660a45f29575a6759c567700",
+          "finish_reason": {
+            "type": "length",
+            "length": 1
+          },
+          "prompt_tokens": 16384,
+          "weight_version": "default",
+          "num_retractions": 0,
+          "reasoning_tokens": 0,
+          "completion_tokens": 1,
+          "cached_tokens": 0,
+          "cached_tokens_details": null,
+          "dp_rank": null,
+          "e2e_latency": 6.38760075904429,
+          "response_sent_to_client_ts": 1792056728.0330732
+        }
+      },
+      "flush": {
+        "url": "http://127.0.0.1:31001",
+        "utc": "2026-10-15T09:32:01.642769+00:00",
+        "status": 200,
+        "body": "Cache flushed.\nPlease check backend logs for more details. (When there are running or waiting requests, the operation will not be performed.)\n",
+        "wall_started_ns": 1792056721640268587,
+        "wall_finished_ns": 1792056721642774403,
+        "perf_started_seconds": 3895045.395854738,
+        "perf_finished_seconds": 3895045.398360333
+      }
+    },
+    {
+      "phase_timing": {
+        "perf_started_seconds": 3895061.881076229,
+        "perf_finished_seconds": 3895066.079481759,
+        "wall_started_ns": 1792056738125490622,
+        "wall_finished_ns": 1792056742323898490
+      },
+      "prompt_tokens": 18432,
+      "cached_tokens": 16385,
+      "output_tokens": 45,
+      "ttft": 1.0498709119856358,
+      "latency": 4.198405530303717,
+      "tpot": 0.07155760496177456,
+      "output_sha256": "8ca2f16515037956a9361fcb310d450862be08fd8a28bbc801d77eace249880b",
+      "input_ids_sha256": "dc418ab68de34f4888306ed12011334995145b0b9015946b0505e4f5dd17e004",
+      "meta_info": {
+        "id": "99fe8d2cfa514e568fdec2344f49aef6",
+        "finish_reason": {
+          "type": "length",
+          "length": 45
+        },
+        "prompt_tokens": 18432,
+        "weight_version": "default",
+        "num_retractions": 0,
+        "reasoning_tokens": 0,
+        "completion_tokens": 45,
+        "cached_tokens": 16385,
+        "cached_tokens_details": {
+          "device": 16385,
+          "host": 0
+        },
+        "dp_rank": null,
+        "e2e_latency": 4.194988542236388
+      },
+      "worker": 1,
+      "intended_prefix": 16384,
+      "max_new_tokens": 45,
+      "prime": {
+        "phase_timing": {
+          "perf_started_seconds": 3895055.411003061,
+          "perf_finished_seconds": 3895061.880207614,
+          "wall_started_ns": 1792056731655417480,
+          "wall_finished_ns": 1792056738124624213
+        },
+        "prompt_tokens": 16384,
+        "cached_tokens": 0,
+        "output_tokens": 1,
+        "ttft": 6.469180401880294,
+        "latency": 6.469204552937299,
+        "tpot": null,
+        "output_sha256": "ea3d47caa38b0766a7331bb8df4102b2861a72be42ea8f2d3114379c8bbcc2f3",
+        "input_ids_sha256": "9ae0b02b1aff8ed446781a2cf4b577f3d14f0cce8921bf19d502e3af0d69a950",
+        "meta_info": {
+          "id": "16a78a1fc4f946978390fc0315c927c4",
+          "finish_reason": {
+            "type": "length",
+            "length": 1
+          },
+          "prompt_tokens": 16384,
+          "weight_version": "default",
+          "num_retractions": 0,
+          "reasoning_tokens": 0,
+          "completion_tokens": 1,
+          "cached_tokens": 0,
+          "cached_tokens_details": null,
+          "dp_rank": null,
+          "e2e_latency": 6.466001817956567,
+          "response_sent_to_client_ts": 1792056738.124245
+        }
+      },
+      "flush": {
+        "url": "http://127.0.0.1:31001",
+        "utc": "2026-10-15T09:32:11.655346+00:00",
+        "status": 200,
+        "body": "Cache flushed.\nPlease check backend logs for more details. (When there are running or waiting requests, the operation will not be performed.)\n",
+        "wall_started_ns": 1792056731390310707,
+        "wall_finished_ns": 1792056731655353800,
+        "perf_started_seconds": 3895055.145896796,
+        "perf_finished_seconds": 3895055.410939842
+      }
+    },
+    {
+      "phase_timing": {
+        "perf_started_seconds": 3895080.616298346,
+        "perf_finished_seconds": 3895085.076963841,
+        "wall_started_ns": 1792056756860712886,
+        "wall_finished_ns": 1792056761321380519
+      },
+      "prompt_tokens": 32722,
+      "cached_tokens": 30675,
+      "output_tokens": 44,
+      "ttft": 1.418735709041357,
+      "latency": 4.46066549513489,
+      "tpot": 0.07074255316496589,
+      "output_sha256": "9fac1ad573ce2c451c6e7835561b8cb9b13de0413f958b5f78e16f04ea612e0f",
+      "input_ids_sha256": "6d0fa8fdf46bd83ddc7eda87846c2f536544d38b609a4ca1c17d5697546ec754",
+      "meta_info": {
+        "id": "d4d8db79967742bca030edcb8418043e",
+        "finish_reason": {
+          "type": "length",
+          "length": 44
+        },
+        "prompt_tokens": 32722,
+        "weight_version": "default",
+        "num_retractions": 0,
+        "reasoning_tokens": 0,
+        "completion_tokens": 44,
+        "cached_tokens": 30675,
+        "cached_tokens_details": {
+          "device": 30675,
+          "host": 0
+        },
+        "dp_rank": null,
+        "e2e_latency": 4.454542006831616
+      },
+      "worker": 1,
+      "intended_prefix": 30674,
+      "max_new_tokens": 45,
+      "prime": {
+        "phase_timing": {
+          "perf_started_seconds": 3895066.085842875,
+          "perf_finished_seconds": 3895080.61473788,
+          "wall_started_ns": 1792056742330257287,
+          "wall_finished_ns": 1792056756859155251
+        },
+        "prompt_tokens": 30674,
+        "cached_tokens": 0,
+        "output_tokens": 1,
+        "ttft": 14.528862688224763,
+        "latency": 14.528895005118102,
+        "tpot": null,
+        "output_sha256": "c8a9fccfec2e5ae0abe96f213c2149cb3a41c31c64a746f83443fc6d4ead7cfc",
+        "input_ids_sha256": "e1dc7b0fe02962fcd00f52e44f74fd92d184dae2f9ff917e3c244551722d433b",
+        "meta_info": {
+          "id": "3bef1b4346c24c2c8a248eb64d398e11",
+          "finish_reason": {
+            "type": "length",
+            "length": 1
+          },
+          "prompt_tokens": 30674,
+          "weight_version": "default",
+          "num_retractions": 0,
+          "reasoning_tokens": 0,
+          "completion_tokens": 1,
+          "cached_tokens": 0,
+          "cached_tokens_details": null,
+          "dp_rank": null,
+          "e2e_latency": 14.523969962261617,
+          "response_sent_to_client_ts": 1792056756.8585863
+        }
+      },
+      "flush": {
+        "url": "http://127.0.0.1:31001",
+        "utc": "2026-10-15T09:32:22.330127+00:00",
+        "status": 200,
+        "body": "Cache flushed.\nPlease check backend logs for more details. (When there are running or waiting requests, the operation will not be performed.)\n",
+        "wall_started_ns": 1792056742326233564,
+        "wall_finished_ns": 1792056742330133172,
+        "perf_started_seconds": 3895066.081819691,
+        "perf_finished_seconds": 3895066.085719674
+      }
+    }
+  ]
+}
