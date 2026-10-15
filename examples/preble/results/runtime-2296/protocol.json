@@ -1,0 +1,526 @@
+{
+  "created_at": "2026-10-15T09:19:16.649259+00:00",
+  "host": "gpu-lg-cmc-h-h200-2296.host.h.pjlab.org.cn",
+  "container": "sglang_chenjiefei_ds4",
+  "source_commit": "091d70e1e73955a2cd4f26bc5e9e7c9acf519db5",
+  "model": "Qwen3-235B-A22B-Instruct-2507 BF16",
+  "deployment": "Two TP4 replicas on8xH200",
+  "core_checks_passed": true,
+  "checks_passed": 27,
+  "checks_total": 28,
+  "measurement_gaps": [
+    {
+      "name": "frontend_overhead_saved",
+      "pass": false,
+      "detail": "Missing: Uvicorn gracefully shuts down then re-raises SIGTERM; Python atexit-only writer is skipped. Exact select/finish timings are unavailable and are not reconstructed."
+    }
+  ],
+  "metrics": {
+    "requests": 393,
+    "successful": 393,
+    "duration_seconds": 279.5235743727535,
+    "completed_rps": 1.4059637040699906,
+    "output_tokens_per_second": 62.878417462427876,
+    "cached_token_fraction": 0.8353874657450341,
+    "workload_sha256": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+    "arrivals_sha256": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+    "ttft_observations": 393,
+    "ttft_mean": 28.31268312415326,
+    "ttft_p50": 18.764610182959586,
+    "ttft_p95": 80.28523045498876,
+    "ttft_p99": 96.8524278761073,
+    "latency_observations": 393,
+    "latency_mean": 62.43505152785065,
+    "latency_p50": 57.41149803670123,
+    "latency_p95": 126.28726931810378,
+    "latency_p99": 138.41974014464765
+  },
+  "worker_counts": {
+    "0": 184,
+    "1": 209
+  },
+  "output_token_counts": {
+    "22": 1,
+    "23": 1,
+    "25": 1,
+    "40": 3,
+    "43": 2,
+    "44": 25,
+    "45": 360
+  },
+  "routing_stats": {
+    "scheduled": 393,
+    "migrations": 95,
+    "replications": 0,
+    "nodes": 541,
+    "active": [
+      0,
+      0
+    ]
+  },
+  "protocol": {
+    "worker_ready_physical_lf_lines": [
+      92,
+      92
+    ],
+    "worker_ready_log_lines": [
+      "[2026-10-15 09:07:52] The server is fired up and ready to roll!",
+      "[2026-10-15 09:07:53] The server is fired up and ready to roll!"
+    ],
+    "gate_completed_at": "2026-10-15T09:07:54.147182+00:00",
+    "first_flush_started_utc": "2026-10-15T09:07:54.625484+00:00",
+    "profiles_per_worker": [
+      6,
+      6
+    ],
+    "last_external_profile_finished_utc": "2026-10-15T09:09:09.512798+00:00",
+    "formal_replay_process_start": "2026-10-15T09:09:17.480642+00:00",
+    "formal_client_clock_anchor_utc": "2026-10-15T09:09:21.489303+00:00",
+    "runner_completed_at": "2026-10-15T09:14:10.586941+00:00",
+    "fixed_prefill_time_scale": 2.387698396256729,
+    "fixed_initial_tpot": 0.06731290138453584,
+    "warmup_refits_calibration": false,
+    "exactly_one_formal_replay": true,
+    "rr_or_repeated_preble_run": false
+  },
+  "capacity_adaptation": {
+    "historical_1727_tokens_per_worker": [
+      328506,
+      328506
+    ],
+    "expected_2296_tokens_per_worker": [
+      328505,
+      328505
+    ],
+    "difference_tokens_per_worker": [
+      -1,
+      -1
+    ],
+    "reason": "Actual hardware/runtime-profiled capacity; mem_fraction_static remains0.90 and memory policy is unchanged; frontend uses the same actual capacity",
+    "driver_only_idle_memory_mib_per_gpu": 4,
+    "driver_memory_explains_difference": "Not established"
+  },
+  "warmup_ttft_seconds": [
+    {
+      "worker": 0,
+      "prompt_tokens": 8192,
+      "intended_prefix": 0,
+      "ttft_seconds": 2.874708589166403,
+      "latency_seconds": 6.092021783348173
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 16384,
+      "intended_prefix": 0,
+      "ttft_seconds": 6.418965350836515,
+      "latency_seconds": 9.703666300047189
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 32722,
+      "intended_prefix": 0,
+      "ttft_seconds": 15.94919948419556,
+      "latency_seconds": 18.980541561264545
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 16896,
+      "intended_prefix": 16384,
+      "ttft_seconds": 0.30417835572734475,
+      "latency_seconds": 3.607142698019743
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 18432,
+      "intended_prefix": 16384,
+      "ttft_seconds": 1.1409493973478675,
+      "latency_seconds": 4.403791528195143
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 32722,
+      "intended_prefix": 30674,
+      "ttft_seconds": 1.4194368128664792,
+      "latency_seconds": 4.444106288254261
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 8192,
+      "intended_prefix": 0,
+      "ttft_seconds": 2.8621667958796024,
+      "latency_seconds": 6.056529861874878
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 16384,
+      "intended_prefix": 0,
+      "ttft_seconds": 6.396430353168398,
+      "latency_seconds": 9.672681231983006
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 32722,
+      "intended_prefix": 0,
+      "ttft_seconds": 15.915390025824308,
+      "latency_seconds": 19.146684850100428
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 16896,
+      "intended_prefix": 16384,
+      "ttft_seconds": 0.3041597451083362,
+      "latency_seconds": 3.527349137235433
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 18432,
+      "intended_prefix": 16384,
+      "ttft_seconds": 1.1029681069776416,
+      "latency_seconds": 4.343223105650395
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 32722,
+      "intended_prefix": 30674,
+      "ttft_seconds": 1.419444383122027,
+      "latency_seconds": 4.519273493438959
+    }
+  ],
+  "client_timings_seconds": {
+    "wake_lag": {
+      "count": 393,
+      "mean": 0.0011680573722674646,
+      "p50": 0.0009576212614774704,
+      "p95": 0.0024471520446240898,
+      "p99": 0.0033146401867270455,
+      "max": 0.021670621819794178,
+      "sum": 0.4590465473011136
+    },
+    "semaphore_queue": {
+      "count": 393,
+      "mean": 8.402817643249915e-06,
+      "p50": 8.196104317903519e-06,
+      "p95": 1.1900346726179123e-05,
+      "p99": 1.6807951033115375e-05,
+      "max": 2.6043038815259933e-05,
+      "sum": 0.0033023073337972164
+    },
+    "send_to_headers": {
+      "count": 393,
+      "mean": 0.012254381493094161,
+      "p50": 0.010334919672459364,
+      "p95": 0.01925480980426073,
+      "p99": 0.05463669143617106,
+      "max": 0.14146470604464412,
+      "sum": 4.8159719267860055
+    }
+  },
+  "telemetry": {
+    "total_samples": 28,
+    "formal_samples": 18,
+    "formal_gpu_samples": 144,
+    "formal_sm_clock_mhz": {
+      "min": 1965.0,
+      "max": 1980.0
+    },
+    "formal_mem_clock_mhz": {
+      "min": 3201.0,
+      "max": 3201.0
+    },
+    "formal_power_draw_watts": {
+      "min": 126.18,
+      "max": 510.57
+    },
+    "formal_gpu_utilization_percent": {
+      "min": 0.0,
+      "max": 100.0
+    },
+    "formal_temperature_celsius": {
+      "min": 34.0,
+      "max": 48.0
+    },
+    "gpu_errors": 0,
+    "observer_ended": true
+  },
+  "worker_error_oom_retract_log_markers": [],
+  "cleanup": {
+    "frontend_remaining": [],
+    "replay_remaining": [],
+    "workers_remaining": [],
+    "final_gpu_snapshot": {
+      "utc": "2026-10-15T09:14:08.991249+00:00",
+      "gpus": "0, NVIDIA H200, 4, 143771, 0\n1, NVIDIA H200, 4, 143771, 0\n2, NVIDIA H200, 4, 143771, 0\n3, NVIDIA H200, 4, 143771, 0\n4, NVIDIA H200, 4, 143771, 0\n5, NVIDIA H200, 4, 143771, 0\n6, NVIDIA H200, 4, 143771, 0\n7, NVIDIA H200, 4, 143771, 0",
+      "compute_apps": ""
+    },
+    "observer_ended": true
+  },
+  "evidence_paths": {
+    "run_manifest": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/run-manifest.json",
+    "postrun_audit": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/postrun-audit.json",
+    "requests": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/preble-mpq-r1.4-once/requests.jsonl",
+    "summary": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/preble-mpq-r1.4-once/summary.json",
+    "routing_stats": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/preble-mpq-r1.4-once/routing-stats.json",
+    "ready_evidence": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/sessions/01-mpq/workers-ready.json",
+    "warmup": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/sessions/01-mpq/warmup.json",
+    "telemetry": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/system-telemetry.jsonl",
+    "overhead_missing_evidence": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/overhead-missing-evidence.json",
+    "final_source_verification": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/final-source-verification.json",
+    "final_gpu_snapshot": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/final-gpu-snapshot.json",
+    "failed_startup_attempt_status": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/2296-startup-attempt-status.json",
+    "model_provenance": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/model-provenance.json",
+    "worker0_log": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/sessions/01-mpq/worker0.log",
+    "worker1_log": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/sessions/01-mpq/worker1.log",
+    "frontend_log": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/preble-mpq-r1.4-once/frontend.log",
+    "replay_log": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/preble-mpq-r1.4-once/replay.log",
+    "frontend_cleanup": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/preble-mpq-r1.4-once/frontend-stop.json",
+    "replay_cleanup": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/preble-mpq-r1.4-once/replay-stop.json",
+    "workers_cleanup": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/sessions/01-mpq/workers-stop.json",
+    "driver_host_preflight": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/2296-host-driver-preflight.json",
+    "runner_source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/run_2296_once.py",
+    "runner_adaptation_diff": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/2296-single-runner.diff",
+    "replay_measured_source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/bench_loogle_measured.py",
+    "frontend_measured_source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/frontend_measured.py",
+    "observer_source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/observe_2296.py",
+    "postrun_validation_source": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/verify_2296_ready_gated.py"
+  },
+  "evidence_sha256": {
+    "run_manifest": "11a391ce76a009e2d7ee4cd197052533bfb2e9296de58ab7b47aa958965b102b",
+    "postrun_audit": "9488c94bc55c300168b0d01a08115ec1d19a901913d47d2a3142e1b4d3230768",
+    "requests": "b71fa1462960c50203b61cfb9eab4a445f2a2108bd2b75fd1881550c6706d57a",
+    "summary": "20b88a88a47747e25c6af88feb7ede252c903fa70708b898d63f468cedaeb5df",
+    "routing_stats": "f7966026228a5e698c13ace40e0a36bd84b3edae5d3bf2a75dede95a1f027e67",
+    "ready_evidence": "d63bf1e372726409dc8852e14480729169bac47d48b89b6ce015afc099812150",
+    "warmup": "710c27611057b269069b1026805f3352b5f026a9af85fe597e59b05a6089f7fd",
+    "telemetry": "68e8549c22f99a89f8f4b094eb2d1c524b3c6d6a690b34f606b4747261f905fe",
+    "overhead_missing_evidence": "a147e0cbc37463042091a4bccebe6b64c94529b25b22b0226e64c64e66633fc9",
+    "final_source_verification": "ddf30e9234cb83f6e9ab3c3c207d3c302ac26d277cf8edbfff8c377419506e0a",
+    "final_gpu_snapshot": "715602d0d7395ee7e541999c869d1cb2e030f4f5597dd1101f1f4284b8ed691a",
+    "failed_startup_attempt_status": "2638b0e4a9890def250dd2c1850d78e124fc40cb474d856a5f64081bdab46235",
+    "model_provenance": "76ea4d4ebbbc8fa7c1e772b5e5ee5386d034fa855b7c3848b61ab995c296d3c3",
+    "worker0_log": "750f9af448e2b062f8cc274f9008f788ee1773cbbd5235c9a1de73d64905f97d",
+    "worker1_log": "cf94114c2d61c39d48d9d261b215abf23d98bac478688abf3de4c1962231fd49",
+    "frontend_log": "cb236b59351e72a20cbb45fb1c256fbcb9ce7e1e2bbca05737df49718eb0bdd4",
+    "replay_log": "3617b342b645f786baa1ee3515fff649bdba3dacb20f06fb8f85d65050933723",
+    "frontend_cleanup": "8b6c3d1c246c5cd52f59a857033b60e336711933d1b4338e6444a24fcb46437f",
+    "replay_cleanup": "1cfd0a9d347c55dd480b6b078f3c6e476e78867b29c433d0b31e1783872b1401",
+    "workers_cleanup": "6c08a611327846f2a6b75e400b8e1159a9cdd2d024b7c1e734fbd2550649b0c6",
+    "driver_host_preflight": "6e132d30ce0ea3f73f5885ae65b9e7ce26df9f607413f9013be559cfd56b8d35",
+    "runner_source": "cabce6bd9cad37544a54c8ce9e372bcb8c9e3d28bad31d8bcccc2cf7b1214dbc",
+    "runner_adaptation_diff": "6cf6746ab1c8b9ca69d85920a20fc9034829fed0267448b346f7bf376a2f698a",
+    "replay_measured_source": "89dd567fb80a6b112987c4978f01926bcef5b35450f633850f90c286e9ace350",
+    "frontend_measured_source": "e8c32ffb2c1046a799fc0eecfee3fa02aef0146b8d495e01f62923534c4defa7",
+    "observer_source": "9dc1911bcca09dc11e92c5ed8f02ad1a203d7485e09878cad5ee29d74610df86",
+    "postrun_validation_source": "18c45c152c32ea390f1ac3b5486933f50728d1c8fb2b487b2955789011804397"
+  },
+  "limitations": [
+    "Exactly one formal Preble+MPQ run; no paired RR, no repetition, and no claim of paper performance reproduction or measured speedup.",
+    "Exact select/finish CPU and wall overhead is unavailable: the atexit-only writer was skipped by Uvicorn0.44.0 re-raising SIGTERM; no fabricated timings and no rerun.",
+    "Current complete-ready protocol removes this run startup overlap; slow warmup resembles historical slow group, which does not establish the cause of historical variation.",
+    "Actual capacity328505 per worker is1token below1727; unchanged mem_fraction_static0.90; driver-only4MiB is observed but not proven causal."
+  ],
+  "supersedes_path": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/compact-summary.json",
+  "software": {
+    "runtime_python": "3.13.13 | packaged by conda-forge | (main, Apr  8 2026, 02:00:33) [GCC 14.3.0]",
+    "runtime_python_executable": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/env/bin/python",
+    "dependencies": {
+      "torch": "2.11.0+cu128",
+      "triton": "3.6.0",
+      "sglang-kernel": "0.4.4+cu129",
+      "transformers": "5.8.1",
+      "apache-tvm-ffi": "0.1.9",
+      "flashinfer-python": "0.6.12",
+      "flashinfer-cubin": "0.6.12",
+      "flashinfer-jit-cache": "0.6.12+cu128",
+      "nvidia-cutlass-dsl": "4.5.2",
+      "nvidia-nccl-cu12": "2.28.9"
+    },
+    "uvicorn": "0.44.0",
+    "nvidia_driver": "570.133.20"
+  },
+  "model_provenance": {
+    "model": "Qwen3-235B-A22B-Instruct-2507",
+    "model_path": "/models/qwen3-235b-agentic/snapshots/56e16a623ffb2855ca901a65166a9170e99df127",
+    "resolved_model_path": "/models/qwen3-235b-agentic/snapshots/56e16a623ffb2855ca901a65166a9170e99df127",
+    "snapshot": "56e16a623ffb2855ca901a65166a9170e99df127",
+    "model_type": "qwen3_moe",
+    "architectures": [
+      "Qwen3MoeForCausalLM"
+    ],
+    "config_dtype": "bfloat16",
+    "quantization_config": null,
+    "shards": 118,
+    "all_indexed_tensors_present": true,
+    "tensor_count": 36945,
+    "tensor_dtype_counts": {
+      "BF16": 36945
+    },
+    "element_counts_by_dtype": {
+      "BF16": 235093634560
+    },
+    "total_shard_bytes": 470191875040,
+    "all_shards_outside_development_tree": true,
+    "storage_mount": "/dev/nvme1n1[/models] /models xfs",
+    "config_sha256": "ad59a339665ee1c68cbff06ac72c9e59f5183ebfaf3698c98737e003a870e9e2",
+    "index_sha256": "821d06bca7fdd15b787dfd5ac169815ecaf0fa0b6952e143fff472df26072f03",
+    "index_metadata": {
+      "total_size": 470187269120
+    },
+    "verification_method": "Read all118safetensors headers and stat full shard sizes; verify every indexed tensor, BF16 dtype, offsets, and external resolved location. Header/config/index SHA256 only; full470GB payload hashes not computed. No GPU/model execution."
+  },
+  "source_file_sha256": {
+    "python/sglang/launch_preble.py": "5a17f0d773f07a6da2aa2d9872c1552fcb3f5a77c19e7c5c4b1544181b7e694d",
+    "python/sglang/srt/routing/preble.py": "492a90289a06c58e95c00cd621276562cf737ff511fcf116e81b9158a5f3541a",
+    "python/sglang/srt/managers/schedule_policy.py": "e6a5f01caf262bd774a0015479add06845d7bdd684022ddb45df788c8071fa38",
+    "python/sglang/srt/managers/schedule_batch.py": "16df0e46f3db73236b3655c5ebae324dd5b68601a3697cf11ec70316bb2b0de1",
+    "python/sglang/srt/managers/scheduler.py": "780f973a83535c53914d68f887c00ed750263df095fba6d9bf4f8db4d618373c",
+    "python/sglang/srt/observability/req_time_stats.py": "5487e638bbe6a83b990e8c72940586c20479e5c0317ee40bec68612826206f34",
+    "python/sglang/srt/managers/tokenizer_manager.py": "f2c2bc1da72eb5587a0663cd2bf24fc2d57c63c2d74dec218029b849bd6a0711",
+    "benchmark/preble/bench_loogle.py": "66963c75c29b37e054ab13dd9fc89baaf53f892b4322b3fa1f8446d6a2332983"
+  },
+  "input_sha256": {
+    "workload": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+    "arrivals": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+    "calibration": "b9a93683d8e47498af24030166e9ec17ab6ab5bc7493798e10c873057a066fc0",
+    "replay_original": "66963c75c29b37e054ab13dd9fc89baaf53f892b4322b3fa1f8446d6a2332983",
+    "replay": "89dd567fb80a6b112987c4978f01926bcef5b35450f633850f90c286e9ace350",
+    "frontend_wrapper": "e8c32ffb2c1046a799fc0eecfee3fa02aef0146b8d495e01f62923534c4defa7",
+    "observer": "9dc1911bcca09dc11e92c5ed8f02ad1a203d7485e09878cad5ee29d74610df86",
+    "runner_adaptation_diff": "6cf6746ab1c8b9ca69d85920a20fc9034829fed0267448b346f7bf376a2f698a",
+    "replay_measurement_diff": "149d23fb06550231d27c786f425bd8fb067cfb5a2bd8656e10a65b379d16aaa3",
+    "host_driver_preflight": "6e132d30ce0ea3f73f5885ae65b9e7ce26df9f607413f9013be559cfd56b8d35",
+    "warmup_workload": "b9fbf417c3f588e7b92dd134fff42eead61b7bf3aa10ff3c7020db2f96b74d68"
+  },
+  "runner_script_sha256": "cabce6bd9cad37544a54c8ce9e372bcb8c9e3d28bad31d8bcccc2cf7b1214dbc",
+  "worker_launches": [
+    {
+      "worker": 0,
+      "command": [
+        "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/env/bin/python",
+        "-B",
+        "-m",
+        "sglang.launch_server",
+        "--model-path",
+        "/models/qwen3-235b-agentic/snapshots/56e16a623ffb2855ca901a65166a9170e99df127",
+        "--tp-size",
+        "4",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "31000",
+        "--dtype",
+        "bfloat16",
+        "--mem-fraction-static",
+        "0.90",
+        "--context-length",
+        "32768",
+        "--max-running-requests",
+        "64",
+        "--chunked-prefill-size",
+        "512",
+        "--schedule-policy",
+        "fcfs-mpq",
+        "--attention-backend",
+        "triton",
+        "--moe-runner-backend",
+        "flashinfer_cutlass",
+        "--disable-cuda-graph",
+        "--random-seed",
+        "659938497"
+      ],
+      "environment": {
+        "PYTHONPATH": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/sglang-2296-preble-reaudit-stage/python",
+        "PYTHONUNBUFFERED": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "CUDA_VISIBLE_DEVICES": "0,1,2,3",
+        "TVM_FFI_CACHE_DIR": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/cache-worker0-cutlass/tvm-ffi",
+        "TRITON_CACHE_DIR": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/cache-worker0-cutlass/triton",
+        "FLASHINFER_WORKSPACE_BASE": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/cache-worker0-cutlass/flashinfer",
+        "TORCH_EXTENSIONS_DIR": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/cache-worker0-cutlass/torch-extensions",
+        "SGLANG_CACHE_DIR": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/cache-worker0/sglang",
+        "LD_PRELOAD": "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6:/mnt/nvme1n1/ml_research/chenjiefei/preble-results/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2"
+      }
+    },
+    {
+      "worker": 1,
+      "command": [
+        "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/env/bin/python",
+        "-B",
+        "-m",
+        "sglang.launch_server",
+        "--model-path",
+        "/models/qwen3-235b-agentic/snapshots/56e16a623ffb2855ca901a65166a9170e99df127",
+        "--tp-size",
+        "4",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "31001",
+        "--dtype",
+        "bfloat16",
+        "--mem-fraction-static",
+        "0.90",
+        "--context-length",
+        "32768",
+        "--max-running-requests",
+        "64",
+        "--chunked-prefill-size",
+        "512",
+        "--schedule-policy",
+        "fcfs-mpq",
+        "--attention-backend",
+        "triton",
+        "--moe-runner-backend",
+        "flashinfer_cutlass",
+        "--disable-cuda-graph",
+        "--random-seed",
+        "556540270"
+      ],
+      "environment": {
+        "PYTHONPATH": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/sglang-2296-preble-reaudit-stage/python",
+        "PYTHONUNBUFFERED": "1",
+        "PYTHONDONTWRITEBYTECODE": "1",
+        "CUDA_VISIBLE_DEVICES": "4,5,6,7",
+        "TVM_FFI_CACHE_DIR": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/cache-worker1-cutlass/tvm-ffi",
+        "TRITON_CACHE_DIR": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/cache-worker1-cutlass/triton",
+        "FLASHINFER_WORKSPACE_BASE": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/cache-worker1-cutlass/flashinfer",
+        "TORCH_EXTENSIONS_DIR": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/cache-worker1-cutlass/torch-extensions",
+        "SGLANG_CACHE_DIR": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/cache-worker1/sglang",
+        "LD_PRELOAD": "/opt/conda/envs/cqx_sglang/lib/libstdc++.so.6:/mnt/nvme1n1/ml_research/chenjiefei/preble-results/env/lib/python3.13/site-packages/nvidia/nccl/lib/libnccl.so.2"
+      }
+    }
+  ],
+  "effective_workload": {
+    "source": "Imported JSONL; replay generation defaults are unused",
+    "documents": 24,
+    "requests": 393,
+    "min_prompt_tokens": 13559,
+    "max_prompt_tokens": 32722,
+    "max_new_tokens": 45,
+    "temperature": 0,
+    "last_arrival_seconds": 256.4685589457491,
+    "nominal_rate": 1.4,
+    "concurrency": 256
+  },
+  "public_artifacts": {
+    "audit.json": {
+      "sha256": "9488c94bc55c300168b0d01a08115ec1d19a901913d47d2a3142e1b4d3230768",
+      "bytes": 10055
+    },
+    "model-provenance.json": {
+      "sha256": "76ea4d4ebbbc8fa7c1e772b5e5ee5386d034fa855b7c3848b61ab995c296d3c3",
+      "bytes": 52448
+    },
+    "requests.jsonl.gz": {
+      "sha256": "8e5a0c7bc6a93b90609be33c8be12c97bcd871428be831ab0853242a2c7d2d0b",
+      "bytes": 69763
+    },
+    "summary.json": {
+      "sha256": "20b88a88a47747e25c6af88feb7ede252c903fa70708b898d63f468cedaeb5df",
+      "bytes": 2028
+    },
+    "telemetry.jsonl.gz": {
+      "sha256": "dd7baba4c1185335d106211669602c3bfc76ba65ce8c5b42028dd4915e1049a5",
+      "bytes": 4948
+    }
+  }
+}

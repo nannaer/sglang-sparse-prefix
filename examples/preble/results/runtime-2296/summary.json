@@ -1,0 +1,50 @@
+{
+  "config": {
+    "workload": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reference-1727-20261015/artifact/reference-trace/loogle-24-393-reference.jsonl",
+    "prepare_only": false,
+    "dataset": null,
+    "model_path": null,
+    "patterns": 105,
+    "requests": 393,
+    "max_input_tokens": 4096,
+    "max_new_tokens": null,
+    "seed": 42,
+    "arrivals": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reference-1727-20261015/artifact/reference-trace/arrivals-r1.4.json",
+    "policy": "preble",
+    "router_url": "http://127.0.0.1:18000",
+    "worker_urls": [
+      "http://127.0.0.1:31000",
+      "http://127.0.0.1:31001"
+    ],
+    "rate": 1.4,
+    "concurrency": 256,
+    "output": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/preble-mpq-r1.4-once"
+  },
+  "measurement": {
+    "enhancement": "External replay copy adds planned/wake/semaphore/send/headers/first-token/finish timestamps in memory; request payload, arrival schedule and routing unchanged",
+    "clock": {
+      "start_perf_seconds": 3893685.244887507,
+      "wall_anchor_ns": 1792055361489302654,
+      "perf_anchor_seconds": 3893685.244888737
+    },
+    "original_replay_sha256": "66963c75c29b37e054ab13dd9fc89baaf53f892b4322b3fa1f8446d6a2332983"
+  },
+  "requests": 393,
+  "successful": 393,
+  "duration_seconds": 279.5235743727535,
+  "completed_rps": 1.4059637040699906,
+  "output_tokens_per_second": 62.878417462427876,
+  "cached_token_fraction": 0.8353874657450341,
+  "workload_sha256": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+  "arrivals_sha256": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+  "ttft_observations": 393,
+  "ttft_mean": 28.31268312415326,
+  "ttft_p50": 18.764610182959586,
+  "ttft_p95": 80.28523045498876,
+  "ttft_p99": 96.8524278761073,
+  "latency_observations": 393,
+  "latency_mean": 62.43505152785065,
+  "latency_p50": 57.41149803670123,
+  "latency_p95": 126.28726931810378,
+  "latency_p99": 138.41974014464765
+}

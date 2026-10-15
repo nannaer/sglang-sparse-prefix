@@ -1,0 +1,358 @@
+{
+  "root": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated",
+  "checks": [
+    {
+      "name": "exactly_one_formal_trial",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "completed_without_failure",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "runtime_commit",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "393_successful_unique_requests",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "all_393_summary_observations",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "trace_sha256",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "explicit_1token_hardware_adaptation",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "frozen_model_calibration",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "final_source_hashes",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker0_six_profiles",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker0_first_flush_after_both_ready",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker0_actual_capacity_config",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker1_six_profiles",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker1_first_flush_after_both_ready",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "worker1_actual_capacity_config",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "physical_lf_ready_evidence",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "no_worker_error_oom_retract_log_markers",
+      "pass": true,
+      "detail": []
+    },
+    {
+      "name": "formal_after_all_profiles",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "formal_flush_after_both_ready",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "routing_drained_393",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "client_clock_order",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "client_timing_matches_metrics",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "backend_ids_present",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "frontend_overhead_saved",
+      "pass": false,
+      "detail": "Missing: Uvicorn gracefully shuts down then re-raises SIGTERM; Python atexit-only writer is skipped. Exact select/finish timings are unavailable and are not reconstructed."
+    },
+    {
+      "name": "own_workers_cleaned",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "gpus_idle_after_run",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "telemetry_collected",
+      "pass": true,
+      "detail": null
+    },
+    {
+      "name": "observer_ended",
+      "pass": true,
+      "detail": null
+    }
+  ],
+  "all_passed": false,
+  "core_checks_passed": true,
+  "summary": {
+    "config": {
+      "workload": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reference-1727-20261015/artifact/reference-trace/loogle-24-393-reference.jsonl",
+      "prepare_only": false,
+      "dataset": null,
+      "model_path": null,
+      "patterns": 105,
+      "requests": 393,
+      "max_input_tokens": 4096,
+      "max_new_tokens": null,
+      "seed": 42,
+      "arrivals": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reference-1727-20261015/artifact/reference-trace/arrivals-r1.4.json",
+      "policy": "preble",
+      "router_url": "http://127.0.0.1:18000",
+      "worker_urls": [
+        "http://127.0.0.1:31000",
+        "http://127.0.0.1:31001"
+      ],
+      "rate": 1.4,
+      "concurrency": 256,
+      "output": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/preble-mpq-r1.4-once"
+    },
+    "measurement": {
+      "enhancement": "External replay copy adds planned/wake/semaphore/send/headers/first-token/finish timestamps in memory; request payload, arrival schedule and routing unchanged",
+      "clock": {
+        "start_perf_seconds": 3893685.244887507,
+        "wall_anchor_ns": 1792055361489302654,
+        "perf_anchor_seconds": 3893685.244888737
+      },
+      "original_replay_sha256": "66963c75c29b37e054ab13dd9fc89baaf53f892b4322b3fa1f8446d6a2332983"
+    },
+    "requests": 393,
+    "successful": 393,
+    "duration_seconds": 279.5235743727535,
+    "completed_rps": 1.4059637040699906,
+    "output_tokens_per_second": 62.878417462427876,
+    "cached_token_fraction": 0.8353874657450341,
+    "workload_sha256": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+    "arrivals_sha256": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+    "ttft_observations": 393,
+    "ttft_mean": 28.31268312415326,
+    "ttft_p50": 18.764610182959586,
+    "ttft_p95": 80.28523045498876,
+    "ttft_p99": 96.8524278761073,
+    "latency_observations": 393,
+    "latency_mean": 62.43505152785065,
+    "latency_p50": 57.41149803670123,
+    "latency_p95": 126.28726931810378,
+    "latency_p99": 138.41974014464765
+  },
+  "routing_stats": {
+    "scheduled": 393,
+    "migrations": 95,
+    "replications": 0,
+    "nodes": 541,
+    "active": [
+      0,
+      0
+    ]
+  },
+  "ready_gate": {
+    "gate_completed_at": "2026-10-15T09:07:54.147182+00:00",
+    "gate_completed_wall_ns": 1792055274147189448,
+    "gate_completed_perf_seconds": 3893597.902775694,
+    "requirement": "Both complete physical LF ready markers and validated server_info precede every flush and external profile",
+    "workers": [
+      {
+        "log": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/sessions/01-mpq/worker0.log",
+        "physical_lf_line": 92,
+        "line": "[2026-10-15 09:07:52] The server is fired up and ready to roll!",
+        "completed_line_end_byte": 37565,
+        "log_sha256_when_observed": "f3680c27e059b6b505765c21d6375259884979f0a535b7e4959f39df89693de2",
+        "observed_at": "2026-10-15T09:07:53.136463+00:00",
+        "observed_wall_ns": 1792055273136475716,
+        "observed_perf_seconds": 3893596.892062257
+      },
+      {
+        "log": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-runtime-235b-2296-20261015-ready-gated/sessions/01-mpq/worker1.log",
+        "physical_lf_line": 92,
+        "line": "[2026-10-15 09:07:53] The server is fired up and ready to roll!",
+        "completed_line_end_byte": 37553,
+        "log_sha256_when_observed": "80ab9b21cd4791db9dde7c51122d96d75c610aef866a54d43c2aecf4f8735668",
+        "observed_at": "2026-10-15T09:07:54.138941+00:00",
+        "observed_wall_ns": 1792055274138952202,
+        "observed_perf_seconds": 3893597.894538618
+      }
+    ]
+  },
+  "warmup_ttft": [
+    {
+      "worker": 0,
+      "prompt_tokens": 8192,
+      "intended_prefix": 0,
+      "ttft_seconds": 2.874708589166403,
+      "latency_seconds": 6.092021783348173
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 16384,
+      "intended_prefix": 0,
+      "ttft_seconds": 6.418965350836515,
+      "latency_seconds": 9.703666300047189
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 32722,
+      "intended_prefix": 0,
+      "ttft_seconds": 15.94919948419556,
+      "latency_seconds": 18.980541561264545
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 16896,
+      "intended_prefix": 16384,
+      "ttft_seconds": 0.30417835572734475,
+      "latency_seconds": 3.607142698019743
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 18432,
+      "intended_prefix": 16384,
+      "ttft_seconds": 1.1409493973478675,
+      "latency_seconds": 4.403791528195143
+    },
+    {
+      "worker": 0,
+      "prompt_tokens": 32722,
+      "intended_prefix": 30674,
+      "ttft_seconds": 1.4194368128664792,
+      "latency_seconds": 4.444106288254261
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 8192,
+      "intended_prefix": 0,
+      "ttft_seconds": 2.8621667958796024,
+      "latency_seconds": 6.056529861874878
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 16384,
+      "intended_prefix": 0,
+      "ttft_seconds": 6.396430353168398,
+      "latency_seconds": 9.672681231983006
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 32722,
+      "intended_prefix": 0,
+      "ttft_seconds": 15.915390025824308,
+      "latency_seconds": 19.146684850100428
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 16896,
+      "intended_prefix": 16384,
+      "ttft_seconds": 0.3041597451083362,
+      "latency_seconds": 3.527349137235433
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 18432,
+      "intended_prefix": 16384,
+      "ttft_seconds": 1.1029681069776416,
+      "latency_seconds": 4.343223105650395
+    },
+    {
+      "worker": 1,
+      "prompt_tokens": 32722,
+      "intended_prefix": 30674,
+      "ttft_seconds": 1.419444383122027,
+      "latency_seconds": 4.519273493438959
+    }
+  ],
+  "frontend_overhead_milliseconds": null,
+  "client_timings_seconds": {
+    "wake_lag": {
+      "count": 393,
+      "mean": 0.0011680573722674646,
+      "p50": 0.0009576212614774704,
+      "p95": 0.0024471520446240898,
+      "p99": 0.0033146401867270455,
+      "max": 0.021670621819794178,
+      "sum": 0.4590465473011136
+    },
+    "semaphore_queue": {
+      "count": 393,
+      "mean": 8.402817643249915e-06,
+      "p50": 8.196104317903519e-06,
+      "p95": 1.1900346726179123e-05,
+      "p99": 1.6807951033115375e-05,
+      "max": 2.6043038815259933e-05,
+      "sum": 0.0033023073337972164
+    },
+    "send_to_headers": {
+      "count": 393,
+      "mean": 0.012254381493094161,
+      "p50": 0.010334919672459364,
+      "p95": 0.01925480980426073,
+      "p99": 0.05463669143617106,
+      "max": 0.14146470604464412,
+      "sum": 4.8159719267860055
+    }
+  },
+  "telemetry_samples": 28,
+  "worker_counts": {
+    "0": 184,
+    "1": 209
+  },
+  "validation_script_sha256": "18c45c152c32ea390f1ac3b5486933f50728d1c8fb2b487b2955789011804397",
+  "worker_log_anomalies": []
+}
