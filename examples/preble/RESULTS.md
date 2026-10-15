@@ -1,4 +1,4 @@
-# SGLang prefix load balancing: Qwen3-235B LooGLE measurements
+# SGLang Prefix Load Balancing: Qwen3-235B LooGLE measurements
 
 These measurements validate the current SGLang integration on a large BF16 model. They compare the upstream no-eviction-cost E2 variant against round-robin with the same local MPQ policy. They do not reproduce the paper's numerical speedups or its full eviction-aware serving configuration.
 
@@ -55,8 +55,8 @@ The following ratios divide round-robin mean duration by Preble mean duration, u
 
 ## Evidence and reproduction
 
-Raw artifacts are in `/mnt/nvme1n1/ml_research/chenjiefei/preble-results`: each `round-robin-r<RATE>-rep<N>` or `preble-r<RATE>-rep<N>` directory contains the exact command, `requests.jsonl`, `summary.json` and replay log. Preble trials also contain `/routing_stats` after completion; active counts must be `[0, 0]`. Model/dataset revisions, calibration samples, worker commands, dependencies and server info are stored alongside them.
+Raw artifacts are retained locally in `/mnt/nvme1n1/ml_research/chenjiefei/preble-results` and are not included in this public repository: each `round-robin-r<RATE>-rep<N>` or `preble-r<RATE>-rep<N>` directory contains the exact command, `requests.jsonl`, `summary.json` and replay log. Preble trials also contain `/routing_stats` after completion; active counts must be `[0, 0]`. Model/dataset revisions, calibration samples, worker commands, dependencies and server info are stored alongside them.
 
-Use [README.md](README.md) for the worker/frontend/workload commands. Replay each policy at 0.7 and 1.4 RPS twice with seed 42, flushing both caches between trials and restarting the frontend before each Preble trial. The recorded comparison harness is `run_comparison.py` in the artifact directory.
+Use [README.md](README.md) for the worker/frontend/workload commands. Replay each policy at 0.7 and 1.4 RPS twice with seed 42, flushing both caches between trials and restarting the frontend before each Preble trial. The original comparison harness, `run_comparison.py`, is also retained only in the local artifact directory; the public replay entry point is [bench_loogle.py](../../benchmark/preble/bench_loogle.py).
 
 The global scheduler does not receive actual KV eviction events or estimate eviction penalties. Each worker still uses normal radix LRU; global assignments can therefore overestimate locality after an eviction. This experiment holds local MPQ constant to isolate global routing, whereas the paper's full comparison also changes local scheduling and uses different models/GPUs. Arrival rates, two repetitions and a single dataset are insufficient to establish saturation throughput or a general serving speedup.
