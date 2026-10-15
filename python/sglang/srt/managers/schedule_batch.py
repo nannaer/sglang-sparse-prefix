@@ -2479,7 +2479,18 @@ class ScheduleBatch(ScheduleBatchDisaggregationDecodeMixin):
         # requests from the back, so we can only retract from the back.
         # TODO(sang): Clean up finish path and support better retract
         # policy.
-        if not server_args.speculative_algorithm:
+        if (
+            server_args.schedule_policy == "fcfs-mpq"
+            and not server_args.speculative_algorithm
+        ):
+            sorted_indices.sort(
+                key=lambda i: (
+                    getattr(self.reqs[i].time_stats, "created_time", 0.0)
+                    or self.reqs[i].time_stats.scheduler_recv_time,
+                    len(self.reqs[i].output_ids),
+                )
+            )
+        elif not server_args.speculative_algorithm:
             sorted_indices.sort(
                 key=lambda i: (
                     len(self.reqs[i].output_ids),
