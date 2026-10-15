@@ -167,6 +167,7 @@ class SchedulePolicy:
         self.prefill_limit = None
         self.prefill_candidates = None
         self.mpq_cursor = 9
+        self.mpq_group_by_req: Dict[Req, int] = {}
 
         # It is used to find the matching prefix for in-batch prefix caching.
         self.waiting_queue_radix_tree = RadixCache.create_simulated()
@@ -198,6 +199,9 @@ class SchedulePolicy:
             return
 
         if isinstance(policy, CacheAwarePolicy):
+            if policy == CacheAwarePolicy.FCFS_MPQ:
+                self._sort_by_cache_hit_groups(waiting_queue)
+                return
             temporary_deprioritized = self._compute_prefix_matches(
                 waiting_queue, policy
             )
@@ -207,8 +211,6 @@ class SchedulePolicy:
                 )
             elif policy == CacheAwarePolicy.DFS_WEIGHT:
                 SchedulePolicy._sort_by_dfs_weight(waiting_queue, self.tree_cache)
-            elif policy == CacheAwarePolicy.FCFS_MPQ:
-                self._sort_by_cache_hit_groups(waiting_queue)
             else:
                 raise ValueError(f"Unknown CacheAware Policy: {policy=}")
         else:
@@ -231,24 +233,42 @@ class SchedulePolicy:
     def _sort_by_cache_hit_groups(self, waiting_queue: List[Req]) -> None:
         """Round-robin ten hit-rate groups, with 10 * (priority + 1) quota.
 
-        Preserve FIFO within a group. Refresh membership at every prefill decision
-        because the local cache can change while requests wait. The scheduler's
-        existing prefill budget limits admission to the selected group.
+        Match Preble's persistent group membership: classify requests only when
+        they enter or re-enter the waiting queue. Refresh the selected group's
+        matches without moving its requests between groups.
         """
-        groups = [[] for _ in range(10)]
-        for req in waiting_queue:
+        waiting_reqs = set(waiting_queue)
+        self.mpq_group_by_req = {
+            req: group
+            for req, group in self.mpq_group_by_req.items()
+            if req in waiting_reqs
+        }
+        # Upstream drains its incoming queue with pop(); retain that insertion
+        # order for requests whose arrival timestamps compare equal.
+        for req in reversed(waiting_queue):
+            if req in self.mpq_group_by_req:
+                continue
+            match_prefix_for_req(self.tree_cache, req)
             length = len(req.origin_input_ids) + len(req.output_ids)
-            hits = min(len(req.prefix_indices), req._compute_max_prefix_len(length))
-            if req.positional_embed_overrides is not None:
-                hits = 0
+            hits = len(req.prefix_indices)
+            if req.return_logprob:
+                hits = len(req.prefix_indices[: req.logprob_start_len])
             group = max(0, min(9, (10 * hits + length - 1) // max(1, length) - 1))
+            self.mpq_group_by_req[req] = group
+
+        groups = [[] for _ in range(10)]
+        for req, group in self.mpq_group_by_req.items():
             groups[group].append(req)
         for _ in range(10):
             group = self.mpq_cursor
             self.mpq_cursor = (group + 9) % 10
             if groups[group]:
                 selected = groups[group]
-                selected.sort(key=lambda req: req.time_stats.wait_queue_entry_time)
+                # Unlike wait_queue_entry_time, the first scheduler receive
+                # timestamp is unchanged when a request is retracted.
+                selected.sort(key=lambda req: req.time_stats.scheduler_recv_time)
+                for req in selected:
+                    match_prefix_for_req(self.tree_cache, req)
                 self.prefill_candidates = selected
                 self.prefill_limit = min(len(selected), 10 * (group + 1))
                 selected_ids = {id(req) for req in selected}
@@ -256,6 +276,11 @@ class SchedulePolicy:
                     req for req in waiting_queue if id(req) not in selected_ids
                 ]
                 return
+
+    def remove_admitted_requests(self, reqs: List[Req]) -> None:
+        """Let retracted requests be classified again when they re-enter MPQ."""
+        for req in reqs:
+            self.mpq_group_by_req.pop(req, None)
 
     def _determine_active_policy(self, waiting_queue: List[Req]) -> Policy:
         if self.policy == CacheAwarePolicy.LPM and len(waiting_queue) > 128:
@@ -271,7 +296,10 @@ class SchedulePolicy:
         """
         try:
             policy_enum = CacheAwarePolicy(policy)
-            if getattr(tree_cache, "disable", True):
+            if (
+                getattr(tree_cache, "disable", True)
+                and policy_enum != CacheAwarePolicy.FCFS_MPQ
+            ):
                 # If tree_cache is disabled, using CacheAgnosticPolicy policy
                 return CacheAgnosticPolicy.FCFS
             return policy_enum

@@ -2870,6 +2870,7 @@ class Scheduler(
 
         can_run_set = set(can_run_list)
         self.waiting_queue = [x for x in self.waiting_queue if x not in can_run_set]
+        self.policy.remove_admitted_requests(can_run_list)
         if adder.preempt_list:
             for req in adder.preempt_list:
                 self._add_request_to_queue(req)
