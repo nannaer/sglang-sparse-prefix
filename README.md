@@ -26,9 +26,9 @@ route(prompt, output_budget):
     更新归属、虚拟缓存、在途引用和 180 秒窗口
     若虚拟占用超容量：按原虚拟 LRU 驱逐
     若累计请求 ≥ 50×副本数 且 leaf 到 group 的深度差 < 3：
-        仅计窗口请求数 ≥ 2 的组；最大/最小负载比 ≥ 1.5 时尝试重平衡
+        仅计窗口请求数 ≥ 2 的组；最大负载 ≥ 1.5×最小负载时尝试重平衡
         多个可迁组：从小代价组开始迁，直到平衡或迁移会反转两端负载
-        单个热点组：两半窗都有样本、后半窗平均 TTFT ≥ 前半窗 2 倍时添加归属
+        单个热点组：目标尚无该组、两半窗都有样本、后半窗平均 TTFT ≥ 前半窗 2 倍时添加归属
     forward(w, prompt token IDs)
 ```
 
@@ -56,6 +56,9 @@ worker_prefill():
         锁后容量不足或本轮预算耗尽 → 停止
     请求准入或取消离队时清除 MPQ 引用；retract 后重新分组
 
+worker_retract_if_decode_oom():
+    非 speculative MPQ：按(原到达时间, 已输出长度)升序排序，从后撤回
+
 finish(request):
     释放原副本路径引用，记录组 TTFT
     output_len > 1 且 latency > TTFT > 0 时：TPOT[w].append((latency - TTFT) / output_len)
@@ -74,9 +77,20 @@ finish(request):
 | 全局源码差分 | 9012 次选择 / 完成尝试状态一致；9006 正常完成，6 次双方同一原断言。 |
 | 本地调度 | 准入 / chunk 41 项、FIFO / IPC 8 项、取消 41 项；retract 306 项对原版、1200 项既有路径、1 项现代保护通过。 |
 | 服务与候选 | 健康池 960、部分池 1200、HTTP 计时与预算差分通过，含修前负对照。 |
-| 真实推理 | 2296 指定容器，BF16 Qwen3-235B-A22B、8×H200、2×TP4，LooGLE 393/393 成功；只跑一轮 Preble + MPQ。 |
+| 真实推理 | 2296 指定容器，BF16 Qwen3-235B-A22B、8×H200、2×TP4；Preble + MPQ 与 RR + LPM 各一轮，均 393/393 成功。 |
 
-源码语义验证与 GPU 性能证据分别记录。当前单轮结果见[235B 报告](examples/preble/RUNTIME_2296.md)，原始指标与 hash 随报告提供；不宣称稳定性能收益或论文数值复现。旧 A1/A2 的后台速度在路由分叉前已不同，旧 ABBA 不能作为控制住副本速度的比较，见[延迟差异结论](examples/preble/VARIANCE_ANALYSIS.md)。
+同一 LooGLE 输入与到达轨迹，时延单位为秒：
+
+| 指标 | Preble + MPQ | RR + LPM |
+| --- | ---: | ---: |
+| 平均 / p95 TTFT | 28.313 / 80.285 | 42.322 / 147.955 |
+| 平均 / p95 端到端时延 | 62.435 / 126.287 | 76.554 / 171.768 |
+| 整轮用时 | 279.524 | 329.190 |
+| 输入缓存比例 | 83.539% | 81.048% |
+
+本次 Preble 平均 TTFT 降低 **33.1%**，平均端到端时延降低 **18.4%**。六个冷 prefill 预热样本的 TTFT 差异均小于 0.5%；正式输出为 17,576 / 17,498 tokens，四条请求长度不同且正常停止。各方案一次、固定先后顺序，比较包含全局路由与本地调度，不证明稳定收益或论文数值复现。[235B 对照报告](examples/preble/RUNTIME_2296.md)提供配置、指标与证据。
+
+源码语义验证与 GPU 性能证据分别记录。旧 A1/A2 的后台速度在路由分叉前已不同，旧 ABBA 不能作为控制住副本速度的比较，见[延迟差异结论](examples/preble/VARIANCE_ANALYSIS.md)。
 
 [启动、轨迹准备与执行命令](examples/preble/README.md) · [源码验证数据](examples/preble/results/reaudit-20261015/semantic-validation.json) · [历史实验](examples/preble/RUNTIME_RESULTS.md)
 

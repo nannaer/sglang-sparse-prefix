@@ -29,7 +29,7 @@
 | HTTP 预算 | 6 个成功差分、6 个修前负对照、2 个低层实际预算对照、6 个失败 / 取消 / 幂等场景通过。 |
 | 既有准入验证 | 真实准入 / chunk 41 项、FIFO / IPC 8 项、取消生命周期 41 项通过，见[先前证据](results/runtime-235b/validation.json)；覆盖方法本轮未改，retract 顺序另按上表验证。 |
 
-[验证数据与源码 / 原报告 SHA256](results/reaudit-20261015/semantic-validation.json)。Black 26.1.0、isort 7.0.0、Ruff 0.15.1 适用检查及 diff 检查通过。脚本保留在仓库外，未提交单元测试。以上是 CPU 语义验证，真实大模型运行见 [2296 单轮结果](RUNTIME_2296.md)。
+[验证数据与源码 / 原报告 SHA256](results/reaudit-20261015/semantic-validation.json)。Black 26.1.0、isort 7.0.0、Ruff 0.15.1 适用检查及 diff 检查通过。脚本保留在仓库外，未提交单元测试。以上是 CPU 语义验证，真实大模型运行见 [2296 对照结果](RUNTIME_2296.md)。
 
 ## 必要适配与边界
 

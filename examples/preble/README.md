@@ -1,6 +1,6 @@
 # Preble 执行流程与运行方法
 
-参考 [WukLab/Preble `1a35eae20c`](https://github.com/WukLab/preble/tree/1a35eae20c416f7062ca81775aab72890323fd97) 的公开服务默认路径，保留当前 SGLang runtime。全局路由、代价公式与 MPQ 伪代码见[项目主页](../../README.md)，逐项[一致性验证](ALIGNMENT_REAUDIT.md)及[235B 单轮结果](RUNTIME_2296.md)可单独查看。
+参考 [WukLab/Preble `1a35eae20c`](https://github.com/WukLab/preble/tree/1a35eae20c416f7062ca81775aab72890323fd97) 的公开服务默认路径，保留当前 SGLang runtime。全局路由、代价公式与 MPQ 伪代码见[项目主页](../../README.md)，逐项[一致性验证](ALIGNMENT_REAUDIT.md)及[235B 对照结果](RUNTIME_2296.md)可单独查看。
 
 ## 执行流程
 
@@ -88,7 +88,18 @@ python benchmark/preble/bench_loogle.py \
 
 核验 393 成功、393 个 TTFT、frontend active=[0,0]，并保存 summary / requests / routing_stats。`--arrivals` 决定计划到达；TTFT / E2E 从 sleep 醒后起钟，包含 semaphore、HTTP、frontend 与计算，不含唤醒迟延。完成 RPS 包含到达等待和尾部排空，不代表饱和吞吐。
 
-2296 本次只运行一轮 Preble + MPQ，没有追加 RR 或重复轮次。旧 ABBA 保留为[历史结果](RUNTIME_RESULTS.md)，其两轮方差的证据与限制见[简短调查结论](VARIANCE_ANALYSIS.md)。
+RR + LPM 对照：停止本轮自有服务，将两个 worker 的 `--schedule-policy` 改为 `lpm` 后重新启动；保持模型、seed 和其他参数相同，重复双 ready、每端六 profile warmup 与正式前 flush。RR 不启动 frontend，直接回放：
+
+```bash
+python benchmark/preble/bench_loogle.py \
+  --workload preble-bench/reference-trace/loogle-24-393-reference.jsonl \
+  --arrivals preble-bench/reference-trace/arrivals-r1.4.json \
+  --policy round-robin \
+  --worker-urls http://127.0.0.1:31000 http://127.0.0.1:31001 \
+  --requests 393 --rate 1.4 --concurrency 256 --output preble-bench/rr-lpm-r1.4-once
+```
+
+2296 本次两种组合方案各一轮，先 Preble 后 RR。RR 核验 393 成功、各 index % 2 路由及每端 197 / 196 请求。结果见[对照报告](RUNTIME_2296.md)。旧 ABBA 保留为[历史结果](RUNTIME_RESULTS.md)，两轮方差见[简短结论](VARIANCE_ANALYSIS.md)。
 
 ## 源码入口
 
