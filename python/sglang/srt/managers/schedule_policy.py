@@ -264,9 +264,11 @@ class SchedulePolicy:
             self.mpq_cursor = (group + 9) % 10
             if groups[group]:
                 selected = groups[group]
-                # Unlike wait_queue_entry_time, the first scheduler receive
-                # timestamp is unchanged when a request is retracted.
-                selected.sort(key=lambda req: req.time_stats.scheduler_recv_time)
+                # Preserve tokenizer arrival order, including after retraction.
+                selected.sort(
+                    key=lambda req: getattr(req.time_stats, "created_time", 0.0)
+                    or req.time_stats.scheduler_recv_time
+                )
                 for req in selected:
                     match_prefix_for_req(self.tree_cache, req)
                 self.prefill_candidates = selected

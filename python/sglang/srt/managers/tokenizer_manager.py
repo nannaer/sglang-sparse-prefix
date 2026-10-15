@@ -2810,7 +2810,7 @@ class TokenizerManager(TokenizerControlMixin, TokenizerManagerScoreMixin):
         obj: Union[GenerateReqInput, EmbeddingReqInput],
         request: Optional[fastapi.Request] = None,
     ):
-        created_time = obj.received_time
+        created_time = obj.received_time or time.perf_counter()
 
         external_trace_header = None
         if self.server_args.enable_trace:

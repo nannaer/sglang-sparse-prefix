@@ -367,13 +367,8 @@ class APIServerReqTimeStats(ReqTimeStatsBase):
     response_sent_to_client_time: float = 0.0
 
     def __getstate__(self) -> object:
-        state = {}
-        # send to DP controller or Scheduler
-        # If necessary, can propagate the timestamp here, for example:
-        # state = {
-        #    "created_time": self.created_time,
-        #    "api_server_dispatch_time": self.api_server_dispatch_time,
-        # }
+        # Preserve arrival before tokenization for FIFO scheduling across IPC.
+        state = {"created_time": self.created_time}
         state.update(super().__getstate__())
         return state
 
@@ -528,14 +523,8 @@ class DPControllerReqTimeStats(ReqTimeStatsBase):
     dpc_dispatch_finish_time: float = 0.0
 
     def __getstate__(self) -> object:
-        state = {}
-        # send to Scheduler
-        # If necessary, can propagate the timestamp here, for example:
-        # state = {
-        #     "created_time": self.created_time,
-        #     "api_server_dispatch_time": self.api_server_dispatch_time,
-        #     "dpc_dispatch_time": self.dpc_dispatch_time,
-        # }
+        # Retain the original arrival through the DP controller's second IPC hop.
+        state = {"created_time": self.created_time}
         state.update(super().__getstate__())
         return state
 
