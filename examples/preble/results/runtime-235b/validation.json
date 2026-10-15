@@ -1,0 +1,3987 @@
+{
+  "counts": {
+    "cancellation_checks": 41,
+    "fifo_checks": 8,
+    "global_finish_attempts": 9012,
+    "global_select_calls": 9012,
+    "global_shared_assertion_failures": 6,
+    "global_successful_finishes": 9006,
+    "mpq_runtime_checks": 41,
+    "public_http_tpot_cases": 3
+  },
+  "integration_commit": "c773f3e5605eb3fe9a2d032c80f0e9def6dfc2d9",
+  "limitations": [
+    "One 8xH200 host, Qwen3-235B BF16, two TP4 replicas, one frozen LooGLE trace, 1.4 offered RPS, two repetitions per policy; this is not a paper-wide performance reproduction.",
+    "ABBA reduces ordering bias; there are only two trial repetitions per policy, and requests sharing prefixes are not independent experimental replicates.",
+    "Percentiles use all raw observations within each policy; trial p95 values are never averaged. Throughput uses summed measured replay duration and excludes startup/warmup.",
+    "Backend cached_tokens measures realized local cache reuse, not accuracy of the frontend virtual cache. No cross-worker KV transfer, Mooncake, or physical cache synchronization is enabled.",
+    "Modern SGLang GPU execution, chunk construction, memory allocation, and preserving generated tokens on retraction remain version adaptations; CPU source checks do not validate GPU timing.",
+    "Global differential evidence comprises 9012 select calls AND 9012 finish attempts: 9006 successful finishes and 6 assertion failures shared with the pinned original. Reference-state parity does not mean every replay operation succeeded.",
+    "Original candidate-subset indexing, overlapping-prefix histogram assertions, and duplicate-parent virtual eviction accounting remain visible reference behaviors.",
+    "Output hashes are alignment diagnostics. Temperature zero does not guarantee identical text across different batch shapes; hash agreement is not a quality or performance validity requirement.",
+    "Requested max_new_tokens=45 is clamped to44 for32722-token prompts by the frozen context/allocation bounds. Length finishes must equal the effective cap; shorter stop finishes are allowed.",
+    "CPU MPQ41, FIFO8, public HTTP TPOT3, and cancellation41 checks are separate functional evidence. Only the1572 real requests in this bundle are GPU inference evidence."
+  ],
+  "reference_commit": "1a35eae20c416f7062ca81775aab72890323fd97",
+  "reports": {
+    "fifo-runtime-validation.json": {
+      "data": {
+        "at_utc": "2026-10-15T07:18:58Z",
+        "checks": [
+          {
+            "details": {
+              "created": 1000.0,
+              "received": 1000.0
+            },
+            "name": "pickle_direct_hop",
+            "passed": true
+          },
+          {
+            "details": {
+              "created": 1001.0,
+              "received": 1001.0
+            },
+            "name": "pickle_dp_two_hops",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "cross_process_clock_conversion",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "reverse_tokenization_completion",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "retract_preserves_fifo",
+            "passed": true
+          },
+          {
+            "details": [
+              2076334.251419245,
+              2076334.251419245,
+              2076334.251419245
+            ],
+            "name": "native_generate_batch_one_arrival",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "batch_tie_retains_upstream_pop_order",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "zero_arrival_falls_back_to_scheduler_receive",
+            "passed": true
+          }
+        ],
+        "method": "AST-extracted unmodified production methods; real pickle round trips; GPU and unrelated logging/trace dependencies excluded",
+        "source_sha256": {
+          "python/sglang/srt/disaggregation/utils.py": "6c3dd76f0ad56f30e79b36989da68d0740d206ed8759dd617887236830899a2a",
+          "python/sglang/srt/managers/schedule_batch.py": "c995e03e6f8a2681813b3950dd72a29483c7c9a2aa286fbe41ba3901b753b741",
+          "python/sglang/srt/managers/schedule_policy.py": "e6a5f01caf262bd774a0015479add06845d7bdd684022ddb45df788c8071fa38",
+          "python/sglang/srt/managers/tokenizer_manager.py": "f2c2bc1da72eb5587a0663cd2bf24fc2d57c63c2d74dec218029b849bd6a0711",
+          "python/sglang/srt/observability/req_time_stats.py": "5487e638bbe6a83b990e8c72940586c20479e5c0317ee40bec68612826206f34",
+          "python/sglang/srt/observability/trace.py": "7d988ebe910ad5ffad782bdd6461ef7361309592135b174ee139dc31979abfc2"
+        }
+      },
+      "source": {
+        "file": "$VALIDATION/fifo-runtime-validation.json",
+        "sha256": "5378b8508a5a4bc1a8c37a4f06f10dc5402951308e665aebd8d3487915b8f9de"
+      }
+    },
+    "global-diff.json": {
+      "data": {
+        "a6000_regression_combinations": 50,
+        "all_workload_requests_successful": false,
+        "checked_files_sha256": {
+          "preble.py": "fc57ef6ff4f54794b5fd0704fe8e10ef5a15f9a1084c65356447055efc68b370",
+          "preble_cache.py": "12c6ba78d219dc296919f76415194b0c6571099a3c126943be133b49c73f9003",
+          "preble_cost.py": "c438285d82b811777ec9919b8aa54106b987cfbef5bfb076645999eea26a47e8"
+        },
+        "feedback_semantics": "Original public HTTP divides decode wall time by output_len",
+        "integration_repository": "$REPOSITORY",
+        "known_reference_behaviors_retained": [
+          "calculate_min_load_cost returns candidate-list position for complete healthy pool, even for exploitation subsets",
+          "histogram regrouping after some overlapping radix splits can leave finish important node absent and assert",
+          "virtual eviction can count duplicate parent heap entries while returning a unique victim set"
+        ],
+        "method": {
+          "clock": "same UUID generation and fixed wall/datetime values per logical operation",
+          "comparison": "selected worker, tree/ref/cache/evicted/allocated/depth/access state, histogram maps and timestamps, TPOT, TTFT, allocation and cost arrays",
+          "floating_point_normalization_decimal_places": 11,
+          "healthy_pool": true,
+          "reference_classes": "AST extracted from pinned source, no old runtime dependencies imported"
+        },
+        "partial_availability_transport_mapping_checks": 516,
+        "random_replay": {
+          "eviction_settings": [
+            false,
+            true
+          ],
+          "expiry_seconds_between_drained_phases": 200,
+          "finish_attempts": 9012,
+          "phases_per_trace": 2,
+          "random_choice_steps": 13680,
+          "seeded_select_calls": 0,
+          "seeds_per_setting": 6,
+          "select_calls": 9012,
+          "shared_finish_assertion_failures": 6,
+          "successful_finishes": 9006,
+          "traces": 36,
+          "workers": [
+            2,
+            3,
+            4
+          ]
+        },
+        "reference_commit": "1a35eae20c416f7062ca81775aab72890323fd97",
+        "reference_repository": "/tmp/preble-source",
+        "reference_state_parity": true,
+        "shared_finish_assertion_failures": {
+          "cases": [
+            {
+              "recent_replay": [
+                [
+                  "select",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  26
+                ],
+                [
+                  "select",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  15
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  19
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  14
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  0
+                ],
+                [
+                  "finish",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    102
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  1
+                ],
+                [
+                  "select",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  10
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    101,
+                    109,
+                    105,
+                    104
+                  ],
+                  0
+                ]
+              ],
+              "tokens": [
+                4,
+                4,
+                4,
+                4,
+                101,
+                109,
+                105,
+                104
+              ],
+              "worker": 0
+            },
+            {
+              "recent_replay": [
+                [
+                  "select",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  26
+                ],
+                [
+                  "select",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  15
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  19
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  14
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  0
+                ],
+                [
+                  "finish",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    102
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  1
+                ],
+                [
+                  "select",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  10
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    101,
+                    109,
+                    105,
+                    104
+                  ],
+                  0
+                ]
+              ],
+              "tokens": [
+                4,
+                4,
+                4,
+                4,
+                101,
+                109,
+                105,
+                104
+              ],
+              "worker": 0
+            },
+            {
+              "recent_replay": [
+                [
+                  "select",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  26
+                ],
+                [
+                  "select",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  15
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  19
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  14
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  2
+                ],
+                [
+                  "finish",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  2
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    102
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  0
+                ],
+                [
+                  "select",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  10
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    101,
+                    109,
+                    105,
+                    104
+                  ],
+                  0
+                ]
+              ],
+              "tokens": [
+                4,
+                4,
+                4,
+                4,
+                101,
+                109,
+                105,
+                104
+              ],
+              "worker": 0
+            },
+            {
+              "recent_replay": [
+                [
+                  "select",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  26
+                ],
+                [
+                  "select",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  15
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  19
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  14
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  2
+                ],
+                [
+                  "finish",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  2
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    102
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  0
+                ],
+                [
+                  "select",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  10
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    101,
+                    109,
+                    105,
+                    104
+                  ],
+                  0
+                ]
+              ],
+              "tokens": [
+                4,
+                4,
+                4,
+                4,
+                101,
+                109,
+                105,
+                104
+              ],
+              "worker": 0
+            },
+            {
+              "recent_replay": [
+                [
+                  "select",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  26
+                ],
+                [
+                  "select",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  15
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  19
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  14
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  3
+                ],
+                [
+                  "finish",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  2
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    102
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  3
+                ],
+                [
+                  "select",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  10
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  2
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    101,
+                    109,
+                    105,
+                    104
+                  ],
+                  0
+                ]
+              ],
+              "tokens": [
+                4,
+                4,
+                4,
+                4,
+                101,
+                109,
+                105,
+                104
+              ],
+              "worker": 0
+            },
+            {
+              "recent_replay": [
+                [
+                  "select",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  26
+                ],
+                [
+                  "select",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  15
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  19
+                ],
+                [
+                  "select",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  14
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    101,
+                    103,
+                    105,
+                    108
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    5,
+                    107,
+                    102,
+                    100
+                  ],
+                  3
+                ],
+                [
+                  "finish",
+                  [
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    1,
+                    103,
+                    100,
+                    102,
+                    101
+                  ],
+                  2
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    102
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    4,
+                    102,
+                    105,
+                    104
+                  ],
+                  3
+                ],
+                [
+                  "select",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  10
+                ],
+                [
+                  "finish",
+                  [
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    3,
+                    105,
+                    106,
+                    109,
+                    100
+                  ],
+                  1
+                ],
+                [
+                  "finish",
+                  [
+                    4,
+                    4,
+                    4,
+                    4,
+                    101,
+                    109,
+                    105,
+                    104
+                  ],
+                  0
+                ]
+              ],
+              "tokens": [
+                4,
+                4,
+                4,
+                4,
+                101,
+                109,
+                105,
+                104
+              ],
+              "worker": 0
+            }
+          ],
+          "count": 6,
+          "interpretation": "These are failures in both the pinned reference and the port, not successful requests. The replay compares their matching partial cleanup state and continues."
+        },
+        "status": "matched_reference_with_shared_upstream_assertion_failures",
+        "targeted_migration": [
+          {
+            "migrations": 1,
+            "workers": 2
+          },
+          {
+            "migrations": 1,
+            "workers": 3
+          },
+          {
+            "migrations": 1,
+            "workers": 4
+          }
+        ],
+        "targeted_replication": [
+          {
+            "replications": 1,
+            "workers": 2
+          },
+          {
+            "replications": 1,
+            "workers": 3
+          },
+          {
+            "replications": 1,
+            "workers": 4
+          }
+        ],
+        "transport_extensions": [
+          "partial availability remaps candidate-list positions to actual worker ids",
+          "finish is idempotent and cancellation/error cleanup with zero output omits the success-only histogram assertion"
+        ],
+        "validation_script": "$VALIDATION/global_diff.py"
+      },
+      "source": {
+        "file": "$VALIDATION/global-diff.json",
+        "sha256": "2504742a4262c7fced78ba1947b16047172a462d77e8292b85fe9d9d1e07b9f3"
+      }
+    },
+    "mpq-chunk-rotation-negative-control.json": {
+      "data": {
+        "expected_failure": true,
+        "negative_control": "8b2cbd5823 before chunk-rotation fix",
+        "observed_assertion": "AssertionError(('chunk_only_does_not_rotate_or_classify', 'cursor', 6, 9))"
+      },
+      "source": {
+        "file": "$VALIDATION/mpq-chunk-rotation-negative-control.json",
+        "sha256": "f5ec3147ab7f30f624cd20542d3875d4d25d7b58b2f2b59239b713ff99662f42"
+      }
+    },
+    "mpq-runtime-validation-with-chunks.json": {
+      "data": {
+        "cases": [
+          {
+            "admitted": [
+              "short"
+            ],
+            "batch_is_full": false,
+            "group_limit": 2,
+            "name": "mpq_prelock_total",
+            "trace": [
+              {
+                "admitted": false,
+                "allow_skip": true,
+                "rem_input": 1000,
+                "rem_total": 50,
+                "req": "long",
+                "result": "SKIP"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 995,
+                "rem_total": 44,
+                "req": "short",
+                "result": "CONTINUE"
+              }
+            ],
+            "waiting": [
+              "long"
+            ]
+          },
+          {
+            "admitted": [
+              "first",
+              "short"
+            ],
+            "batch_is_full": false,
+            "group_limit": 3,
+            "name": "mpq_prelock_input",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 8,
+                "rem_total": 997,
+                "req": "first",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": false,
+                "allow_skip": true,
+                "rem_input": 8,
+                "rem_total": 997,
+                "req": "too_large_input",
+                "result": "SKIP"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 6,
+                "rem_total": 994,
+                "req": "short",
+                "result": "CONTINUE"
+              }
+            ],
+            "waiting": [
+              "too_large_input"
+            ]
+          },
+          {
+            "admitted": [
+              "first",
+              "short"
+            ],
+            "batch_is_full": false,
+            "group_limit": 3,
+            "name": "mpq_post_loadback_input",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 7,
+                "rem_total": 998,
+                "req": "first",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": false,
+                "allow_skip": true,
+                "rem_input": 7,
+                "rem_total": 998,
+                "req": "host_partial",
+                "result": "SKIP"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 6,
+                "rem_total": 996,
+                "req": "short",
+                "result": "CONTINUE"
+              }
+            ],
+            "waiting": [
+              "host_partial"
+            ]
+          },
+          {
+            "admitted": [
+              "short"
+            ],
+            "batch_is_full": false,
+            "group_limit": 2,
+            "name": "mpq_alignment",
+            "trace": [
+              {
+                "admitted": false,
+                "allow_skip": true,
+                "rem_input": 1000,
+                "rem_total": 1000,
+                "req": "long_chunk",
+                "result": "SKIP"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 998,
+                "rem_total": 997,
+                "req": "short",
+                "result": "CONTINUE"
+              }
+            ],
+            "waiting": [
+              "long_chunk"
+            ]
+          },
+          {
+            "admitted": [
+              "short"
+            ],
+            "batch_is_full": false,
+            "group_limit": 2,
+            "name": "mpq_prelock_swa",
+            "trace": [
+              {
+                "admitted": false,
+                "allow_skip": true,
+                "rem_input": 1000,
+                "rem_total": 1000,
+                "req": "long_swa",
+                "result": "SKIP"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 999,
+                "rem_total": 998,
+                "req": "short",
+                "result": "CONTINUE"
+              }
+            ],
+            "waiting": [
+              "long_swa"
+            ]
+          },
+          {
+            "admitted": [],
+            "batch_is_full": false,
+            "group_limit": 2,
+            "name": "mpq_postlock_total_stops",
+            "trace": [
+              {
+                "admitted": false,
+                "allow_skip": true,
+                "rem_input": 1000,
+                "rem_total": 100,
+                "req": "postlock_fail",
+                "result": "NO_TOKEN"
+              }
+            ],
+            "waiting": [
+              "postlock_fail",
+              "short"
+            ]
+          },
+          {
+            "admitted": [
+              "postlock_fail",
+              "short"
+            ],
+            "batch_is_full": false,
+            "group_limit": 2,
+            "name": "mpq_postlock_total_next_round",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 970,
+                "rem_total": 69,
+                "req": "postlock_fail",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 969,
+                "rem_total": 67,
+                "req": "short",
+                "result": "CONTINUE"
+              }
+            ],
+            "waiting": []
+          },
+          {
+            "admitted": [],
+            "batch_is_full": false,
+            "group_limit": 2,
+            "name": "mpq_postlock_swa_stops",
+            "trace": [
+              {
+                "admitted": false,
+                "allow_skip": true,
+                "rem_input": 1000,
+                "rem_total": 1000,
+                "req": "postlock_swa_fail",
+                "result": "NO_TOKEN"
+              }
+            ],
+            "waiting": [
+              "postlock_swa_fail",
+              "short"
+            ]
+          },
+          {
+            "admitted": [
+              "exhaust_input"
+            ],
+            "batch_is_full": false,
+            "group_limit": 2,
+            "name": "mpq_admitted_exhausts_input",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 0,
+                "rem_total": 994,
+                "req": "exhaust_input",
+                "result": "OTHER"
+              }
+            ],
+            "waiting": [
+              "unvisited"
+            ]
+          },
+          {
+            "admitted": [
+              "exhaust_total"
+            ],
+            "batch_is_full": false,
+            "group_limit": 2,
+            "name": "mpq_admitted_exhausts_total",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 994,
+                "rem_total": -2,
+                "req": "exhaust_total",
+                "result": "NO_TOKEN"
+              }
+            ],
+            "waiting": [
+              "unvisited"
+            ]
+          },
+          {
+            "admitted": [],
+            "batch_is_full": true,
+            "group_limit": null,
+            "name": "fcfs_prelock_total",
+            "trace": [
+              {
+                "admitted": false,
+                "allow_skip": false,
+                "rem_input": 1000,
+                "rem_total": 50,
+                "req": "long",
+                "result": "NO_TOKEN"
+              }
+            ],
+            "waiting": [
+              "long",
+              "short"
+            ]
+          },
+          {
+            "admitted": [
+              "first"
+            ],
+            "batch_is_full": false,
+            "group_limit": null,
+            "name": "fcfs_prelock_input",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": false,
+                "rem_input": 8,
+                "rem_total": 997,
+                "req": "first",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": false,
+                "allow_skip": false,
+                "rem_input": 8,
+                "rem_total": 997,
+                "req": "too_large_input",
+                "result": "OTHER"
+              }
+            ],
+            "waiting": [
+              "too_large_input",
+              "short"
+            ]
+          },
+          {
+            "admitted": [
+              "first"
+            ],
+            "batch_is_full": false,
+            "group_limit": null,
+            "name": "fcfs_post_loadback_input",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": false,
+                "rem_input": 7,
+                "rem_total": 998,
+                "req": "first",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": false,
+                "allow_skip": false,
+                "rem_input": 7,
+                "rem_total": 998,
+                "req": "host_partial",
+                "result": "OTHER"
+              }
+            ],
+            "waiting": [
+              "host_partial",
+              "short"
+            ]
+          },
+          {
+            "admitted": [],
+            "batch_is_full": false,
+            "group_limit": null,
+            "name": "fcfs_alignment",
+            "trace": [
+              {
+                "admitted": false,
+                "allow_skip": false,
+                "rem_input": 1000,
+                "rem_total": 1000,
+                "req": "long_chunk",
+                "result": "OTHER"
+              }
+            ],
+            "waiting": [
+              "long_chunk",
+              "short"
+            ]
+          },
+          {
+            "admitted": [],
+            "batch_is_full": true,
+            "group_limit": null,
+            "name": "fcfs_prelock_swa",
+            "trace": [
+              {
+                "admitted": false,
+                "allow_skip": false,
+                "rem_input": 1000,
+                "rem_total": 1000,
+                "req": "long_swa",
+                "result": "NO_TOKEN"
+              }
+            ],
+            "waiting": [
+              "long_swa",
+              "short"
+            ]
+          },
+          {
+            "admitted": [],
+            "batch_is_full": true,
+            "group_limit": null,
+            "name": "fcfs_postlock_total_stops",
+            "trace": [
+              {
+                "admitted": false,
+                "allow_skip": false,
+                "rem_input": 1000,
+                "rem_total": 100,
+                "req": "postlock_fail",
+                "result": "NO_TOKEN"
+              }
+            ],
+            "waiting": [
+              "postlock_fail",
+              "short"
+            ]
+          },
+          {
+            "admitted": [],
+            "batch_is_full": true,
+            "group_limit": null,
+            "name": "fcfs_postlock_swa_stops",
+            "trace": [
+              {
+                "admitted": false,
+                "allow_skip": false,
+                "rem_input": 1000,
+                "rem_total": 1000,
+                "req": "postlock_swa_fail",
+                "result": "NO_TOKEN"
+              }
+            ],
+            "waiting": [
+              "postlock_swa_fail",
+              "short"
+            ]
+          },
+          {
+            "admitted": [
+              "exhaust_input"
+            ],
+            "batch_is_full": false,
+            "group_limit": null,
+            "name": "fcfs_admitted_exhausts_input",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": false,
+                "rem_input": 0,
+                "rem_total": 994,
+                "req": "exhaust_input",
+                "result": "OTHER"
+              }
+            ],
+            "waiting": [
+              "unvisited"
+            ]
+          },
+          {
+            "admitted": [
+              "exhaust_total"
+            ],
+            "batch_is_full": true,
+            "group_limit": null,
+            "name": "fcfs_admitted_exhausts_total",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": false,
+                "rem_input": 994,
+                "rem_total": -2,
+                "req": "exhaust_total",
+                "result": "NO_TOKEN"
+              }
+            ],
+            "waiting": [
+              "unvisited"
+            ]
+          },
+          {
+            "admitted": [
+              "q00",
+              "q01",
+              "q02",
+              "q03",
+              "q04",
+              "q05",
+              "q06",
+              "q07",
+              "q08",
+              "q09"
+            ],
+            "batch_is_full": false,
+            "group_limit": 10,
+            "name": "mpq_group0_quota10",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 999,
+                "rem_total": 998,
+                "req": "q00",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 998,
+                "rem_total": 996,
+                "req": "q01",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 997,
+                "rem_total": 994,
+                "req": "q02",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 996,
+                "rem_total": 992,
+                "req": "q03",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 995,
+                "rem_total": 990,
+                "req": "q04",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 994,
+                "rem_total": 988,
+                "req": "q05",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 993,
+                "rem_total": 986,
+                "req": "q06",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 992,
+                "rem_total": 984,
+                "req": "q07",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 991,
+                "rem_total": 982,
+                "req": "q08",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 990,
+                "rem_total": 980,
+                "req": "q09",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": false,
+                "allow_skip": true,
+                "rem_input": 990,
+                "rem_total": 980,
+                "req": "q10",
+                "result": "OTHER"
+              }
+            ],
+            "waiting": [
+              "q10",
+              "q11",
+              "q12",
+              "q13",
+              "q14"
+            ]
+          },
+          {
+            "admitted": [
+              "q00",
+              "q01",
+              "q02"
+            ],
+            "batch_is_full": false,
+            "group_limit": 10,
+            "name": "mpq_configured_quota3",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 999,
+                "rem_total": 998,
+                "req": "q00",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 998,
+                "rem_total": 996,
+                "req": "q01",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 997,
+                "rem_total": 994,
+                "req": "q02",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": false,
+                "allow_skip": true,
+                "rem_input": 997,
+                "rem_total": 994,
+                "req": "q03",
+                "result": "OTHER"
+              }
+            ],
+            "waiting": [
+              "q03",
+              "q04",
+              "q05",
+              "q06",
+              "q07",
+              "q08",
+              "q09",
+              "q10",
+              "q11",
+              "q12",
+              "q13",
+              "q14"
+            ]
+          },
+          {
+            "admitted": [
+              "high000",
+              "high001",
+              "high002",
+              "high003",
+              "high004",
+              "high005",
+              "high006",
+              "high007",
+              "high008",
+              "high009",
+              "high010",
+              "high011",
+              "high012",
+              "high013",
+              "high014",
+              "high015",
+              "high016",
+              "high017",
+              "high018",
+              "high019",
+              "high020",
+              "high021",
+              "high022",
+              "high023",
+              "high024",
+              "high025",
+              "high026",
+              "high027",
+              "high028",
+              "high029",
+              "high030",
+              "high031",
+              "high032",
+              "high033",
+              "high034",
+              "high035",
+              "high036",
+              "high037",
+              "high038",
+              "high039",
+              "high040",
+              "high041",
+              "high042",
+              "high043",
+              "high044",
+              "high045",
+              "high046",
+              "high047",
+              "high048",
+              "high049",
+              "high050",
+              "high051",
+              "high052",
+              "high053",
+              "high054",
+              "high055",
+              "high056",
+              "high057",
+              "high058",
+              "high059",
+              "high060",
+              "high061",
+              "high062",
+              "high063",
+              "high064",
+              "high065",
+              "high066",
+              "high067",
+              "high068",
+              "high069",
+              "high070",
+              "high071",
+              "high072",
+              "high073",
+              "high074",
+              "high075",
+              "high076",
+              "high077",
+              "high078",
+              "high079",
+              "high080",
+              "high081",
+              "high082",
+              "high083",
+              "high084",
+              "high085",
+              "high086",
+              "high087",
+              "high088",
+              "high089"
+            ],
+            "batch_is_full": false,
+            "group_limit": 90,
+            "name": "mpq_group8_quota90",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 999,
+                "rem_total": 998,
+                "req": "high000",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 998,
+                "rem_total": 996,
+                "req": "high001",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 997,
+                "rem_total": 994,
+                "req": "high002",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 996,
+                "rem_total": 992,
+                "req": "high003",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 995,
+                "rem_total": 990,
+                "req": "high004",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 994,
+                "rem_total": 988,
+                "req": "high005",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 993,
+                "rem_total": 986,
+                "req": "high006",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 992,
+                "rem_total": 984,
+                "req": "high007",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 991,
+                "rem_total": 982,
+                "req": "high008",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 990,
+                "rem_total": 980,
+                "req": "high009",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 989,
+                "rem_total": 978,
+                "req": "high010",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 988,
+                "rem_total": 976,
+                "req": "high011",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 987,
+                "rem_total": 974,
+                "req": "high012",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 986,
+                "rem_total": 972,
+                "req": "high013",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 985,
+                "rem_total": 970,
+                "req": "high014",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 984,
+                "rem_total": 968,
+                "req": "high015",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 983,
+                "rem_total": 966,
+                "req": "high016",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 982,
+                "rem_total": 964,
+                "req": "high017",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 981,
+                "rem_total": 962,
+                "req": "high018",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 980,
+                "rem_total": 960,
+                "req": "high019",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 979,
+                "rem_total": 958,
+                "req": "high020",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 978,
+                "rem_total": 956,
+                "req": "high021",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 977,
+                "rem_total": 954,
+                "req": "high022",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 976,
+                "rem_total": 952,
+                "req": "high023",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 975,
+                "rem_total": 950,
+                "req": "high024",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 974,
+                "rem_total": 948,
+                "req": "high025",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 973,
+                "rem_total": 946,
+                "req": "high026",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 972,
+                "rem_total": 944,
+                "req": "high027",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 971,
+                "rem_total": 942,
+                "req": "high028",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 970,
+                "rem_total": 940,
+                "req": "high029",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 969,
+                "rem_total": 938,
+                "req": "high030",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 968,
+                "rem_total": 936,
+                "req": "high031",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 967,
+                "rem_total": 934,
+                "req": "high032",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 966,
+                "rem_total": 932,
+                "req": "high033",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 965,
+                "rem_total": 930,
+                "req": "high034",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 964,
+                "rem_total": 928,
+                "req": "high035",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 963,
+                "rem_total": 926,
+                "req": "high036",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 962,
+                "rem_total": 924,
+                "req": "high037",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 961,
+                "rem_total": 922,
+                "req": "high038",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 960,
+                "rem_total": 920,
+                "req": "high039",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 959,
+                "rem_total": 918,
+                "req": "high040",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 958,
+                "rem_total": 916,
+                "req": "high041",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 957,
+                "rem_total": 914,
+                "req": "high042",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 956,
+                "rem_total": 912,
+                "req": "high043",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 955,
+                "rem_total": 910,
+                "req": "high044",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 954,
+                "rem_total": 908,
+                "req": "high045",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 953,
+                "rem_total": 906,
+                "req": "high046",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 952,
+                "rem_total": 904,
+                "req": "high047",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 951,
+                "rem_total": 902,
+                "req": "high048",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 950,
+                "rem_total": 900,
+                "req": "high049",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 949,
+                "rem_total": 898,
+                "req": "high050",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 948,
+                "rem_total": 896,
+                "req": "high051",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 947,
+                "rem_total": 894,
+                "req": "high052",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 946,
+                "rem_total": 892,
+                "req": "high053",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 945,
+                "rem_total": 890,
+                "req": "high054",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 944,
+                "rem_total": 888,
+                "req": "high055",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 943,
+                "rem_total": 886,
+                "req": "high056",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 942,
+                "rem_total": 884,
+                "req": "high057",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 941,
+                "rem_total": 882,
+                "req": "high058",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 940,
+                "rem_total": 880,
+                "req": "high059",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 939,
+                "rem_total": 878,
+                "req": "high060",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 938,
+                "rem_total": 876,
+                "req": "high061",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 937,
+                "rem_total": 874,
+                "req": "high062",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 936,
+                "rem_total": 872,
+                "req": "high063",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 935,
+                "rem_total": 870,
+                "req": "high064",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 934,
+                "rem_total": 868,
+                "req": "high065",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 933,
+                "rem_total": 866,
+                "req": "high066",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 932,
+                "rem_total": 864,
+                "req": "high067",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 931,
+                "rem_total": 862,
+                "req": "high068",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 930,
+                "rem_total": 860,
+                "req": "high069",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 929,
+                "rem_total": 858,
+                "req": "high070",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 928,
+                "rem_total": 856,
+                "req": "high071",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 927,
+                "rem_total": 854,
+                "req": "high072",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 926,
+                "rem_total": 852,
+                "req": "high073",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 925,
+                "rem_total": 850,
+                "req": "high074",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 924,
+                "rem_total": 848,
+                "req": "high075",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 923,
+                "rem_total": 846,
+                "req": "high076",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 922,
+                "rem_total": 844,
+                "req": "high077",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 921,
+                "rem_total": 842,
+                "req": "high078",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 920,
+                "rem_total": 840,
+                "req": "high079",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 919,
+                "rem_total": 838,
+                "req": "high080",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 918,
+                "rem_total": 836,
+                "req": "high081",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 917,
+                "rem_total": 834,
+                "req": "high082",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 916,
+                "rem_total": 832,
+                "req": "high083",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 915,
+                "rem_total": 830,
+                "req": "high084",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 914,
+                "rem_total": 828,
+                "req": "high085",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 913,
+                "rem_total": 826,
+                "req": "high086",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 912,
+                "rem_total": 824,
+                "req": "high087",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 911,
+                "rem_total": 822,
+                "req": "high088",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 910,
+                "rem_total": 820,
+                "req": "high089",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": false,
+                "allow_skip": true,
+                "rem_input": 910,
+                "rem_total": 820,
+                "req": "high090",
+                "result": "OTHER"
+              }
+            ],
+            "waiting": [
+              "high090",
+              "high091",
+              "high092",
+              "high093",
+              "high094"
+            ]
+          },
+          {
+            "name": "direct_add_one_req_default_remains_non_skip",
+            "result": "NO_TOKEN"
+          },
+          {
+            "admitted": [
+              "existing_chunk"
+            ],
+            "chunked_req": "existing_chunk",
+            "classification_calls": 0,
+            "classified_after": {},
+            "cursor_after": 9,
+            "cursor_before": 9,
+            "group_limit": null,
+            "name": "chunk_only_does_not_rotate_or_classify",
+            "trace": [],
+            "waiting": [
+              "high",
+              "low"
+            ],
+            "waiting_matches": []
+          },
+          {
+            "admitted": [
+              "existing_chunk"
+            ],
+            "chunked_req": null,
+            "classification_calls": 0,
+            "classified_after": {},
+            "cursor_after": 9,
+            "cursor_before": 9,
+            "group_limit": null,
+            "name": "final_chunk_exhausts_budget_does_not_rotate_or_classify",
+            "trace": [],
+            "waiting": [
+              "high",
+              "low"
+            ],
+            "waiting_matches": []
+          },
+          {
+            "admitted": [
+              "high"
+            ],
+            "chunked_req": null,
+            "classification_calls": 1,
+            "classified_after": {
+              "low": 1
+            },
+            "cursor_after": 6,
+            "cursor_before": 9,
+            "group_limit": 1,
+            "name": "next_budget_selects_original_high_group",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 2,
+                "rem_total": 997,
+                "req": "high",
+                "result": "CONTINUE"
+              }
+            ],
+            "waiting": [
+              "low"
+            ],
+            "waiting_matches": [
+              "low",
+              "high",
+              "high"
+            ]
+          },
+          {
+            "admitted": [
+              "high0"
+            ],
+            "chunked_req": "high0",
+            "classification_calls": 1,
+            "classified_after": {
+              "high1": 7,
+              "low0": 1,
+              "low1": 1
+            },
+            "cursor_after": 6,
+            "cursor_before": 9,
+            "group_limit": 2,
+            "name": "two_groups_two_chunks_step1",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 0,
+                "rem_total": 997,
+                "req": "high0",
+                "result": "OTHER"
+              }
+            ],
+            "waiting": [
+              "high1",
+              "low0",
+              "low1"
+            ],
+            "waiting_matches": [
+              "low1",
+              "high1",
+              "low0",
+              "high0",
+              "high0",
+              "high1"
+            ]
+          },
+          {
+            "admitted": [
+              "high0"
+            ],
+            "chunked_req": null,
+            "classification_calls": 0,
+            "classified_after": {
+              "high1": 7,
+              "low0": 1,
+              "low1": 1
+            },
+            "cursor_after": 6,
+            "cursor_before": 6,
+            "group_limit": 2,
+            "name": "two_groups_two_chunks_step2",
+            "trace": [],
+            "waiting": [
+              "high1",
+              "low0",
+              "low1"
+            ],
+            "waiting_matches": []
+          },
+          {
+            "admitted": [
+              "low0"
+            ],
+            "chunked_req": "low0",
+            "classification_calls": 1,
+            "classified_after": {
+              "high1": 7,
+              "low1": 1
+            },
+            "cursor_after": 0,
+            "cursor_before": 6,
+            "group_limit": 2,
+            "name": "two_groups_two_chunks_step3",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 0,
+                "rem_total": 997,
+                "req": "low0",
+                "result": "OTHER"
+              }
+            ],
+            "waiting": [
+              "low1",
+              "high1"
+            ],
+            "waiting_matches": [
+              "low0",
+              "low1"
+            ]
+          },
+          {
+            "admitted": [
+              "low0"
+            ],
+            "chunked_req": null,
+            "classification_calls": 0,
+            "classified_after": {
+              "high1": 7,
+              "low1": 1
+            },
+            "cursor_after": 0,
+            "cursor_before": 0,
+            "group_limit": 2,
+            "name": "two_groups_two_chunks_step4",
+            "trace": [],
+            "waiting": [
+              "low1",
+              "high1"
+            ],
+            "waiting_matches": []
+          },
+          {
+            "admitted": [
+              "high1"
+            ],
+            "chunked_req": "high1",
+            "classification_calls": 1,
+            "classified_after": {
+              "low1": 1
+            },
+            "cursor_after": 6,
+            "cursor_before": 0,
+            "group_limit": 1,
+            "name": "two_groups_two_chunks_step5",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 0,
+                "rem_total": 997,
+                "req": "high1",
+                "result": "OTHER"
+              }
+            ],
+            "waiting": [
+              "low1"
+            ],
+            "waiting_matches": [
+              "high1"
+            ]
+          },
+          {
+            "admitted": [
+              "high1"
+            ],
+            "chunked_req": null,
+            "classification_calls": 0,
+            "classified_after": {
+              "low1": 1
+            },
+            "cursor_after": 6,
+            "cursor_before": 6,
+            "group_limit": 1,
+            "name": "two_groups_two_chunks_step6",
+            "trace": [],
+            "waiting": [
+              "low1"
+            ],
+            "waiting_matches": []
+          },
+          {
+            "admitted": [
+              "low1"
+            ],
+            "chunked_req": "low1",
+            "classification_calls": 1,
+            "classified_after": {},
+            "cursor_after": 0,
+            "cursor_before": 6,
+            "group_limit": 1,
+            "name": "two_groups_two_chunks_step7",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 0,
+                "rem_total": 997,
+                "req": "low1",
+                "result": "OTHER"
+              }
+            ],
+            "waiting": [],
+            "waiting_matches": [
+              "low1"
+            ]
+          },
+          {
+            "admitted": [
+              "low1"
+            ],
+            "chunked_req": null,
+            "classification_calls": 0,
+            "classified_after": {},
+            "cursor_after": 0,
+            "cursor_before": 0,
+            "group_limit": 1,
+            "name": "two_groups_two_chunks_step8",
+            "trace": [],
+            "waiting": [],
+            "waiting_matches": []
+          },
+          {
+            "admitted": [
+              "final_chunk",
+              "new00",
+              "new01",
+              "new02",
+              "new03",
+              "new04",
+              "new05",
+              "new06",
+              "new07",
+              "new08",
+              "new09"
+            ],
+            "chunked_req": null,
+            "classification_calls": 1,
+            "classified_after": {
+              "new10": 0,
+              "new11": 0,
+              "new12": 0,
+              "new13": 0,
+              "new14": 0
+            },
+            "cursor_after": 9,
+            "cursor_before": 9,
+            "group_limit": 10,
+            "name": "final_chunk_plus_full_new_group_quota",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 997,
+                "rem_total": 995,
+                "req": "new00",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 996,
+                "rem_total": 993,
+                "req": "new01",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 995,
+                "rem_total": 991,
+                "req": "new02",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 994,
+                "rem_total": 989,
+                "req": "new03",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 993,
+                "rem_total": 987,
+                "req": "new04",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 992,
+                "rem_total": 985,
+                "req": "new05",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 991,
+                "rem_total": 983,
+                "req": "new06",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 990,
+                "rem_total": 981,
+                "req": "new07",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 989,
+                "rem_total": 979,
+                "req": "new08",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 988,
+                "rem_total": 977,
+                "req": "new09",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": false,
+                "allow_skip": true,
+                "rem_input": 988,
+                "rem_total": 977,
+                "req": "new10",
+                "result": "OTHER"
+              }
+            ],
+            "waiting": [
+              "new10",
+              "new11",
+              "new12",
+              "new13",
+              "new14"
+            ],
+            "waiting_matches": [
+              "new14",
+              "new13",
+              "new12",
+              "new11",
+              "new10",
+              "new09",
+              "new08",
+              "new07",
+              "new06",
+              "new05",
+              "new04",
+              "new03",
+              "new02",
+              "new01",
+              "new00",
+              "new00",
+              "new01",
+              "new02",
+              "new03",
+              "new04",
+              "new05",
+              "new06",
+              "new07",
+              "new08",
+              "new09",
+              "new10",
+              "new11",
+              "new12",
+              "new13",
+              "new14"
+            ]
+          },
+          {
+            "admitted": [
+              "final_chunk"
+            ],
+            "chunked_req": null,
+            "classification_calls": 0,
+            "classified_after": {},
+            "cursor_after": 9,
+            "cursor_before": 9,
+            "group_limit": null,
+            "name": "global_cap_consumed_by_chunk_does_not_rotate",
+            "trace": [],
+            "waiting": [
+              "high",
+              "low"
+            ],
+            "waiting_matches": []
+          },
+          {
+            "admitted": [
+              "high"
+            ],
+            "chunked_req": null,
+            "classification_calls": 1,
+            "classified_after": {
+              "low": 1
+            },
+            "cursor_after": 6,
+            "cursor_before": 9,
+            "group_limit": 1,
+            "name": "global_cap_next_round_selects_original_group",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 998,
+                "rem_total": 997,
+                "req": "high",
+                "result": "CONTINUE"
+              }
+            ],
+            "waiting": [
+              "low"
+            ],
+            "waiting_matches": [
+              "low",
+              "high",
+              "high"
+            ]
+          },
+          {
+            "admitted": [
+              "final_chunk",
+              "new0"
+            ],
+            "chunked_req": null,
+            "classification_calls": 1,
+            "classified_after": {
+              "new1": 0,
+              "new2": 0,
+              "new3": 0,
+              "new4": 0
+            },
+            "cursor_after": 9,
+            "cursor_before": 9,
+            "group_limit": 5,
+            "name": "global_cap_includes_final_chunk_and_one_new_request",
+            "trace": [
+              {
+                "admitted": true,
+                "allow_skip": true,
+                "rem_input": 997,
+                "rem_total": 995,
+                "req": "new0",
+                "result": "CONTINUE"
+              },
+              {
+                "admitted": false,
+                "allow_skip": true,
+                "rem_input": 997,
+                "rem_total": 995,
+                "req": "new1",
+                "result": "OTHER"
+              }
+            ],
+            "waiting": [
+              "new1",
+              "new2",
+              "new3",
+              "new4"
+            ],
+            "waiting_matches": [
+              "new4",
+              "new3",
+              "new2",
+              "new1",
+              "new0",
+              "new0",
+              "new1",
+              "new2",
+              "new3",
+              "new4"
+            ]
+          },
+          {
+            "admitted": [
+              "existing_chunk"
+            ],
+            "chunked_req": null,
+            "classification_calls": 0,
+            "classified_after": {},
+            "cursor_after": 9,
+            "cursor_before": 9,
+            "group_limit": null,
+            "name": "chunk_exhausts_input_budget_without_rotation",
+            "trace": [],
+            "waiting": [
+              "unclassified"
+            ],
+            "waiting_matches": []
+          },
+          {
+            "admitted": [
+              "existing_chunk"
+            ],
+            "chunked_req": "existing_chunk",
+            "classification_calls": 0,
+            "classified_after": {},
+            "cursor_after": 9,
+            "cursor_before": 9,
+            "group_limit": null,
+            "name": "chunk_exhausts_total_budget_without_rotation",
+            "trace": [],
+            "waiting": [
+              "unclassified"
+            ],
+            "waiting_matches": []
+          },
+          {
+            "admitted": [
+              "existing_chunk"
+            ],
+            "chunked_req": "existing_chunk",
+            "classification_calls": 0,
+            "classified_after": {
+              "known_high": 7,
+              "known_low": 1
+            },
+            "cursor_after": 6,
+            "cursor_before": 6,
+            "group_limit": 1,
+            "name": "chunk_only_preserves_membership_and_defers_new_arrival",
+            "trace": [],
+            "waiting": [
+              "known_high",
+              "known_low",
+              "new_arrival"
+            ],
+            "waiting_matches": []
+          }
+        ],
+        "executed_source_ast": {
+          "PrefillAdder": "bc2b41f4b4d219cb241c4dc2c4ac7ddd14f472796fec677b15fefefc79d93eda",
+          "SchedulePolicy": "606bf19e011f179c0a4e103e22a9434e3f10665572b6c4bf537742d313d12f16",
+          "Scheduler._get_new_batch_prefill_raw": "ee25b224881e3a7201bcd2cfabe5ee68de45f1d3a9e675dfb65dbb2325836ec6"
+        },
+        "files": {
+          "python/sglang/srt/managers/schedule_policy.py": "e6a5f01caf262bd774a0015479add06845d7bdd684022ddb45df788c8071fa38",
+          "python/sglang/srt/managers/scheduler.py": "780f973a83535c53914d68f887c00ed750263df095fba6d9bf4f8db4d618373c"
+        },
+        "head": "c773f3e5605eb3fe9a2d032c80f0e9def6dfc2d9",
+        "limitations": "CPU runtime infrastructure stubs; no GPU, model, timing or throughput claims.",
+        "passed": 41,
+        "repo": "$REPOSITORY"
+      },
+      "source": {
+        "file": "$VALIDATION/mpq-runtime-validation-with-chunks.json",
+        "sha256": "a7eb12044b6846b8bf0748f230bd80bd4c64108a16eb99f454d85ebabe4c5a65"
+      }
+    },
+    "verify_public_http_tpot.json": {
+      "data": {
+        "all_passed": true,
+        "cases": [
+          {
+            "current_samples": [
+              [
+                0.15
+              ],
+              [
+                0.15
+              ]
+            ],
+            "output_tokens": 1,
+            "pass": true,
+            "public_http_tpot": 2.0,
+            "reference_samples": [
+              [
+                0.15
+              ],
+              [
+                0.15
+              ]
+            ]
+          },
+          {
+            "current_samples": [
+              [
+                0.15,
+                1.0
+              ],
+              [
+                0.15
+              ]
+            ],
+            "output_tokens": 2,
+            "pass": true,
+            "public_http_tpot": 1.0,
+            "reference_samples": [
+              [
+                0.15,
+                1.0
+              ],
+              [
+                0.15
+              ]
+            ]
+          },
+          {
+            "current_samples": [
+              [
+                0.15,
+                0.044444444444444446
+              ],
+              [
+                0.15
+              ]
+            ],
+            "output_tokens": 45,
+            "pass": true,
+            "public_http_tpot": 0.044444444444444446,
+            "reference_samples": [
+              [
+                0.15,
+                0.044444444444444446
+              ],
+              [
+                0.15
+              ]
+            ]
+          }
+        ],
+        "reference_commit": "1a35eae20c416f7062ca81775aab72890323fd97",
+        "scope": "Original public async_send_request/process_stream_output and original finish_request vs current select/finish; fake HTTP clock/frames, CPU only, no model loading."
+      },
+      "source": {
+        "file": "$VALIDATION/verify_public_http_tpot.json",
+        "sha256": "89c73c7dfdbce15e8bfa9b3d226ce83fe7b1c76015ae63357c7ba23573f25a53"
+      }
+    },
+    "waiting-cancel-validation.json": {
+      "data": {
+        "checks": [
+          {
+            "details": {
+              "candidate_snapshot_released": true,
+              "mpq_index": [
+                "keep"
+              ],
+              "waiting": [
+                "keep"
+              ]
+            },
+            "name": "partial_abort_keeps_unrelated_waiting_and_mpq_membership",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "partial_abort_preserves_existing_group_and_resource_release",
+            "passed": true
+          },
+          {
+            "details": {
+              "candidate_snapshot_released": true,
+              "mpq_index": [],
+              "waiting": []
+            },
+            "name": "abort_all_releases_last_waiting_entries_immediately",
+            "passed": true
+          },
+          {
+            "details": {
+              "candidate_snapshot_released": false,
+              "mpq_index": [
+                "keep"
+              ],
+              "waiting": [
+                "keep"
+              ]
+            },
+            "name": "unmatched_abort_preserves_waiting_and_mpq",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "unmatched_abort_preserves_candidate_snapshot",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "running_abort_does_not_remove_unrelated_waiting_index",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "chunked_abort_preserves_waiting_index_and_defers_existing_cleanup",
+            "passed": true
+          },
+          {
+            "details": {
+              "candidate_snapshot_released": true,
+              "mpq_index": [
+                "boundary",
+                "fresh",
+                "unset"
+              ],
+              "waiting": [
+                "boundary",
+                "fresh",
+                "unset"
+              ]
+            },
+            "name": "timeout_removes_only_expired_waiting_index_entries",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "timeout_keeps_original_error_and_prefetch_cleanup",
+            "passed": true
+          },
+          {
+            "details": {
+              "candidate_snapshot_released": true,
+              "mpq_index": [],
+              "waiting": []
+            },
+            "name": "timeout_all_releases_last_index_immediately",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "disabled_timeout_keeps_all_policy_state",
+            "passed": true
+          },
+          {
+            "details": {
+              "candidate_snapshot_released": true,
+              "mpq_index": [
+                "keep-best",
+                "keep-older"
+              ],
+              "waiting": [
+                "keep-best",
+                "keep-older"
+              ]
+            },
+            "name": "queue_replacement_low_values_first",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "queue_replacement_preserves_rejection_direction_and_cleanup_True",
+            "passed": true
+          },
+          {
+            "details": {
+              "candidate_snapshot_released": true,
+              "mpq_index": [
+                "keep-best",
+                "keep-older"
+              ],
+              "waiting": [
+                "keep-best",
+                "keep-older"
+              ]
+            },
+            "name": "queue_replacement_high_values_first",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "queue_replacement_preserves_rejection_direction_and_cleanup_False",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "incoming_rejection_or_under_limit_does_not_modify_existing_index_(99, True, 1)",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "incoming_rejection_or_under_limit_does_not_modify_existing_index_(3, True, 1)",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "incoming_rejection_or_under_limit_does_not_modify_existing_index_(0, False, 1)",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "incoming_rejection_or_under_limit_does_not_modify_existing_index_(0, True, 2)",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "incoming_rejection_or_under_limit_does_not_modify_existing_index_(0, True, None)",
+            "passed": true
+          },
+          {
+            "details": {
+              "candidate_snapshot_released": true,
+              "mpq_index": [],
+              "waiting": []
+            },
+            "name": "explicit_abort_prefill_clears_waiting_mpq_state",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "explicit_abort_prefill_keeps_existing_resource_cleanup",
+            "passed": true
+          },
+          {
+            "details": {
+              "candidate_snapshot_released": true,
+              "mpq_index": [],
+              "waiting": []
+            },
+            "name": "explicit_abort_decode_clears_waiting_mpq_state",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "explicit_abort_decode_keeps_existing_resource_cleanup",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "mamba_abort_preserves_existing_kv_cleanup",
+            "passed": true
+          },
+          {
+            "details": {
+              "candidate_snapshot_released": true,
+              "mpq_index": [
+                "pd-other"
+              ],
+              "waiting": [
+                "pd-other"
+              ]
+            },
+            "name": "pd_bootstrap_failure_partial",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "pd_bootstrap_failure_preserves_error_and_resource_cleanup_False",
+            "passed": true
+          },
+          {
+            "details": {
+              "candidate_snapshot_released": true,
+              "mpq_index": [],
+              "waiting": []
+            },
+            "name": "pd_bootstrap_failure_all",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "pd_bootstrap_failure_preserves_error_and_resource_cleanup_True",
+            "passed": true
+          },
+          {
+            "details": {
+              "candidate_snapshot_released": true,
+              "mpq_index": [
+                "not-admitted"
+              ],
+              "waiting": [
+                "not-admitted"
+              ]
+            },
+            "name": "normal_admission_cleanup_remains_idempotent",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "normal_admission_local_candidate_list_is_unchanged",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "readmitted_retracted_request_is_reclassified",
+            "passed": true
+          },
+          {
+            "details": {
+              "queue_empty": true,
+              "req_collected": true
+            },
+            "name": "no_further_request_or_schedule_gc_release_abort_all",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "idle_prefill_returns_without_policy_for_abort_all",
+            "passed": true
+          },
+          {
+            "details": {
+              "queue_empty": true,
+              "req_collected": true
+            },
+            "name": "no_further_request_or_schedule_gc_release_partial_abort",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "idle_prefill_returns_without_policy_for_partial_abort",
+            "passed": true
+          },
+          {
+            "details": {
+              "queue_empty": true,
+              "req_collected": true
+            },
+            "name": "no_further_request_or_schedule_gc_release_timeout",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "idle_prefill_returns_without_policy_for_timeout",
+            "passed": true
+          },
+          {
+            "details": {
+              "queue_empty": true,
+              "req_collected": true
+            },
+            "name": "no_further_request_or_schedule_gc_release_replacement",
+            "passed": true
+          },
+          {
+            "details": null,
+            "name": "idle_prefill_returns_without_policy_for_replacement",
+            "passed": true
+          },
+          {
+            "details": {
+              "queue_empty": true,
+              "req_collected": true
+            },
+            "name": "no_further_request_or_schedule_gc_release_pd",
+            "passed": true
+          }
+        ],
+        "method_sha256": {
+          "baseline": {
+            "python/sglang/srt/disaggregation/prefill.py:SchedulerDisaggregationPrefillMixin.handle_bootstrap_failure": "63addbb5f0d31f39f9b780f30878f8dde2735c8ffa65cac19198e7484301439e",
+            "python/sglang/srt/disaggregation/prefill.py:SchedulerDisaggregationPrefillMixin.resolve_waiting_queue_bootstrap": "fc38052d8c4d7bb773db7cc487184cfe805af41eacaefcdb16dd3f08e9e0da67",
+            "python/sglang/srt/managers/schedule_batch.py:Req.finished": "3e9345781cf37e55b04b26c450ef11ad7b578f71b3061c966e5393126713c260",
+            "python/sglang/srt/managers/schedule_policy.py:SchedulePolicy._sort_by_cache_hit_groups": "65a63b32b524ac816ea3a2572805770dc1de9966545205beb0a6ddc390389e04",
+            "python/sglang/srt/managers/schedule_policy.py:SchedulePolicy.remove_admitted_requests": "58f92c64077d0988439078e04dac142fb87ce83e599a3c79b12143dd3161a766",
+            "python/sglang/srt/managers/scheduler.py:Scheduler._abort_on_queued_limit": "69f87a68f5dd2e87d73971d20f3962dd653953646518d35d29246814aafdaecb",
+            "python/sglang/srt/managers/scheduler.py:Scheduler._abort_on_waiting_timeout": "d026e67a73ff02a48b9a095c109db2cbc1e51b8d141191db522cc1ed541bf038",
+            "python/sglang/srt/managers/scheduler.py:Scheduler._get_new_batch_prefill_raw": "1a8d4a599e610d1596c5a56ecbde1996fd20a6ccd0fde4ea35624c1c78823c72",
+            "python/sglang/srt/managers/scheduler.py:Scheduler.abort_request": "6ec428786fc7c49c01ba50ba161cbf87811a2a1b41f658e914e121cdf1edafe4"
+          },
+          "patched": {
+            "python/sglang/srt/disaggregation/prefill.py:SchedulerDisaggregationPrefillMixin.handle_bootstrap_failure": "63addbb5f0d31f39f9b780f30878f8dde2735c8ffa65cac19198e7484301439e",
+            "python/sglang/srt/disaggregation/prefill.py:SchedulerDisaggregationPrefillMixin.resolve_waiting_queue_bootstrap": "c1cd4382f79d8499e848b56d1d551962a199a3bf9e3eafce935284c20dac2598",
+            "python/sglang/srt/managers/schedule_batch.py:Req.finished": "3e9345781cf37e55b04b26c450ef11ad7b578f71b3061c966e5393126713c260",
+            "python/sglang/srt/managers/schedule_policy.py:SchedulePolicy._sort_by_cache_hit_groups": "65a63b32b524ac816ea3a2572805770dc1de9966545205beb0a6ddc390389e04",
+            "python/sglang/srt/managers/schedule_policy.py:SchedulePolicy.remove_admitted_requests": "e3d95c8771d3443e606bb61ebeeb7354a0b43989e69126b67eac3ea8464cefab",
+            "python/sglang/srt/managers/scheduler.py:Scheduler._abort_on_queued_limit": "71d1450e4e859bb9e9c5edd01bbf099c0454cf7218167bada51cf57c2b9e2e5e",
+            "python/sglang/srt/managers/scheduler.py:Scheduler._abort_on_waiting_timeout": "d8737267b30d74da807cf56ed0772532ea6bb4469f6c57bdb88bd117922980c0",
+            "python/sglang/srt/managers/scheduler.py:Scheduler._get_new_batch_prefill_raw": "1a8d4a599e610d1596c5a56ecbde1996fd20a6ccd0fde4ea35624c1c78823c72",
+            "python/sglang/srt/managers/scheduler.py:Scheduler.abort_request": "0ef38ad41bdd9b434f85a531b0db7c73faf9f137be2a59b94cfef2db7be89b10"
+          }
+        },
+        "negative_controls": [
+          {
+            "name": "original_abort_all_retains_map_and_snapshot_without_next_schedule",
+            "reproduced": true
+          },
+          {
+            "name": "clearing_only_map_still_retains_selected_request_in_snapshot",
+            "reproduced": true
+          }
+        ],
+        "passed": 41,
+        "patch": "$VALIDATION/mpq-waiting-cancel.patch",
+        "patch_applies_to_current_worktree": false,
+        "patch_check_stderr": "error: patch failed: python/sglang/srt/managers/schedule_policy.py:279\nerror: python/sglang/srt/managers/schedule_policy.py: patch does not apply\nerror: patch failed: python/sglang/srt/managers/scheduler.py:2304\nerror: python/sglang/srt/managers/scheduler.py: patch does not apply\nerror: patch failed: python/sglang/srt/disaggregation/prefill.py:439\nerror: python/sglang/srt/disaggregation/prefill.py: patch does not apply\n",
+        "scope": "Actual production ASTs with only GPU allocation/IPC/polling infrastructure stubbed; no inference performance claim.",
+        "source": {
+          "python/sglang/srt/disaggregation/prefill.py": {
+            "before_sha256": "60080e2c0fd4b478cde3048fbbfb179d7f206c8ba06d70757d7a919b53bfe32b",
+            "patched_sha256": "f5eb7f34489ca752e117e307c62908d3225bbf00ea4660602481ff64f6932639"
+          },
+          "python/sglang/srt/managers/schedule_policy.py": {
+            "before_sha256": "d717d165dd71a7232829bffefb7ea3c8c7ecb68fa711a7d2d4a412147d1d8dd3",
+            "patched_sha256": "e6a5f01caf262bd774a0015479add06845d7bdd684022ddb45df788c8071fa38"
+          },
+          "python/sglang/srt/managers/scheduler.py": {
+            "before_sha256": "030b857c45b506655b935f3b66fc5758c874395f0c2c68756cc37052c445a16a",
+            "patched_sha256": "780f973a83535c53914d68f887c00ed750263df095fba6d9bf4f8db4d618373c"
+          }
+        },
+        "total": 41
+      },
+      "source": {
+        "file": "$VALIDATION/waiting-cancel-validation.json",
+        "sha256": "18e25df56178d0930f68c407d39665199bb0281b59621d05a09527e404e90dbe"
+      }
+    }
+  },
+  "schema_version": 1,
+  "source_matches_benchmark_commit": {
+    "cancellation": {
+      "python/sglang/srt/disaggregation/prefill.py": "f5eb7f34489ca752e117e307c62908d3225bbf00ea4660602481ff64f6932639",
+      "python/sglang/srt/managers/schedule_policy.py": "e6a5f01caf262bd774a0015479add06845d7bdd684022ddb45df788c8071fa38",
+      "python/sglang/srt/managers/scheduler.py": "780f973a83535c53914d68f887c00ed750263df095fba6d9bf4f8db4d618373c"
+    },
+    "fifo": {
+      "python/sglang/srt/disaggregation/utils.py": "6c3dd76f0ad56f30e79b36989da68d0740d206ed8759dd617887236830899a2a",
+      "python/sglang/srt/managers/schedule_batch.py": "c995e03e6f8a2681813b3950dd72a29483c7c9a2aa286fbe41ba3901b753b741",
+      "python/sglang/srt/managers/schedule_policy.py": "e6a5f01caf262bd774a0015479add06845d7bdd684022ddb45df788c8071fa38",
+      "python/sglang/srt/managers/tokenizer_manager.py": "f2c2bc1da72eb5587a0663cd2bf24fc2d57c63c2d74dec218029b849bd6a0711",
+      "python/sglang/srt/observability/req_time_stats.py": "5487e638bbe6a83b990e8c72940586c20479e5c0317ee40bec68612826206f34",
+      "python/sglang/srt/observability/trace.py": "7d988ebe910ad5ffad782bdd6461ef7361309592135b174ee139dc31979abfc2"
+    },
+    "mpq": {
+      "python/sglang/srt/managers/schedule_policy.py": "e6a5f01caf262bd774a0015479add06845d7bdd684022ddb45df788c8071fa38",
+      "python/sglang/srt/managers/scheduler.py": "780f973a83535c53914d68f887c00ed750263df095fba6d9bf4f8db4d618373c"
+    }
+  },
+  "validation_scripts": [
+    {
+      "file": "$VALIDATION/global_diff.py",
+      "sha256": "441f279b15e3ab1cfd2cb5dc2a2f4e785e6739c157aaa446dab8d48bcfc559ae"
+    },
+    {
+      "file": "$VALIDATION/mpq-runtime-validation.py",
+      "sha256": "28a439836f30cc93da83652d0e6e869a9cef0b7ed9a6ee1ea978faa5cbd24413"
+    },
+    {
+      "file": "$VALIDATION/verify_fifo_runtime.py",
+      "sha256": "cd83ec62802d69c2871d53699288778e3519dec009a598b7d42d0979c49201e5"
+    },
+    {
+      "file": "$VALIDATION/verify_public_http_tpot.py",
+      "sha256": "d34bb3eefc5bd6df544245c915208ebfca92aa1d7219e3e8828d44de7541aca9"
+    },
+    {
+      "file": "$VALIDATION/verify_waiting_cancel.py",
+      "sha256": "0953a653324eb248bd3f46064bac5882c0fe68361546c3dfbc72d58759443fbb"
+    }
+  ],
+  "validation_scripts_committed": false
+}

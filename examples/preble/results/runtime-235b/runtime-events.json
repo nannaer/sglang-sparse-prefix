@@ -1,0 +1,291 @@
+{
+  "all_log_hashes_reverified": true,
+  "conclusion": "Only one runtime event: one normal KV-pool retraction on RR+LPM repetition 2 worker 1, copied by TP0-3. No logged OOM exit, assertion, unexpected exit, traceback, or runtime error. All four trials succeeded 393/393 and all six workers gracefully drained to zero requests.",
+  "counts": {
+    "assertion": 0,
+    "expected_worker_shutdowns": 6,
+    "oom": 0,
+    "other_error": 0,
+    "retracted_requests": 1,
+    "retraction": 1,
+    "runtime_error": 0,
+    "runtime_event_groups": 1,
+    "runtime_event_rank_lines": 4,
+    "traceback": 0,
+    "unexpected_exit": 0
+  },
+  "counts_by_trial": {
+    "preble-mpq-r1.4-rep1": {
+      "assertion": 0,
+      "oom": 0,
+      "other_error": 0,
+      "retraction": 0,
+      "runtime_error": 0,
+      "traceback": 0,
+      "unexpected_exit": 0
+    },
+    "preble-mpq-r1.4-rep2": {
+      "assertion": 0,
+      "oom": 0,
+      "other_error": 0,
+      "retraction": 0,
+      "runtime_error": 0,
+      "traceback": 0,
+      "unexpected_exit": 0
+    },
+    "rr-lpm-r1.4-rep1": {
+      "assertion": 0,
+      "oom": 0,
+      "other_error": 0,
+      "retraction": 0,
+      "runtime_error": 0,
+      "traceback": 0,
+      "unexpected_exit": 0
+    },
+    "rr-lpm-r1.4-rep2": {
+      "assertion": 0,
+      "oom": 0,
+      "other_error": 0,
+      "retraction": 1,
+      "runtime_error": 0,
+      "traceback": 0,
+      "unexpected_exit": 0
+    }
+  },
+  "created_at": "2026-10-15T07:52:52.433330+00:00",
+  "events": [
+    {
+      "classification": "normal KV-pool request retraction; not an OOM exit",
+      "event_type": "retraction",
+      "file": "$RUNTIME/sessions/02-lpm/worker1.log",
+      "message": "KV cache pool is full. Retract requests. #retracted_reqs: 1, #new_tokens_gained: 941, #new_token_ratio: 0.6237 -> 1.0000",
+      "new_tokens_gained": 941,
+      "rank_line_count": 4,
+      "rank_lines": [
+        {
+          "line": 3461,
+          "rank": "TP0",
+          "text": "[2026-10-15 07:38:26 TP0] KV cache pool is full. Retract requests. #retracted_reqs: 1, #new_tokens_gained: 941, #new_token_ratio: 0.6237 -> 1.0000"
+        },
+        {
+          "line": 3462,
+          "rank": "TP2",
+          "text": "[2026-10-15 07:38:26 TP2] KV cache pool is full. Retract requests. #retracted_reqs: 1, #new_tokens_gained: 941, #new_token_ratio: 0.6237 -> 1.0000"
+        },
+        {
+          "line": 3463,
+          "rank": "TP3",
+          "text": "[2026-10-15 07:38:26 TP3] KV cache pool is full. Retract requests. #retracted_reqs: 1, #new_tokens_gained: 941, #new_token_ratio: 0.6237 -> 1.0000"
+        },
+        {
+          "line": 3464,
+          "rank": "TP1",
+          "text": "[2026-10-15 07:38:26 TP1] KV cache pool is full. Retract requests. #retracted_reqs: 1, #new_tokens_gained: 941, #new_token_ratio: 0.6237 -> 1.0000"
+        }
+      ],
+      "ranks": [
+        "TP0",
+        "TP1",
+        "TP2",
+        "TP3"
+      ],
+      "retracted_requests": 1,
+      "session": "02-lpm",
+      "sha256": "54e64e852f1f91b96d0cf9b8cabe684bc8d14615d2e6ffd1fb5771b8d6569666",
+      "timestamp": "2026-10-15T07:38:26+00:00",
+      "trial": "rr-lpm-r1.4-rep2",
+      "worker": 1
+    }
+  ],
+  "logs": [
+    {
+      "bytes": 352022,
+      "expected_cleanup_lines": [
+        {
+          "line": 1646,
+          "text": "[2026-10-15 07:27:47] SIGTERM received. signum=None frame=None. Draining requests and shutting down..."
+        },
+        {
+          "line": 1647,
+          "text": "[2026-10-15 07:27:49] Gracefully exiting... Remaining number of requests 0. Remaining requests remaining_rids=[]."
+        },
+        {
+          "line": 1648,
+          "text": "[2026-10-15 07:27:49] kill_process_tree called: parent_pid=1981118, include_parent=True, pid=1981118"
+        }
+      ],
+      "file": "$RUNTIME/sessions/01-mpq/worker0.log",
+      "physical_lf_lines": 1648,
+      "session": "01-mpq",
+      "sha256": "ee386e537d2751dcac9da600a720724bdd651008b27463e344461fe59d787fe3",
+      "worker": 0
+    },
+    {
+      "bytes": 431540,
+      "expected_cleanup_lines": [
+        {
+          "line": 2041,
+          "text": "[2026-10-15 07:27:47] SIGTERM received. signum=None frame=None. Draining requests and shutting down..."
+        },
+        {
+          "line": 2042,
+          "text": "[2026-10-15 07:27:50] Gracefully exiting... Remaining number of requests 0. Remaining requests remaining_rids=[]."
+        },
+        {
+          "line": 2043,
+          "text": "[2026-10-15 07:27:50] kill_process_tree called: parent_pid=1981119, include_parent=True, pid=1981119"
+        }
+      ],
+      "file": "$RUNTIME/sessions/01-mpq/worker1.log",
+      "physical_lf_lines": 2043,
+      "session": "01-mpq",
+      "sha256": "037502777b50a777e82a25c2b80eab8a861f99f9ee313b5a06fecaa731af9f66",
+      "worker": 1
+    },
+    {
+      "bytes": 765334,
+      "expected_cleanup_lines": [
+        {
+          "line": 3675,
+          "text": "[2026-10-15 07:41:31] SIGTERM received. signum=None frame=None. Draining requests and shutting down..."
+        },
+        {
+          "line": 3676,
+          "text": "[2026-10-15 07:41:35] Gracefully exiting... Remaining number of requests 0. Remaining requests remaining_rids=[]."
+        },
+        {
+          "line": 3677,
+          "text": "[2026-10-15 07:41:35] kill_process_tree called: parent_pid=1985571, include_parent=True, pid=1985571"
+        }
+      ],
+      "file": "$RUNTIME/sessions/02-lpm/worker0.log",
+      "physical_lf_lines": 3677,
+      "session": "02-lpm",
+      "sha256": "8568400813c277a8e116d8cc574c6f4d12b44a1ad983526c0ecbd5c33ee2a2c1",
+      "worker": 0
+    },
+    {
+      "bytes": 980355,
+      "expected_cleanup_lines": [
+        {
+          "line": 4659,
+          "text": "[2026-10-15 07:41:31] SIGTERM received. signum=None frame=None. Draining requests and shutting down..."
+        },
+        {
+          "line": 4660,
+          "text": "[2026-10-15 07:41:35] Gracefully exiting... Remaining number of requests 0. Remaining requests remaining_rids=[]."
+        },
+        {
+          "line": 4661,
+          "text": "[2026-10-15 07:41:35] kill_process_tree called: parent_pid=1985572, include_parent=True, pid=1985572"
+        }
+      ],
+      "file": "$RUNTIME/sessions/02-lpm/worker1.log",
+      "physical_lf_lines": 4661,
+      "session": "02-lpm",
+      "sha256": "54e64e852f1f91b96d0cf9b8cabe684bc8d14615d2e6ffd1fb5771b8d6569666",
+      "worker": 1
+    },
+    {
+      "bytes": 441050,
+      "expected_cleanup_lines": [
+        {
+          "line": 2107,
+          "text": "[2026-10-15 07:48:58] SIGTERM received. signum=None frame=None. Draining requests and shutting down..."
+        },
+        {
+          "line": 2108,
+          "text": "[2026-10-15 07:48:58] Gracefully exiting... Remaining number of requests 0. Remaining requests remaining_rids=[]."
+        },
+        {
+          "line": 2109,
+          "text": "[2026-10-15 07:48:58] kill_process_tree called: parent_pid=1990227, include_parent=True, pid=1990227"
+        }
+      ],
+      "file": "$RUNTIME/sessions/03-mpq/worker0.log",
+      "physical_lf_lines": 2109,
+      "session": "03-mpq",
+      "sha256": "ee90b65f89056b1b900ab21adff1d64a6da8a9ecca39e5ac4b674c53d128985d",
+      "worker": 0
+    },
+    {
+      "bytes": 421125,
+      "expected_cleanup_lines": [
+        {
+          "line": 1987,
+          "text": "[2026-10-15 07:48:58] SIGTERM received. signum=None frame=None. Draining requests and shutting down..."
+        },
+        {
+          "line": 1988,
+          "text": "[2026-10-15 07:48:58] Gracefully exiting... Remaining number of requests 0. Remaining requests remaining_rids=[]."
+        },
+        {
+          "line": 1989,
+          "text": "[2026-10-15 07:48:58] kill_process_tree called: parent_pid=1990228, include_parent=True, pid=1990228"
+        }
+      ],
+      "file": "$RUNTIME/sessions/03-mpq/worker1.log",
+      "physical_lf_lines": 1989,
+      "session": "03-mpq",
+      "sha256": "8a55c08f93dfa9caad7ad10b2353cf57611d12f338f1382c90e76ca1687bf0c0",
+      "worker": 1
+    }
+  ],
+  "public_source": {
+    "file": "$VALIDATION/runtime-event-audit.json",
+    "sha256": "aafd454c5932441ebf71f80d1679d614f98cce4ab0bbd783094ffbed3ba8eb96"
+  },
+  "run_completed_at": "2026-10-15T07:49:04.403148+00:00",
+  "scope": {
+    "excluded_nonincident_messages": [
+      "Expected SIGTERM/graceful zero-request drain during runner-owned cleanup",
+      "Cutlass package-walk WARNING messages",
+      "Custom allreduce initialized successfully (rank-check failed: tensor model parallel group is not initialized) is startup information, not an exit assertion."
+    ],
+    "grouping": "Exact UTC second + session + worker + message after removing timestamp/TP prefix; no merging across workers.",
+    "line_numbers": "1-based physical LF lines, matching rg -n; embedded CR progress updates do not add line numbers.",
+    "logs": "Six worker logs after all four trials and final cleanup",
+    "patterns": {
+      "assertion": "AssertionError|assertion.*(?:failed|failure)|(?:^|\\s)Check failed:",
+      "oom": "CUDA out of memory|OutOfMemoryError|CUDA error:.*out of memory",
+      "other_error": "\\bERROR:|\\bERROR\\s*\\]",
+      "retraction": "KV cache pool is full\\. Retract requests\\.|#retracted_reqs:",
+      "runtime_error": "RuntimeError:",
+      "traceback": "Traceback \\(most recent call last\\)",
+      "unexpected_exit": "Fatal Python error|Segmentation fault|SIGSEGV|SIGABRT|exited unexpectedly|unexpected.*(?:worker|process).*exit|exited with (?:exit )?code [1-9]"
+    },
+    "trial_assignment": "Matching session and trial-manifest started_at <= event UTC <= completed-at UTC; replay start also listed."
+  },
+  "source_commit": "c773f3e5605eb3fe9a2d032c80f0e9def6dfc2d9",
+  "source_root": "$RUNTIME",
+  "trial_windows": [
+    {
+      "completed_at": "2026-10-15T07:27:44.719501+00:00",
+      "replay_started_at": "2026-10-15T07:22:25.816608+00:00",
+      "session": "01-mpq",
+      "started_at": "2026-10-15T07:22:16.452005+00:00",
+      "trial": "preble-mpq-r1.4-rep1"
+    },
+    {
+      "completed_at": "2026-10-15T07:36:11.467972+00:00",
+      "replay_started_at": "2026-10-15T07:30:32.409636+00:00",
+      "session": "02-lpm",
+      "started_at": "2026-10-15T07:30:32.056754+00:00",
+      "trial": "rr-lpm-r1.4-rep1"
+    },
+    {
+      "completed_at": "2026-10-15T07:41:29.451473+00:00",
+      "replay_started_at": "2026-10-15T07:36:14.382273+00:00",
+      "session": "02-lpm",
+      "started_at": "2026-10-15T07:36:13.945458+00:00",
+      "trial": "rr-lpm-r1.4-rep2"
+    },
+    {
+      "completed_at": "2026-10-15T07:48:55.234956+00:00",
+      "replay_started_at": "2026-10-15T07:44:07.281208+00:00",
+      "session": "03-mpq",
+      "started_at": "2026-10-15T07:43:59.885797+00:00",
+      "trial": "preble-mpq-r1.4-rep2"
+    }
+  ]
+}
