@@ -2728,14 +2728,10 @@ class Scheduler(
             return None
 
         # Get priority queue
-        self.policy.calc_priority(self.waiting_queue, self.running_batch)
+        is_mpq = self.policy.policy == CacheAwarePolicy.FCFS_MPQ
+        if not is_mpq:
+            self.policy.calc_priority(self.waiting_queue, self.running_batch)
         prefill_max_requests = self.server_args.prefill_max_requests
-        if self.policy.prefill_limit is not None:
-            mpq_limit = self.policy.prefill_limit + int(self.chunked_req is not None)
-            prefill_max_requests = min(
-                mpq_limit,
-                prefill_max_requests if prefill_max_requests is not None else mpq_limit,
-            )
 
         if TEST_RETRACT and running_bs > TEST_RETRACT_NO_PREFILL_BS:
             # If we are testing retraction and the running batch size exceeds
@@ -2796,6 +2792,29 @@ class Scheduler(
             if self.policy.prefill_candidates is not None
             else self.waiting_queue
         )
+        if is_mpq:
+            # Running chunks consume budget before Preble chooses a waiting group.
+            # A chunk-only pass must not advance the group round-robin cursor.
+            if adder.budget_state() == AddReqResult.CONTINUE and (
+                prefill_max_requests is None
+                or len(adder.can_run_list) < prefill_max_requests
+            ):
+                self.policy.calc_priority(self.waiting_queue, self.running_batch)
+                prefill_candidates = (
+                    self.policy.prefill_candidates or self.waiting_queue
+                )
+                if self.policy.prefill_limit is not None:
+                    mpq_limit = self.policy.prefill_limit + len(adder.can_run_list)
+                    adder.prefill_max_requests = min(
+                        mpq_limit,
+                        (
+                            prefill_max_requests
+                            if prefill_max_requests is not None
+                            else mpq_limit
+                        ),
+                    )
+            else:
+                prefill_candidates = []
         for req in prefill_candidates:
             if self.enable_lora and not self._can_schedule_lora_req(req, running_loras):
                 continue
