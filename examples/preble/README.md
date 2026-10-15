@@ -2,7 +2,7 @@
 
 本项目把 [WukLab/Preble](https://github.com/WukLab/preble) 的**公开服务默认路径**移植到当前 SGLang。参考 commit 固定为 [`1a35eae20c416f7062ca81775aab72890323fd97`](https://github.com/WukLab/preble/tree/1a35eae20c416f7062ca81775aab72890323fd97)，SGLang base 为 `ef11e3904885c8050f167a4a6f805da03e9e9bae`，不安装旧版 SGLang fork。
 
-论文：[Preble: Efficient Distributed Prompt Scheduling for LLM Serving](https://arxiv.org/abs/2407.00023)。修正前的大模型实测、逐轮数据及局限保留在[历史报告](RESULTS.md)。
+论文：[Preble: Efficient Distributed Prompt Scheduling for LLM Serving](https://arxiv.org/abs/2407.00023)。本轮 235B ABBA 实测、逐轮数据及局限见[补充实验](RUNTIME_RESULTS.md)；修正前的数据保留在[历史报告](RESULTS.md)。
 
 ## 请求经过哪里
 
@@ -129,7 +129,7 @@ FIFO 使用 tokenization 前记录的 `created_time`，经 API→Scheduler 或 A
 
 必要适配：保留当前 `Req` / radix API、页级容量预留、对齐、SWA/Mamba 资源校验及单个 continuing chunk 控制流。文本请求 retract 由当前 runtime 释放物理 KV、保留已生成 token 并重新匹配前缀；最后 token、logprob 和 embedding 的安全限制继续生效。HTTP 使用现代累计 SSE，保留不可用 worker 过滤、取消清理与幂等 release；waiting 离队清理也覆盖 [PD bootstrap 生命周期](../../python/sglang/srt/disaggregation/prefill.py)。这些约束决定实际准入与执行时机，不承诺与旧 runtime 逐 batch 相同。
 
-旧 5000 次 MPQ 差分使用受控准入数量隔离分组 / 轮转逻辑，覆盖 membership、桶、quota 及给定 arrival 下的排序；没有验证真实 `PrefillAdder` token budget、续 chunk 或时间戳 IPC。本轮新增验证执行真实源码 AST：准入与 chunk **41 项**、FIFO 与 pickle **8 项**、waiting 取消生命周期另 **41 项**、原公开 HTTP TPOT **3 个场景**，均已通过；chunk 轮转和取消引用释放还包含旧行为负对照。脚本与 JSON 保存在外部实验记录，不作为仓库单元测试提交。这些使用 CPU 和基础设施桩的语义验证不构成 GPU 性能结论；[历史报告](RESULTS.md) 使用修正前的 runtime，也不作为本轮修正的 GPU 验证。
+旧 5000 次 MPQ 差分使用受控准入数量隔离分组 / 轮转逻辑，覆盖 membership、桶、quota 及给定 arrival 下的排序；没有验证真实 `PrefillAdder` token budget、续 chunk 或时间戳 IPC。本轮新增验证执行真实源码 AST：准入与 chunk **41 项**、FIFO 与 pickle **8 项**、waiting 取消生命周期另 **41 项**、原公开 HTTP TPOT **3 个场景**，均已通过；chunk 轮转和取消引用释放还包含旧行为负对照。脚本与 JSON 保存在外部实验记录，不作为仓库单元测试提交。这些使用 CPU 和基础设施桩的语义验证不构成 GPU 性能结论；本轮固定配置的 GPU 结果见[补充实验](RUNTIME_RESULTS.md)。[历史报告](RESULTS.md) 使用修正前的 runtime，不作为本轮修正的 GPU 验证。
 
 原公开服务 [固定 `highest_idx=None`](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/server/server.py#L179)。模拟器 [依据窗口命中率传入的可选 hint](https://github.com/WukLab/preble/blob/1a35eae20c416f7062ca81775aab72890323fd97/preble/simulator.py#L349) 未暴露；不能据此声称覆盖官方模拟器全部分支。
 
@@ -210,14 +210,14 @@ python benchmark/preble/calibrate.py \
 ```bash
 python benchmark/preble/bench_loogle.py \
   --workload preble-bench/reference-trace/loogle-24-393-reference.jsonl \
-  --arrivals preble-bench/reference-trace/arrivals-r0.7.json \
+  --arrivals preble-bench/reference-trace/arrivals-r1.4.json \
   --policy preble --router-url http://127.0.0.1:18000 \
   --worker-urls http://127.0.0.1:31000 http://127.0.0.1:31001 \
-  --requests 393 --rate 0.7 --concurrency 256 --output preble-bench/preble-r0.7-rep1
+  --requests 393 --rate 1.4 --concurrency 256 --output preble-bench/preble-r1.4-rep1
 ```
 
-每档 0.7 / 1.4 RPS 各做两轮，使用对应的 `--arrivals` 文件和新 output 目录。`--arrivals` 决定实际计划到达，`--rate` 仅记录该档标签。输出文件已存在时不要复用。
+本轮只测 1.4 RPS，按 Preble → RR → RR → Preble 的 ABBA 顺序执行，每轮使用新 output 目录。0.7 的轨迹仍可生成，其旧版结果见历史报告。`--arrivals` 决定实际计划到达，`--rate` 仅记录该档标签。输出文件已存在时不要复用。
 
 主对照是 **Preble + MPQ 对 RR + LPM**：重启两 worker，把 `--schedule-policy` 改为 `lpm`，保留有效随机种子及其他参数；对相同 profile warmup 后冷启 cache，重放时用 `--policy round-robin` 直连两 worker，按请求 index 轮流选端。这个比较同时改变全局与本地策略，不能单独归因于全局路由。
 
-每轮保存 `requests.jsonl` / `summary.json`，Preble 另保存最终 `/routing_stats`，核验 393 次成功、393 个 TTFT 及 `active=[0,0]`。TTFT / E2E 从计划到达 sleep 醒后起钟，包含客户端 semaphore 等候、HTTP 与 frontend 开销，但不包含 sleep 超时的唤醒迟延。吞吐分母是含到达等待和尾部排空的整轮时长，不是饱和吞吐估计。具体本次执行顺序与统计方法见 [RESULTS.md](RESULTS.md)。
+每轮保存 `requests.jsonl` / `summary.json`，Preble 另保存最终 `/routing_stats`，核验 393 次成功、393 个 TTFT 及 `active=[0,0]`。TTFT / E2E 从计划到达 sleep 醒后起钟，包含客户端 semaphore 等候、HTTP 与 frontend 开销，但不包含 sleep 超时的唤醒迟延。吞吐分母是含到达等待和尾部排空的整轮时长，不是饱和吞吐估计。本轮三个 worker session 的复用 / 重启、warmup、执行顺序与统计方法见[补充实验](RUNTIME_RESULTS.md)。
