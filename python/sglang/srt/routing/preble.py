@@ -368,10 +368,15 @@ class PrebleScheduler:
                 self.cache.find_node(assignment.tokens)
             )
             self.cache.remove_completed_input_ids(assignment.tokens, worker)
-            if output_tokens > 1 and latency > ttft > 0:
-                self.avg_topt_per_gpu[worker].append((latency - ttft) / output_tokens)
+            # Successful zero-output HTTP feedback reports a budget; cleanup does not.
+            has_completion_feedback = (
+                output_tokens > 0 or reported_output_budget is not None
+            )
+            tpot = (latency - ttft) / max(1, output_tokens)
+            if has_completion_feedback and output_tokens != 1 and tpot != 0:
+                self.avg_topt_per_gpu[worker].append(tpot)
             self.histogram.current_decode_lengths_per_gpu[worker] -= completed_budget
-            if output_tokens:
+            if has_completion_feedback:
                 assert important_node in self.histogram.histogram
             self.histogram.per_node_total_decode_lengths[
                 important_node
