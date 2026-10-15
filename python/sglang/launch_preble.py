@@ -128,7 +128,6 @@ def create_app(worker_urls, tokenizer, scheduler):
         ]
         if not available:
             raise HTTPException(503, "All workers temporarily unavailable")
-        started = time.monotonic()
         assignment = scheduler.select(tokens, budget, available)
         url = urls[assignment.worker]
         stream = payload.get("stream", False)
@@ -143,6 +142,7 @@ def create_app(worker_urls, tokenizer, scheduler):
         session = app.state.session
         response = None
         released = False
+        request_latency = 0.0
 
         async def abort():
             try:
@@ -167,7 +167,7 @@ def create_app(worker_urls, tokenizer, scheduler):
                 assignment,
                 output_tokens if done else 0,
                 ttft if done else 0,
-                time.monotonic() - started,
+                request_latency if done else 0,
             )
             if not done:
                 await asyncio.shield(asyncio.create_task(abort()))
@@ -204,6 +204,8 @@ def create_app(worker_urls, tokenizer, scheduler):
                 url + "/generate", json=payload, headers=headers
             )
 
+        # Reference feedback excludes routing and stops at the last data frame.
+        started = time.monotonic()
         try:
             await with_disconnect(open_response())
         except (aiohttp.ClientError, asyncio.TimeoutError):
@@ -223,22 +225,26 @@ def create_app(worker_urls, tokenizer, scheduler):
                 await release(done=True)
 
         async def chunks():
+            nonlocal request_latency
             ttft = 0.0
             output_tokens = 0
             done = False
             try:
                 async for line in response.content:
+                    # The public reference measures after forwarding each frame.
+                    yield line
                     if line.startswith(b"data:"):
                         data = line[5:].strip()
                         if data == b"[DONE]":
                             done = True
+                            break
                         elif data:
                             obj = json.loads(data)
                             count = obj.get("meta_info", {}).get("completion_tokens", 0)
-                            if count > 0 and ttft == 0:
+                            if ttft == 0:
                                 ttft = time.monotonic() - started
                             output_tokens = count
-                    yield line
+                            request_latency = time.monotonic() - started
             finally:
                 await release(done, output_tokens, ttft)
 
