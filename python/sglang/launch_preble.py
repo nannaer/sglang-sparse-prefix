@@ -143,6 +143,7 @@ def create_app(worker_urls, tokenizer, scheduler):
         response = None
         released = False
         request_latency = 0.0
+        worker_failed = False
 
         async def abort():
             try:
@@ -168,6 +169,11 @@ def create_app(worker_urls, tokenizer, scheduler):
                 output_tokens if done else 0,
                 ttft if done else 0,
                 request_latency if done else 0,
+                # Original HTTP leaves completed budget at zero; preserve its ledger.
+                # Active routing costs use reference counts, not this ledger.
+                reported_output_budget=(
+                    0 if done and response.status == 200 and not worker_failed else None
+                ),
             )
             if not done:
                 await asyncio.shield(asyncio.create_task(abort()))
@@ -225,7 +231,7 @@ def create_app(worker_urls, tokenizer, scheduler):
                 await release(done=True)
 
         async def chunks():
-            nonlocal request_latency
+            nonlocal request_latency, worker_failed
             ttft = 0.0
             output_tokens = 0
             done = False
@@ -240,6 +246,11 @@ def create_app(worker_urls, tokenizer, scheduler):
                             break
                         elif data:
                             obj = json.loads(data)
+                            reason = obj.get("meta_info", {}).get("finish_reason") or {}
+                            worker_failed |= (
+                                obj.get("error") is not None
+                                or reason.get("type") == "abort"
+                            )
                             count = obj.get("meta_info", {}).get("completion_tokens", 0)
                             if ttft == 0:
                                 ttft = time.monotonic() - started

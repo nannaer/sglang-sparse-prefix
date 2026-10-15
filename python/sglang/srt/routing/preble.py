@@ -340,13 +340,25 @@ class PrebleScheduler:
                     self.handle_important_node_stealing(worker)
             return Assignment(leaf_node, worker, output_budget, tokens)
 
-    def finish(self, assignment, output_tokens=0, ttft=0, latency=0):
-        """Keep reference feedback; release once on completion or cancellation."""
+    def finish(
+        self,
+        assignment,
+        output_tokens=0,
+        ttft=0,
+        latency=0,
+        reported_output_budget=None,
+    ):
+        """Keep reported decode bookkeeping; release active references once."""
         with self.lock:
             if assignment.finished:
                 return
             assignment.finished = True
             worker = assignment.worker
+            completed_budget = (
+                assignment.output_budget
+                if reported_output_budget is None
+                else reported_output_budget
+            )
             leaf = self.cache.find_node(assignment.tokens)
             important_node = self.get_important_node(leaf)
             self.overload_detector.add_data_point(
@@ -358,11 +370,9 @@ class PrebleScheduler:
             self.cache.remove_completed_input_ids(assignment.tokens, worker)
             if output_tokens > 1 and latency > ttft > 0:
                 self.avg_topt_per_gpu[worker].append((latency - ttft) / output_tokens)
-            self.histogram.current_decode_lengths_per_gpu[
-                worker
-            ] -= assignment.output_budget
+            self.histogram.current_decode_lengths_per_gpu[worker] -= completed_budget
             if output_tokens:
                 assert important_node in self.histogram.histogram
             self.histogram.per_node_total_decode_lengths[
                 important_node
-            ] -= assignment.output_budget
+            ] -= completed_budget
