@@ -1,109 +1,72 @@
-<div align="center" id="sglangtop">
-<img src="https://raw.githubusercontent.com/sgl-project/sglang/main/assets/logo.png" alt="logo" width="400" margin="10px"></img>
-
-[![PyPI](https://img.shields.io/pypi/v/sglang)](https://pypi.org/project/sglang)
-![PyPI - Downloads](https://static.pepy.tech/badge/sglang?period=month)
-[![license](https://img.shields.io/github/license/sgl-project/sglang.svg)](https://github.com/sgl-project/sglang/tree/main/LICENSE)
-[![issue resolution](https://img.shields.io/github/issues-closed-raw/sgl-project/sglang)](https://github.com/sgl-project/sglang/issues)
-[![open issues](https://img.shields.io/github/issues-raw/sgl-project/sglang)](https://github.com/sgl-project/sglang/issues)
-[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/sgl-project/sglang)
-
-</div>
-
 # SGLang Prefix Load Balancing
 
-This repository contains a prefix-aware global load-balancing extension for
-SGLang. It routes requests across identical SGLang workers using prompt-prefix
-locality, estimated prefill/decode load, and local cache-hit priority queues.
-The implementation is compatible with the current SGLang checkout; Preble is
-the upstream scheduling design used as the reference.
+在当前 SGLang 上接入 Preble：按照 prompt 前缀、预计计算负载与驱逐重算代价，把请求分配给独立模型副本；副本内部使用 MPQ 调度等待请求。
 
-The project repository is
-[`nannaer/sglang-sparse-prefix`](https://github.com/nannaer/sglang-sparse-prefix).
-See [`examples/preble/README.md`](examples/preble/README.md) for implementation
-details and [`examples/preble/RESULTS.md`](examples/preble/RESULTS.md) for the
-Qwen3-235B LooGLE measurements.
+项目：[`nannaer/sglang-sparse-prefix`](https://github.com/nannaer/sglang-sparse-prefix)。原设计来自 [Preble 论文](https://arxiv.org/abs/2407.00023) 与 [WukLab/Preble](https://github.com/WukLab/preble)，底层 runtime 来自 [SGLang](https://github.com/sgl-project/sglang)。
 
---------------------------------------------------------------------------------
+## 一次请求怎么运行
 
-<p align="center">
-<a href="https://lmsys.org/blog/"><b>Blog</b></a> |
-<a href="https://docs.sglang.io/"><b>Documentation</b></a> |
-<a href="https://roadmap.sglang.io/"><b>Roadmap</b></a> |
-<a href="https://slack.sglang.io/"><b>Join Slack</b></a> |
-<a href="https://meet.sglang.io/"><b>Weekly Dev Meeting</b></a> |
-<a href="https://github.com/sgl-project/sgl-learning-materials?tab=readme-ov-file#slides"><b>Slides</b></a>
-</p>
+```text
+客户端发送 prompt
+    ↓
+Frontend：tokenize → 更新全局前缀树 → 估计候选副本代价 → 选择副本
+    ↓
+Worker：进入持久 MPQ 分组 → 按组轮转与 FIFO 准入 → SGLang 生成
+    ↓
+完成反馈：释放引用，记录 TTFT，用输出长度与时延更新 TPOT
+```
 
-## News
-- [2026/06] 🔥 The next generation of speculative decoding: DFlash and Spec V2 ([blog](https://lmsys.org/blog/2026-06-15-next-generation-speculative-decoding-dflash-v2/)).
-- [2026/04] 🔥 DeepSeek-V4 on Day 0: From Fast Inference to Verified RL with SGLang and Miles ([blog](https://lmsys.org/blog/2026-04-25-deepseek-v4/)).
-- [2026/06] SGLang provides day-0 support for latest open models ([Nemotron 3 Ultra](https://lmsys.org/blog/2026-06-04-nvidia-run-nemotron-3-ultra/), [Nemotron 3 Super](https://lmsys.org/blog/2026-03-11-run-nvidia-nemotron-3-super/), [Higgs Audio v3 TTS](https://lmsys.org/blog/2026-06-04-higgs-audio-v3-tts/)).
-- [2026/02] 🔥 Unlocking 25x Inference Performance with SGLang on NVIDIA GB300 NVL72 ([blog](https://lmsys.org/blog/2026-02-20-gb300-inferencex/)).
-- [2026/01] SGLang Diffusion accelerates video and image generation ([blog](https://lmsys.org/blog/2026-01-16-sglang-diffusion/)).
-- [2025/12] SGLang provides day-0 support for latest open models ([MiMo-V2-Flash](https://lmsys.org/blog/2025-12-16-mimo-v2-flash/), [Nemotron 3 Nano](https://lmsys.org/blog/2025-12-15-run-nvidia-nemotron-3-nano/), [Mistral Large 3](https://github.com/sgl-project/sglang/pull/14213), [LLaDA 2.0 Diffusion LLM](https://lmsys.org/blog/2025-12-19-diffusion-llm/), [MiniMax M2](https://lmsys.org/blog/2025-11-04-miminmax-m2/)).
-- [2025/10] SGLang now runs natively on TPU with the SGLang-Jax backend ([blog](https://lmsys.org/blog/2025-10-29-sglang-jax/)).
+全局路由同时考虑三件事：前缀目前分配给谁、各副本还有多少工作、放入新请求后可能驱逐哪些前缀。可复用前缀较长时在既有归属中选；否则探索全部副本，选择估计代价最低的一端。
 
-<details>
-<summary>More</summary>
+```text
+route(prompt):
+    leaf = 全局压缩前缀树.insert(prompt)
+    candidates = 既有归属 if leaf 段短于它之前的 context else 全部副本
+    cost[w] = 窗口 prefill 代价 + 在途 decode 代价 + 虚拟驱逐重算代价
+    worker = 原版最小代价选择(candidates, cost)
+    更新引用、虚拟缓存与窗口；满足条件时调整未来路由归属
+    forward(worker, 相同的 prompt token IDs)
+```
 
-- [2025/09] Deploying DeepSeek on GB200 NVL72 with PD and Large Scale EP (Part II): 3.8x Prefill, 4.8x Decode Throughput ([blog](https://lmsys.org/blog/2025-09-25-gb200-part-2/)).
-- [2025/09] SGLang Day 0 Support for DeepSeek-V3.2 with Sparse Attention ([blog](https://lmsys.org/blog/2025-09-29-deepseek-V32/)).
-- [2025/08] SGLang x AMD SF Meetup on 8/22: Hands-on GPU workshop, tech talks by AMD/xAI/SGLang, and networking ([Roadmap](https://github.com/sgl-project/sgl-learning-materials/blob/main/slides/amd_meetup_sglang_roadmap.pdf), [Large-scale EP](https://github.com/sgl-project/sgl-learning-materials/blob/main/slides/amd_meetup_sglang_ep.pdf), [Highlights](https://github.com/sgl-project/sgl-learning-materials/blob/main/slides/amd_meetup_highlights.pdf), [AITER/MoRI](https://github.com/sgl-project/sgl-learning-materials/blob/main/slides/amd_meetup_aiter_mori.pdf), [Wave](https://github.com/sgl-project/sgl-learning-materials/blob/main/slides/amd_meetup_wave.pdf)).
+每个 worker 的真正 KV 留在自己的 HBM。全局虚拟缓存用于预测代价，不是共享 KV 存储；这里的前缀迁移 / 复制是调整未来请求归属，新副本通过后续请求计算并建立缓存。
 
-- [2025/11] SGLang Diffusion accelerates video and image generation ([blog](https://lmsys.org/blog/2025-11-07-sglang-diffusion/)).
-- [2025/10] PyTorch Conference 2025 SGLang Talk ([slide](https://github.com/sgl-project/sgl-learning-materials/blob/main/slides/sglang_pytorch_2025.pdf)).
-- [2025/10] SGLang x Nvidia SF Meetup on 10/2 ([recap](https://x.com/lmsysorg/status/1975339501934510231)).
-- [2025/08] SGLang provides day-0 support for OpenAI gpt-oss model ([instructions](https://github.com/sgl-project/sglang/issues/8833))
-- [2025/06] SGLang, the high-performance serving infrastructure powering trillions of tokens daily, has been awarded the third batch of the Open Source AI Grant by a16z ([a16z blog](https://a16z.com/advancing-open-source-ai-through-benchmarks-and-bold-experimentation/)).
-- [2025/05] Deploying DeepSeek with PD Disaggregation and Large-scale Expert Parallelism on 96 H100 GPUs ([blog](https://lmsys.org/blog/2025-05-05-large-scale-ep/)).
-- [2025/06] Deploying DeepSeek on GB200 NVL72 with PD and Large Scale EP (Part I): 2.7x Higher Decoding Throughput ([blog](https://lmsys.org/blog/2025-06-16-gb200-part-1/)).
-- [2025/03] Supercharge DeepSeek-R1 Inference on AMD Instinct MI300X ([AMD blog](https://rocm.blogs.amd.com/artificial-intelligence/DeepSeekR1-Part2/README.html))
-- [2025/03] SGLang Joins PyTorch Ecosystem: Efficient LLM Serving Engine ([PyTorch blog](https://pytorch.org/blog/sglang-joins-pytorch/))
-- [2025/02] Unlock DeepSeek-R1 Inference Performance on AMD Instinct™ MI300X GPU ([AMD blog](https://rocm.blogs.amd.com/artificial-intelligence/DeepSeekR1_Perf/README.html))
-- [2025/01] SGLang provides day one support for DeepSeek V3/R1 models on NVIDIA and AMD GPUs with DeepSeek-specific optimizations. ([instructions](https://github.com/sgl-project/sglang/tree/main/benchmark/deepseek_v3), [AMD blog](https://www.amd.com/en/developer/resources/technical-articles/amd-instinct-gpus-power-deepseek-v3-revolutionizing-ai-development-with-sglang.html), [10+ other companies](https://x.com/lmsysorg/status/1887262321636221412))
-- [2024/12] v0.4 Release: Zero-Overhead Batch Scheduler, Cache-Aware Load Balancer, Faster Structured Outputs ([blog](https://lmsys.org/blog/2024-12-04-sglang-v0-4/)).
-- [2024/10] The First SGLang Online Meetup ([slides](https://github.com/sgl-project/sgl-learning-materials?tab=readme-ov-file#the-first-sglang-online-meetup)).
-- [2024/09] v0.3 Release: 7x Faster DeepSeek MLA, 1.5x Faster torch.compile, Multi-Image/Video LLaVA-OneVision ([blog](https://lmsys.org/blog/2024-09-04-sglang-v0-3/)).
-- [2024/07] v0.2 Release: Faster Llama3 Serving with SGLang Runtime (vs. TensorRT-LLM, vLLM) ([blog](https://lmsys.org/blog/2024-07-25-sglang-llama3/)).
-- [2024/02] SGLang enables **3x faster JSON decoding** with compressed finite state machine ([blog](https://lmsys.org/blog/2024-02-05-compressed-fsm/)).
-- [2024/01] SGLang provides up to **5x faster inference** with RadixAttention ([blog](https://lmsys.org/blog/2024-01-17-sglang/)).
-- [2024/01] SGLang powers the serving of the official **LLaVA v1.6** release demo ([usage](https://github.com/haotian-liu/LLaVA?tab=readme-ov-file#demo)).
+## 是否与 Preble 一致
 
-</details>
+对齐目标是原版**公开服务默认路径**，参考 commit 固定为 `1a35eae20c416f7062ca81775aab72890323fd97`。SGLang 保持 base `ef11e3904885c8050f167a4a6f805da03e9e9bae`，没有降级或导入旧 runtime。
 
-## About
-SGLang is a high-performance serving framework for large language models and multimodal models.
-It is designed to deliver low-latency and high-throughput inference across a wide range of setups, from a single GPU to large distributed clusters.
-Its core features include:
+| 模块 | 当前实现 |
+| --- | --- |
+| 全局 E2 | 原版节点段 / context 判断、归属继承与候选选择 |
+| 负载估计 | 原版 180 秒窗口、miss/count、prefill / decode 公式与二维时间模型 |
+| 全局驱逐 | 原版虚拟 GPU radix cache、LRU victim 和重算代价；CLI 默认开启 |
+| 重平衡 | 原版 warmup、migration 与 TTFT 热点 replication |
+| 本地 MPQ | 持久十组、9→0 轮转、组内 FIFO、`10 × (group+1)` 准入上限 |
 
-- **Fast Runtime**: Provides efficient serving with RadixAttention for prefix caching, a zero-overhead CPU scheduler, prefill-decode disaggregation, speculative decoding, continuous batching, paged attention, tensor/pipeline/expert/data parallelism, structured outputs, chunked prefill, quantization (FP4/FP8/INT4/AWQ/GPTQ), and multi-LoRA batching.
-- **Broad Model Support**: Supports a wide range of language models (Llama, Qwen, DeepSeek, Kimi, GLM, GPT, Gemma, Mistral, etc.), embedding models (e5-mistral, gte, mcdse), reward models (Skywork), and diffusion models (WAN, Qwen-Image), with easy extensibility for adding new models. Compatible with most Hugging Face models and OpenAI APIs.
-- **Extensive Hardware Support**: Runs on NVIDIA GPUs (GB200/B300/H100/A100/Spark/5090), AMD GPUs (MI355/MI300), Intel Xeon CPUs, Google TPUs, Ascend NPUs, and more.
-- **Active Community**: SGLang is open-source and supported by a vibrant community with widespread industry adoption, powering over 400,000 GPUs worldwide.
-- **RL & Post-Training Backbone**: SGLang is a proven rollout backend used for training many frontier models, with native RL integrations and adoption by well-known post-training frameworks such as [**AReaL**](https://github.com/inclusionAI/AReaL), [**Miles**](https://github.com/radixark/miles), [**slime**](https://github.com/THUDM/slime), [**Tunix**](https://github.com/google/tunix), [**verl**](https://github.com/volcengine/verl) and more.
+必要适配集中在当前 `Req` / radix / `PrefillAdder` 接口、chunk 准入、HTTP 生命周期以及硬件时间 / 容量参数。原模拟器的可选 hit-rate hint 未暴露；原版候选 ID、虚拟驱逐重复计数和特定 split 后断言等缺陷也保留并记录，因此不声称所有输入都能成功处理。
 
-## Getting Started
-- [Install SGLang](https://docs.sglang.io/get_started/install.html)
-- [Quick Start](https://docs.sglang.io/basic_usage/send_request.html)
-- [Backend Tutorial](https://docs.sglang.io/basic_usage/openai_api_completions.html)
-- [Frontend Tutorial](https://docs.sglang.io/references/frontend/frontend_tutorial.html)
-- [Contribution Guide](https://docs.sglang.io/developer_guide/contribution_guide.html)
+[实现文档](examples/preble/README.md) 给出完整伪代码、代价公式、逐文件源码映射、适配与原版缺陷的链接，以及两份 TP4 235B 副本的启动命令。
 
-## Benchmark and Performance
-Learn more in the release blogs: [v0.2 blog](https://lmsys.org/blog/2024-07-25-sglang-llama3/), [v0.3 blog](https://lmsys.org/blog/2024-09-04-sglang-v0-3/), [v0.4 blog](https://lmsys.org/blog/2024-12-04-sglang-v0-4/), [Large-scale expert parallelism](https://lmsys.org/blog/2025-05-05-large-scale-ep/), [GB200 rack-scale parallelism](https://lmsys.org/blog/2025-09-25-gb200-part-2/), [GB300 long context](https://lmsys.org/blog/2026-02-19-gb300-longctx/).
+## 验证与复现
 
-## Adoption and Sponsorship
-SGLang has been deployed at large scale, generating trillions of tokens in production each day. It is trusted and adopted by a wide range of leading enterprises and institutions, including xAI, AMD, NVIDIA, Intel, LinkedIn, Cursor, Oracle Cloud, Google Cloud, Microsoft Azure, AWS, Atlas Cloud, Voltage Park, Nebius, DataCrunch, Novita, InnoMatrix, Modal, MIT, UCLA, the University of Washington, Stanford, UC Berkeley, Tsinghua University, Jam & Tea Studios, Baseten, and other major technology organizations.
-As an open-source LLM inference engine, SGLang has become the de facto industry standard, with deployments running on over 400,000 GPUs worldwide.
-SGLang is currently hosted under the non-profit open-source organization [LMSYS](https://lmsys.org/about/).
+源码差分覆盖 9012 次全局选择 / 完成调用与 5000 次 MPQ 决策；全局完整状态与原源码一致，其中 6 次 finish 为双方共有的原断言失败，9006 次正常完成。另有虚拟缓存操作差分、migration / replication 定向验证、29 项 HTTP 检查及 arrival 重放验证。验证脚本不作为单元测试提交。
 
-<img src="https://raw.githubusercontent.com/sgl-project/sgl-learning-materials/refs/heads/main/slides/adoption.png" alt="logo" width="800" margin="10px"></img>
+真实推理使用 **Qwen3-235B-A22B-Instruct-2507、未量化 BF16、8×H200、两个独立 TP4 副本**。工作负载采用固定原版 LooGLE 生成器与旧 schema 数据：24 文档、393 请求，每档 0.7 / 1.4 RPS 各重复两次，对比 **完整 Preble + MPQ** 与 **RR + LPM**。
 
-## Contact Us
-For enterprises interested in adopting or deploying SGLang at scale, including technical consulting, sponsorship opportunities, or partnership inquiries, please contact us at [sglang@lmsys.org](mailto:sglang@lmsys.org).
+八轮 **3144/3144 请求成功**。两轮合并的平均时延如下，单位为秒：
 
-Long-term active SGLang contributors are eligible for coding agent sponsorship, such as Cursor, Claude Code, or OpenAI Codex. Email [sglang@lmsys.org](mailto:sglang@lmsys.org) with your most important commits or pull requests.
+| 到达 RPS | TTFT：Preble / RR | E2E：Preble / RR |
+| --- | --- | --- |
+| 0.7 | 5.940 / 25.851 | 17.481 / 62.956 |
+| 1.4 | 42.364 / 31.310 | 70.438 / 61.814 |
 
-## Acknowledgment
-We learned the design and reused code from the following projects: [Guidance](https://github.com/guidance-ai/guidance), [vLLM](https://github.com/vllm-project/vllm), [LightLLM](https://github.com/ModelTC/lightllm), [FlashInfer](https://github.com/flashinfer-ai/flashinfer), [Outlines](https://github.com/outlines-dev/outlines), and [LMQL](https://github.com/eth-sri/lmql).
+本次低负载档有明显实测收益，高负载档慢于基线且重复间波动较大，未复现跨负载稳定加速。两策略按阶段执行、没有按时间交替，结果仅作当前配置下的描述性比较。
+
+详细结果、逐轮波动、输出一致性与可复现证据见 [实验记录](examples/preble/RESULTS.md)。这是当前 SGLang 上的大模型验证，模型、硬件与随机流不同于论文，不等同论文数值复现。
+
+公开入口：
+
+- [准备原版生成器轨迹](benchmark/preble/prepare_reference_loogle.py)：固定源码 / 数据版本与 hash，输出 token IDs 和固定 arrival 文件。
+- [校准部署时间模型](benchmark/preble/calibrate.py)：先 warmup，再冻结二维原模型的整体 scale 与初始 TPOT。
+- [重放请求](benchmark/preble/bench_loogle.py)：同一份 workload / arrivals，用 Preble 或 round-robin 路由，保存逐请求与汇总指标。
+
+安装沿用 [SGLang 安装说明](https://docs.sglang.io/get_started/install.html)，运行步骤见 [实现与运行方法](examples/preble/README.md)。本项目保留 SGLang 的 [Apache-2.0 许可证](LICENSE)。
