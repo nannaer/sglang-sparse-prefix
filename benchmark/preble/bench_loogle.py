@@ -90,13 +90,28 @@ async def replay(args):
     workload = workload[: args.requests]
     if not workload:
         raise ValueError("Workload contains no requests")
-    rng = random.Random(args.seed)
-    arrivals = []
-    elapsed = 0.0
-    for _ in workload:
-        arrivals.append(elapsed)
-        if args.rate > 0:
-            elapsed += rng.expovariate(args.rate)
+    if args.arrivals:
+        arrivals = json.loads(Path(args.arrivals).read_text())
+        if (
+            not isinstance(arrivals, list)
+            or len(arrivals) != len(workload)
+            or any(
+                type(value) not in (int, float) or not math.isfinite(value) or value < 0
+                for value in arrivals
+            )
+            or any(left > right for left, right in zip(arrivals, arrivals[1:]))
+        ):
+            raise ValueError(
+                "Arrivals must contain one finite, nonnegative, ordered time per request"
+            )
+    else:
+        rng = random.Random(args.seed)
+        arrivals = []
+        elapsed = 0.0
+        for _ in workload:
+            arrivals.append(elapsed)
+            if args.rate > 0:
+                elapsed += rng.expovariate(args.rate)
     output = Path(args.output)
     output.mkdir(parents=True, exist_ok=True)
     results = []
@@ -209,6 +224,11 @@ async def replay(args):
         "cached_token_fraction": sum(row["cached_tokens"] for row in successful)
         / max(1, sum(row["prompt_tokens"] for row in successful)),
         "workload_sha256": hashlib.sha256(Path(args.workload).read_bytes()).hexdigest(),
+        "arrivals_sha256": (
+            hashlib.sha256(Path(args.arrivals).read_bytes()).hexdigest()
+            if args.arrivals
+            else None
+        ),
     }
     for metric in ("ttft", "latency"):
         values = [row[metric] for row in successful if row[metric] is not None]
@@ -244,6 +264,10 @@ def main():
         help="Preparation: override the answer cap (45 matches Preble's end-to-end config)",
     )
     parser.add_argument("--seed", type=int, default=42)
+    parser.add_argument(
+        "--arrivals",
+        help="Replay archived arrival times: a JSON list of elapsed seconds, overrides --rate",
+    )
     parser.add_argument("--policy", choices=["preble", "round-robin"], default="preble")
     parser.add_argument("--router-url", default="http://127.0.0.1:8000")
     parser.add_argument(
