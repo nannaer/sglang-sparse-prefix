@@ -1,0 +1,1099 @@
+{
+ "schema_version": 1,
+ "purpose": "Compact evidence for old 235B A1/A2 variance; this file does not claim paper-level performance reproduction or unique causal attribution.",
+ "analysis_environment": {
+  "hostname": "gpu-lg-cmc-h-h200-2296.host.h.pjlab.org.cn",
+  "container": "sglang_chenjiefei_ds4",
+  "python": "3.13.13 | packaged by conda-forge | (main, Apr  8 2026, 02:00:33) [GCC 14.3.0]",
+  "executable": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/env/bin/python"
+ },
+ "evidence_root": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results",
+ "physical_line_definition": "read_bytes().decode().split(chr(10)); 1-based physical LF lines, not splitlines()",
+ "old_experiment": {
+  "host": "1727",
+  "source_commit": "c773f3e5605eb3fe9a2d032c80f0e9def6dfc2d9",
+  "preble_reference_commit": "1a35eae20c416f7062ca81775aab72890323fd97",
+  "model": "Qwen3-235B-A22B-Instruct-2507",
+  "snapshot": "/models/qwen3-235b-agentic/snapshots/56e16a623ffb2855ca901a65166a9170e99df127",
+  "dtype": "bfloat16",
+  "hardware": "8 H200, 2 TP4 replicas",
+  "chunked_prefill_size": 512,
+  "max_running_requests": 64,
+  "context_length": 32768,
+  "kv_capacity_per_replica": 328506,
+  "attention_backend": "triton",
+  "moe_runner_backend": "flashinfer_cutlass",
+  "cuda_graph": false,
+  "random_seeds": [
+   659938497,
+   556540270
+  ],
+  "runs": {
+   "A1": "preble-mpq-r1.4-rep1",
+   "A2": "preble-mpq-r1.4-rep2"
+  }
+ },
+ "identity": {
+  "requests": 393,
+  "identity_keys_equal": [
+   "index",
+   "doc_id",
+   "prompt_tokens",
+   "arrival",
+   "success"
+  ],
+  "input_manifest_hashes": {
+   "workload": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54",
+   "arrivals": "4d828135a0c485bb1c4559d4df00133dc46ddf4b5f93b98c353038730e299c40",
+   "calibration": "b9a93683d8e47498af24030166e9ec17ab6ab5bc7493798e10c873057a066fc0",
+   "replay": "66963c75c29b37e054ab13dd9fc89baaf53f892b4322b3fa1f8446d6a2332983",
+   "warmup_workload": "b9fbf417c3f588e7b92dd134fff42eead61b7bf3aa10ff3c7020db2f96b74d68"
+  },
+  "source_commit": "c773f3e5605eb3fe9a2d032c80f0e9def6dfc2d9",
+  "same_output_sha256": 269,
+  "different_output_sha256": 124,
+  "output_token_count_differences": [
+   {
+    "index": 113,
+    "A1_tokens": 45,
+    "A2_tokens": 32
+   }
+  ],
+  "same_worker_requests": 289,
+  "different_worker_requests": 104,
+  "first_different_worker_index": 149,
+  "first_different_worker_planned_arrival": 95.36054287108632
+ },
+ "old_metrics": {
+  "A1": {
+   "overall": {
+    "requests": 393,
+    "prompt_tokens": 8293688,
+    "uncached_tokens": 1283422,
+    "cached_token_fraction": 0.8452531611992156,
+    "output_tokens": 17550,
+    "worker_counts": {
+     "0": 169,
+     "1": 224
+    },
+    "ttft_seconds": {
+     "count": 393,
+     "mean": 28.390024029609506,
+     "p50": 20.69132648408413,
+     "p95": 80.1051440887153,
+     "max": 114.75827364623547
+    },
+    "e2e_seconds": {
+     "count": 393,
+     "mean": 64.7466961717181,
+     "p50": 64.09957992378622,
+     "p95": 123.91894039418547,
+     "max": 152.06553368549794
+    }
+   },
+   "workers": {
+    "0": {
+     "requests": 169,
+     "prompt_tokens": 3344363,
+     "uncached_tokens": 559814,
+     "cached_token_fraction": 0.8326096778370051,
+     "output_tokens": 7543,
+     "worker_counts": {
+      "0": 169
+     },
+     "ttft_mean_seconds": 35.04335024331823,
+     "e2e_mean_seconds": 81.81850062846895
+    },
+    "1": {
+     "requests": 224,
+     "prompt_tokens": 4949325,
+     "uncached_tokens": 723608,
+     "cached_token_fraction": 0.8537966288332247,
+     "output_tokens": 10007,
+     "worker_counts": {
+      "1": 224
+     },
+     "ttft_mean_seconds": 23.370327020159625,
+     "e2e_mean_seconds": 51.8666294164016
+    }
+   },
+   "same_routing_prefix": {
+    "requests": 149,
+    "prompt_tokens": 3077529,
+    "uncached_tokens": 534719,
+    "cached_token_fraction": 0.82625054061229,
+    "output_tokens": 6668,
+    "worker_counts": {
+     "0": 78,
+     "1": 71
+    },
+    "ttft_mean_seconds": 32.09558947084334,
+    "e2e_mean_seconds": 85.42429115822002
+   },
+   "routing_final": {
+    "scheduled": 393,
+    "migrations": 58,
+    "replications": 0,
+    "nodes": 541,
+    "active": [
+     0,
+     0
+    ]
+   }
+  },
+  "A2": {
+   "overall": {
+    "requests": 393,
+    "prompt_tokens": 8293688,
+    "uncached_tokens": 1486460,
+    "cached_token_fraction": 0.820772134182043,
+    "output_tokens": 17537,
+    "worker_counts": {
+     "0": 221,
+     "1": 172
+    },
+    "ttft_seconds": {
+     "count": 393,
+     "mean": 14.301207768775845,
+     "p50": 10.862582433968782,
+     "p95": 42.06226795110852,
+     "max": 61.15683730505407
+    },
+    "e2e_seconds": {
+     "count": 393,
+     "mean": 38.10883003154784,
+     "p50": 30.315305087715387,
+     "p95": 92.33717980124055,
+     "max": 107.26515325158834
+    }
+   },
+   "workers": {
+    "0": {
+     "requests": 221,
+     "prompt_tokens": 4358227,
+     "uncached_tokens": 763514,
+     "cached_token_fraction": 0.8248108691906135,
+     "output_tokens": 9879,
+     "worker_counts": {
+      "0": 221
+     },
+     "ttft_mean_seconds": 12.514420433968677,
+     "e2e_mean_seconds": 35.099570958664415
+    },
+    "1": {
+     "requests": 172,
+     "prompt_tokens": 3935461,
+     "uncached_tokens": 722946,
+     "cached_token_fraction": 0.8162995389866651,
+     "output_tokens": 7658,
+     "worker_counts": {
+      "1": 172
+     },
+     "ttft_mean_seconds": 16.597021728033894,
+     "e2e_mean_seconds": 41.975378026357355
+    }
+   },
+   "same_routing_prefix": {
+    "requests": 149,
+    "prompt_tokens": 3077529,
+    "uncached_tokens": 534535,
+    "cached_token_fraction": 0.8263103288384934,
+    "output_tokens": 6655,
+    "worker_counts": {
+     "0": 78,
+     "1": 71
+    },
+    "ttft_mean_seconds": 20.67146262026473,
+    "e2e_mean_seconds": 57.57951339549266
+   },
+   "routing_final": {
+    "scheduled": 393,
+    "migrations": 110,
+    "replications": 0,
+    "nodes": 541,
+    "active": [
+     0,
+     0
+    ]
+   }
+  }
+ },
+ "request_evidence": [
+  {
+   "run": "A1",
+   "source": {
+    "path": "reference-runtime-235b-1727-20261015/preble-mpq-r1.4-rep1/requests.jsonl",
+    "lf_line": 1
+   },
+   "index": 0,
+   "arrival": 0,
+   "worker": "0",
+   "prompt_tokens": 19697,
+   "cached_tokens": 0,
+   "output_tokens": 45,
+   "ttft": 8.087205352261662,
+   "latency": 132.05948864575475,
+   "finish_reason": {
+    "type": "length",
+    "length": 45
+   },
+   "output_sha256": "6b893494345d586bd54ee3d74138a4f7611cc39e083717a71ce9623a801c8b85",
+   "success": true
+  },
+  {
+   "run": "A2",
+   "source": {
+    "path": "reference-runtime-235b-1727-20261015/preble-mpq-r1.4-rep2/requests.jsonl",
+    "lf_line": 1
+   },
+   "index": 0,
+   "arrival": 0,
+   "worker": "0",
+   "prompt_tokens": 19697,
+   "cached_tokens": 0,
+   "output_tokens": 45,
+   "ttft": 4.609618998132646,
+   "latency": 105.85069387964904,
+   "finish_reason": {
+    "type": "length",
+    "length": 45
+   },
+   "output_sha256": "6b893494345d586bd54ee3d74138a4f7611cc39e083717a71ce9623a801c8b85",
+   "success": true
+  },
+  {
+   "run": "A1",
+   "source": {
+    "path": "reference-runtime-235b-1727-20261015/preble-mpq-r1.4-rep1/requests.jsonl",
+    "lf_line": 2
+   },
+   "index": 1,
+   "arrival": 1.0538817468187018,
+   "worker": "1",
+   "prompt_tokens": 19145,
+   "cached_tokens": 0,
+   "output_tokens": 45,
+   "ttft": 7.995263764634728,
+   "latency": 108.47617797274143,
+   "finish_reason": {
+    "type": "length",
+    "length": 45
+   },
+   "output_sha256": "bbf0637d7984d2c689bc22223fdaa1d70847b41317b4cafb9f2e30eeb659ea1f",
+   "success": true
+  },
+  {
+   "run": "A2",
+   "source": {
+    "path": "reference-runtime-235b-1727-20261015/preble-mpq-r1.4-rep2/requests.jsonl",
+    "lf_line": 2
+   },
+   "index": 1,
+   "arrival": 1.0538817468187018,
+   "worker": "1",
+   "prompt_tokens": 19145,
+   "cached_tokens": 0,
+   "output_tokens": 45,
+   "ttft": 4.4541327534243464,
+   "latency": 95.80260809324682,
+   "finish_reason": {
+    "type": "length",
+    "length": 45
+   },
+   "output_sha256": "bbf0637d7984d2c689bc22223fdaa1d70847b41317b4cafb9f2e30eeb659ea1f",
+   "success": true
+  },
+  {
+   "run": "A1",
+   "source": {
+    "path": "reference-runtime-235b-1727-20261015/preble-mpq-r1.4-rep1/requests.jsonl",
+    "lf_line": 121
+   },
+   "index": 120,
+   "arrival": 75.46414918015932,
+   "worker": "1",
+   "prompt_tokens": 28821,
+   "cached_tokens": 28684,
+   "output_tokens": 22,
+   "ttft": 9.076408656314015,
+   "latency": 31.846264047548175,
+   "finish_reason": {
+    "type": "stop",
+    "matched": 151643
+   },
+   "output_sha256": "a5c90c56ad13d7889f3e02b07caeef6e79b75d53d1b0a51fc5afbe39dccf410f",
+   "success": true
+  },
+  {
+   "run": "A2",
+   "source": {
+    "path": "reference-runtime-235b-1727-20261015/preble-mpq-r1.4-rep2/requests.jsonl",
+    "lf_line": 121
+   },
+   "index": 120,
+   "arrival": 75.46414918015932,
+   "worker": "1",
+   "prompt_tokens": 28821,
+   "cached_tokens": 28774,
+   "output_tokens": 22,
+   "ttft": 7.211159593425691,
+   "latency": 19.172541578300297,
+   "finish_reason": {
+    "type": "stop",
+    "matched": 151643
+   },
+   "output_sha256": "a5c90c56ad13d7889f3e02b07caeef6e79b75d53d1b0a51fc5afbe39dccf410f",
+   "success": true
+  },
+  {
+   "run": "A1",
+   "source": {
+    "path": "reference-runtime-235b-1727-20261015/preble-mpq-r1.4-rep1/requests.jsonl",
+    "lf_line": 150
+   },
+   "index": 149,
+   "arrival": 95.36054287108632,
+   "worker": "1",
+   "prompt_tokens": 32722,
+   "cached_tokens": 12,
+   "output_tokens": 44,
+   "ttft": 30.811151851899922,
+   "latency": 83.58666515536606,
+   "finish_reason": {
+    "type": "length",
+    "length": 44
+   },
+   "output_sha256": "c9c8388ead0ad1b3541a1d96d408a7e39e644fecf8371600f727d52be774efa6",
+   "success": true
+  },
+  {
+   "run": "A2",
+   "source": {
+    "path": "reference-runtime-235b-1727-20261015/preble-mpq-r1.4-rep2/requests.jsonl",
+    "lf_line": 150
+   },
+   "index": 149,
+   "arrival": 95.36054287108632,
+   "worker": "0",
+   "prompt_tokens": 32722,
+   "cached_tokens": 16361,
+   "output_tokens": 44,
+   "ttft": 10.235589567571878,
+   "latency": 22.55761556699872,
+   "finish_reason": {
+    "type": "length",
+    "length": 44
+   },
+   "output_sha256": "754ebc14e9daf1638b50f78276fc62f1edb4a20dbc6e8099a115627a2cd98e2b",
+   "success": true
+  }
+ ],
+ "feedback": {
+  "A1": {
+   "earliest_completion_proxy": {
+    "index": 120,
+    "completion_proxy": 107.3104132277075,
+    "worker": "1",
+    "ttft": 9.076408656314015,
+    "e2e": 31.846264047548175,
+    "tpot_proxy": 1.03499342687428
+   },
+   "initial_tpot": 0.06731290138453584
+  },
+  "A2": {
+   "earliest_completion_proxy": {
+    "index": 120,
+    "completion_proxy": 94.63669075845962,
+    "worker": "1",
+    "ttft": 7.211159593425691,
+    "e2e": 19.172541578300297,
+    "tpot_proxy": 0.543699181130664
+   },
+   "initial_tpot": 0.06731290138453584
+  }
+ },
+ "initial_benchmark_prefill": {
+  "scope": "Initial benchmark prefill entries while running_req=0, before first prefill with running_req>0. Last entry can include a second sequence.",
+  "caveats": [
+   "Logger timestamps have second precision.",
+   "Input throughput is a server accounting measurement affected by scheduling and batching; this is not a pure GPU kernel measurement.",
+   "Replay-start timestamp precedes child Python startup and is only used to exclude warmup lines.",
+   "This establishes different initial service cadence in the records; it does not prove hardware, compiler-cache, kernel, or migration causality."
+  ],
+  "rows": [
+   {
+    "run": "A1",
+    "worker": 0,
+    "count": 39,
+    "new_tokens": 19968,
+    "mean_tps_excluding_first": 2559.483947368421,
+    "median_tps_excluding_first": 2510.955,
+    "log": "reference-runtime-235b-1727-20261015/sessions/01-mpq/worker0.log",
+    "first_lf_line": 371,
+    "last_lf_line": 414
+   },
+   {
+    "run": "A1",
+    "worker": 1,
+    "count": 38,
+    "new_tokens": 19348,
+    "mean_tps_excluding_first": 2500.362702702703,
+    "median_tps_excluding_first": 2425.77,
+    "log": "reference-runtime-235b-1727-20261015/sessions/01-mpq/worker1.log",
+    "first_lf_line": 372,
+    "last_lf_line": 415
+   },
+   {
+    "run": "A2",
+    "worker": 0,
+    "count": 39,
+    "new_tokens": 19968,
+    "mean_tps_excluding_first": 4750.106052631579,
+    "median_tps_excluding_first": 4433.530000000001,
+    "log": "reference-runtime-235b-1727-20261015/sessions/03-mpq/worker0.log",
+    "first_lf_line": 363,
+    "last_lf_line": 404
+   },
+   {
+    "run": "A2",
+    "worker": 1,
+    "count": 38,
+    "new_tokens": 19348,
+    "mean_tps_excluding_first": 4762.969459459459,
+    "median_tps_excluding_first": 4345.49,
+    "log": "reference-runtime-235b-1727-20261015/sessions/03-mpq/worker1.log",
+    "first_lf_line": 364,
+    "last_lf_line": 405
+   }
+  ]
+ },
+ "warmup_service_strata": {
+  "all_12_A1_A2_profile_identities_equal": true,
+  "rows": [
+   {
+    "session": "01-mpq",
+    "worker": 0,
+    "log": "reference-runtime-235b-1727-20261015/sessions/01-mpq/worker0.log",
+    "ready_lf_line": 93,
+    "first_external_flush_lf_line": 94,
+    "external_starts_before_builtin_ready": false,
+    "profiles": [
+     {
+      "profile": 2,
+      "ttft_seconds": 6.354597770608962,
+      "full_512_intervals_excluding_first": 31,
+      "median_prefill_report_gap_seconds": 0.1994282019522151
+     },
+     {
+      "profile": 3,
+      "ttft_seconds": 15.81789128575474,
+      "full_512_intervals_excluding_first": 62,
+      "median_prefill_report_gap_seconds": 0.24697172519266514
+     }
+    ]
+   },
+   {
+    "session": "01-mpq",
+    "worker": 1,
+    "log": "reference-runtime-235b-1727-20261015/sessions/01-mpq/worker1.log",
+    "ready_lf_line": 93,
+    "first_external_flush_lf_line": 94,
+    "external_starts_before_builtin_ready": false,
+    "profiles": [
+     {
+      "profile": 2,
+      "ttft_seconds": 6.370609407313168,
+      "full_512_intervals_excluding_first": 31,
+      "median_prefill_report_gap_seconds": 0.1999640689563594
+     },
+     {
+      "profile": 3,
+      "ttft_seconds": 15.853224068880081,
+      "full_512_intervals_excluding_first": 62,
+      "median_prefill_report_gap_seconds": 0.24723369796144848
+     }
+    ]
+   },
+   {
+    "session": "02-lpm",
+    "worker": 0,
+    "log": "reference-runtime-235b-1727-20261015/sessions/02-lpm/worker0.log",
+    "ready_lf_line": 85,
+    "first_external_flush_lf_line": 86,
+    "external_starts_before_builtin_ready": false,
+    "profiles": [
+     {
+      "profile": 2,
+      "ttft_seconds": 6.3678795751184225,
+      "full_512_intervals_excluding_first": 31,
+      "median_prefill_report_gap_seconds": 0.19933347868066154
+     },
+     {
+      "profile": 3,
+      "ttft_seconds": 15.811198933050036,
+      "full_512_intervals_excluding_first": 62,
+      "median_prefill_report_gap_seconds": 0.24678574906915118
+     }
+    ]
+   },
+   {
+    "session": "02-lpm",
+    "worker": 1,
+    "log": "reference-runtime-235b-1727-20261015/sessions/02-lpm/worker1.log",
+    "ready_lf_line": 104,
+    "first_external_flush_lf_line": 82,
+    "external_starts_before_builtin_ready": true,
+    "profiles": [
+     {
+      "profile": 2,
+      "ttft_seconds": 3.4407133189961314,
+      "full_512_intervals_excluding_first": 31,
+      "median_prefill_report_gap_seconds": 0.10513044799533483
+     },
+     {
+      "profile": 3,
+      "ttft_seconds": 9.922910924069583,
+      "full_512_intervals_excluding_first": 62,
+      "median_prefill_report_gap_seconds": 0.15518696293626327
+     }
+    ]
+   },
+   {
+    "session": "03-mpq",
+    "worker": 0,
+    "log": "reference-runtime-235b-1727-20261015/sessions/03-mpq/worker0.log",
+    "ready_lf_line": 104,
+    "first_external_flush_lf_line": 82,
+    "external_starts_before_builtin_ready": true,
+    "profiles": [
+     {
+      "profile": 2,
+      "ttft_seconds": 3.5366564569994807,
+      "full_512_intervals_excluding_first": 31,
+      "median_prefill_report_gap_seconds": 0.10545633551592246
+     },
+     {
+      "profile": 3,
+      "ttft_seconds": 10.000950728543103,
+      "full_512_intervals_excluding_first": 62,
+      "median_prefill_report_gap_seconds": 0.1553146885726459
+     }
+    ]
+   },
+   {
+    "session": "03-mpq",
+    "worker": 1,
+    "log": "reference-runtime-235b-1727-20261015/sessions/03-mpq/worker1.log",
+    "ready_lf_line": 104,
+    "first_external_flush_lf_line": 82,
+    "external_starts_before_builtin_ready": true,
+    "profiles": [
+     {
+      "profile": 2,
+      "ttft_seconds": 3.431111741811037,
+      "full_512_intervals_excluding_first": 31,
+      "median_prefill_report_gap_seconds": 0.10518595520968368
+     },
+     {
+      "profile": 3,
+      "ttft_seconds": 9.914629525505006,
+      "full_512_intervals_excluding_first": 62,
+      "median_prefill_report_gap_seconds": 0.15536658058765668
+     }
+    ]
+   }
+  ],
+  "matching_pending_chunk_examples": [
+   {
+    "source": {
+     "path": "reference-runtime-235b-1727-20261015/sessions/01-mpq/worker0.log",
+     "lf_line": 118
+    },
+    "text": "[2026-10-15 07:21:08 TP0] Prefill batch, #new-seq: 1, #new-token: 512, #cached-token: 0, token usage: 0.00, #running-req: 0, #queue-req: 0, #pending-token: 15360, cuda graph: False, input throughput (token/s): 3310.30"
+   },
+   {
+    "source": {
+     "path": "reference-runtime-235b-1727-20261015/sessions/01-mpq/worker0.log",
+     "lf_line": 133
+    },
+    "text": "[2026-10-15 07:21:11 TP0] Prefill batch, #new-seq: 1, #new-token: 512, #cached-token: 0, token usage: 0.03, #running-req: 0, #queue-req: 0, #pending-token: 7680, cuda graph: False, input throughput (token/s): 2544.02"
+   },
+   {
+    "source": {
+     "path": "reference-runtime-235b-1727-20261015/sessions/01-mpq/worker0.log",
+     "lf_line": 147
+    },
+    "text": "[2026-10-15 07:21:14 TP0] Prefill batch, #new-seq: 1, #new-token: 512, #cached-token: 0, token usage: 0.05, #running-req: 0, #queue-req: 0, #pending-token: 512, cuda graph: False, input throughput (token/s): 2131.41"
+   },
+   {
+    "source": {
+     "path": "reference-runtime-235b-1727-20261015/sessions/03-mpq/worker0.log",
+     "lf_line": 110
+    },
+    "text": "[2026-10-15 07:43:11 TP0] Prefill batch, #new-seq: 1, #new-token: 512, #cached-token: 0, token usage: 0.00, #running-req: 0, #queue-req: 0, #pending-token: 15360, cuda graph: False, input throughput (token/s): 6758.03"
+   },
+   {
+    "source": {
+     "path": "reference-runtime-235b-1727-20261015/sessions/03-mpq/worker0.log",
+     "lf_line": 125
+    },
+    "text": "[2026-10-15 07:43:12 TP0] Prefill batch, #new-seq: 1, #new-token: 512, #cached-token: 0, token usage: 0.03, #running-req: 0, #queue-req: 0, #pending-token: 7680, cuda graph: False, input throughput (token/s): 4726.04"
+   },
+   {
+    "source": {
+     "path": "reference-runtime-235b-1727-20261015/sessions/03-mpq/worker0.log",
+     "lf_line": 139
+    },
+    "text": "[2026-10-15 07:43:14 TP0] Prefill batch, #new-seq: 1, #new-token: 512, #cached-token: 0, token usage: 0.05, #running-req: 0, #queue-req: 0, #pending-token: 512, cuda graph: False, input throughput (token/s): 3397.49"
+   }
+  ],
+  "gap_definition": "512 / rounded logged input throughput is an adjacent prefill-report wall-time interval, not CUDA kernel duration; exclude first idle sample and profile3 final 466-token chunk.",
+  "profile_identities": [
+   {
+    "profile": 2,
+    "prompt_tokens": 16384,
+    "cached_tokens": 0,
+    "output_tokens": 45,
+    "input_ids_sha256": "9ae0b02b1aff8ed446781a2cf4b577f3d14f0cce8921bf19d502e3af0d69a950",
+    "output_sha256": "08041d1c3aa1e85718249c47c32e55d1f7420e1a557cc95014299a7b072f7894"
+   },
+   {
+    "profile": 3,
+    "prompt_tokens": 32722,
+    "cached_tokens": 0,
+    "output_tokens": 44,
+    "input_ids_sha256": "6d0fa8fdf46bd83ddc7eda87846c2f536544d38b609a4ca1c17d5697546ec754",
+    "output_sha256": "9fac1ad573ce2c451c6e7835561b8cb9b13de0413f958b5f78e16f04ea612e0f"
+   }
+  ]
+ },
+ "startup_race": {
+  "fact": "The old runner can start external warmup before builtin HTTP warmup finishes; observed fast/slow grouping correlates with this race but causality is unproven.",
+  "example": [
+   {
+    "source": {
+     "path": "reference-runtime-235b-1727-20261015/sessions/03-mpq/worker0.log",
+     "lf_line": 82
+    },
+    "text": "[2026-10-15 07:43:04 TP0] Cache flushed successfully!"
+   },
+   {
+    "source": {
+     "path": "reference-runtime-235b-1727-20261015/sessions/03-mpq/worker0.log",
+     "lf_line": 85
+    },
+    "text": "[2026-10-15 07:43:04] INFO:     127.0.0.1:44320 - \"GET /model_info HTTP/1.1\" 200 OK"
+   },
+   {
+    "source": {
+     "path": "reference-runtime-235b-1727-20261015/sessions/03-mpq/worker0.log",
+     "lf_line": 86
+    },
+    "text": "[2026-10-15 07:43:04 TP0] Prefill batch, #new-seq: 1, #new-token: 512, #cached-token: 0, token usage: 0.00, #running-req: 0, #queue-req: 1, #pending-token: 7680, cuda graph: False, input throughput (token/s): 248.99"
+   },
+   {
+    "source": {
+     "path": "reference-runtime-235b-1727-20261015/sessions/03-mpq/worker0.log",
+     "lf_line": 104
+    },
+    "text": "[2026-10-15 07:43:08] The server is fired up and ready to roll!"
+   }
+  ],
+  "source_semantics": {
+   "wait_workers": {
+    "path": "reference-runtime-validation-20261015/run_supplemental.py",
+    "lf_lines": [
+     422,
+     431,
+     434
+    ]
+   },
+   "builtin_warmup": {
+    "path": "sglang-1727-preble-stage/python/sglang/srt/entrypoints/http_server.py",
+    "lf_lines": [
+     1972,
+     2067,
+     2079,
+     2133,
+     2149
+    ]
+   },
+   "prefill_log_gap_definition": {
+    "path": "sglang-1727-preble-stage/python/sglang/srt/managers/scheduler_components/metrics_reporter.py",
+    "lf_lines": [
+     508,
+     509,
+     510,
+     511,
+     512,
+     513
+    ]
+   },
+   "autotune_cache": {
+    "path": "sglang-1727-preble-stage/python/sglang/srt/model_executor/runner/base_runner.py",
+    "lf_lines": [
+     332,
+     335,
+     355,
+     360
+    ]
+   }
+  },
+  "ready_guarantee": {
+   "http_warmup_is_in_main_process_background_thread": true,
+   "marker_requires_builtin_http_generation_success": true,
+   "all_tp_initialization_pipes_ready_before_http_server_launch": true,
+   "extra_post_warmup_dist_barrier_before_marker": false,
+   "source_references": [
+    {
+     "path": "sglang-1727-preble-stage/python/sglang/srt/entrypoints/http_server.py",
+     "lf_lines": [
+      374,
+      375,
+      376,
+      379,
+      2067,
+      2071,
+      2078,
+      2079,
+      2133,
+      2142,
+      2143,
+      2149,
+      2489,
+      2496
+     ]
+    },
+    {
+     "path": "sglang-1727-preble-stage/python/sglang/srt/entrypoints/engine.py",
+     "lf_lines": [
+      614,
+      615,
+      616,
+      648,
+      649,
+      875,
+      1346,
+      1356,
+      1360,
+      1363,
+      1367
+     ]
+    },
+    {
+     "path": "sglang-1727-preble-stage/python/sglang/srt/managers/scheduler.py",
+     "lf_lines": [
+      4363,
+      4376
+     ]
+    }
+   ]
+  }
+ },
+ "output_length": {
+  "requests": [
+   {
+    "run": "A1",
+    "source": {
+     "path": "reference-runtime-235b-1727-20261015/preble-mpq-r1.4-rep1/requests.jsonl",
+     "lf_line": 114
+    },
+    "index": 113,
+    "arrival": 72.91156146326107,
+    "worker": "1",
+    "prompt_tokens": 19705,
+    "cached_tokens": 19658,
+    "output_tokens": 45,
+    "ttft": 11.41670000180602,
+    "latency": 36.73194161057472,
+    "finish_reason": {
+     "type": "length",
+     "length": 45
+    },
+    "output_sha256": "90215349725fc84c38da995d240ceab1c3ed4376dbf9d18e8ce95cb75c0b6df2",
+    "success": true
+   },
+   {
+    "run": "A2",
+    "source": {
+     "path": "reference-runtime-235b-1727-20261015/preble-mpq-r1.4-rep2/requests.jsonl",
+     "lf_line": 114
+    },
+    "index": 113,
+    "arrival": 72.91156146326107,
+    "worker": "1",
+    "prompt_tokens": 19705,
+    "cached_tokens": 19658,
+    "output_tokens": 32,
+    "ttft": 9.549343273974955,
+    "latency": 22.732246628031135,
+    "finish_reason": {
+     "type": "stop",
+     "matched": 151643
+    },
+    "output_sha256": "90e0469d68e7a9ddb50a0af6e7e5ab1c7c62d27c57f0aa9f79c07a5c6095cf28",
+    "success": true
+   }
+  ],
+  "trace_source": {
+   "path": "reference-1727-20261015/artifact/reference-trace/loogle-24-393-reference.jsonl",
+   "lf_line": 114
+  },
+  "trace_input_tokens": 19705,
+  "sampling_params": {
+   "temperature": 0,
+   "max_new_tokens": 45
+  },
+  "model_configuration": {
+   "snapshot_path": "/models/qwen3-235b-agentic/snapshots/56e16a623ffb2855ca901a65166a9170e99df127",
+   "config_eos_token_id": 151645,
+   "generation_config_eos_token_id": [
+    151645,
+    151643
+   ],
+   "token151643": {
+    "content": "<|endoftext|>",
+    "lstrip": false,
+    "normalized": false,
+    "rstrip": false,
+    "single_word": false,
+    "special": true
+   },
+   "config_lf_lines": {
+    "config.json": [
+     7,
+     9
+    ],
+    "generation_config.json": [
+     2,
+     4,
+     5,
+     6,
+     8
+    ],
+    "tokenizer_config.json": [
+     4,
+     5,
+     20,
+     231,
+     234
+    ]
+   }
+  },
+  "server_configuration": {
+   "1": {
+    "sampling_defaults": "model",
+    "context_length": 32768,
+    "reasoning_parser": null,
+    "tool_call_parser": null
+   },
+   "2": {
+    "sampling_defaults": "model",
+    "context_length": 32768,
+    "reasoning_parser": null,
+    "tool_call_parser": null
+   }
+  },
+  "total_output_tokens": {
+   "1": 17550,
+   "2": 17537
+  },
+  "pre_route_divergence_hashes": {
+   "requests": 149,
+   "same": 112,
+   "different": 37
+  },
+  "interpretation": [
+   "The only output-length difference uses the same worker, prompt length and cached-token count; both requests report success.",
+   "A1 reaches requested max_new_tokens=45; A2 reports token stop151643, an allowed EOS in generation_config and the special endoftext token.",
+   "19705+45 is below configured32768 context length; context-budget clipping is not supported by these metadata.",
+   "Full generated text/token sequences and per-request backend trace were not saved. Metadata supports normal EOS; it does not establish why deterministic-temperature outputs differ."
+  ]
+ },
+ "environment_checks": {
+  "launch_and_explicit_environment_differences": [
+   [],
+   []
+  ],
+  "server_info_differences": [
+   {
+    "field": "[0].internal_states[0].last_gen_throughput",
+    "a1": 2.1226974465347284,
+    "a2": 3.091190039792311
+   },
+   {
+    "field": "[1].internal_states[0]._cuda_graph_config_locked[0][0]",
+    "a1": "prefill",
+    "a2": "decode"
+   },
+   {
+    "field": "[1].internal_states[0]._cuda_graph_config_locked[1][0]",
+    "a1": "decode",
+    "a2": "prefill"
+   },
+   {
+    "field": "[1].internal_states[0].last_gen_throughput",
+    "a1": 2.1228568465948743,
+    "a2": 2.895607547758866
+   }
+  ],
+  "input_hashes_identical": true,
+  "runner_hashes_identical": true,
+  "new_processes_and_successful_pretrial_flush_in_both_Preble_runs": true,
+  "Preble_runtime_errors_or_retractions": [],
+  "B2_one_retraction_logged_once_per_TP_rank": {
+   "log": "reference-runtime-235b-1727-20261015/sessions/02-lpm/worker1.log",
+   "lf_lines": [
+    3461,
+    3462,
+    3463,
+    3464
+   ],
+   "retracted_requests": 1,
+   "new_tokens_gained": 941,
+   "TP0_text": "[2026-10-15 07:38:26 TP0] KV cache pool is full. Retract requests. #retracted_reqs: 1, #new_tokens_gained: 941, #new_token_ratio: 0.6237 -> 1.0000"
+  },
+  "all_session_cleanup_remaining": {
+   "01-mpq": [],
+   "02-lpm": [],
+   "03-mpq": []
+  },
+  "autotune_cache_observation": "Eight persistent autotune JSON mtimes are all 07:20; inspected Triton/TVM-FFI/FlashInfer JIT caches show no writes in the old experiment window. Retrospective metadata cannot exclude other lazy or process-local initialization.",
+  "communication": "All sessions log NCCL 2.28.9 and successful custom allreduce v2 initialization; shared startup notes do not identify an A1-specific failure.",
+  "wall_minus_monotonic_offset_span_seconds": 6.9141387939453125e-06
+ },
+ "new_2296_ready_gate": {
+  "gate_completed_at": "2026-10-15T09:07:54.147182+00:00",
+  "gate_completed_wall_ns": 1792055274147189448,
+  "gate_completed_perf_seconds": 3893597.902775694,
+  "requirement": "Both complete physical LF ready markers and validated server_info precede every flush and external profile",
+  "workers": [
+   {
+    "worker": 0,
+    "log": "reaudit-runtime-235b-2296-20261015-ready-gated/sessions/01-mpq/worker0.log",
+    "ready_lf_line": 92,
+    "ready_text": "[2026-10-15 09:07:52] The server is fired up and ready to roll!",
+    "completed_line_end_byte": 37565,
+    "log_prefix_sha256": "f3680c27e059b6b505765c21d6375259884979f0a535b7e4959f39df89693de2",
+    "observed_at": "2026-10-15T09:07:53.136463+00:00"
+   },
+   {
+    "worker": 1,
+    "log": "reaudit-runtime-235b-2296-20261015-ready-gated/sessions/01-mpq/worker1.log",
+    "ready_lf_line": 92,
+    "ready_text": "[2026-10-15 09:07:53] The server is fired up and ready to roll!",
+    "completed_line_end_byte": 37553,
+    "log_prefix_sha256": "80ab9b21cd4791db9dde7c51122d96d75c610aef866a54d43c2aecf4f8735668",
+    "observed_at": "2026-10-15T09:07:54.138941+00:00"
+   }
+  ],
+  "source": "reaudit-runtime-235b-2296-20261015-ready-gated/sessions/01-mpq/workers-ready.json"
+ },
+ "new_2296_warmup": {
+  "source": "reaudit-runtime-235b-2296-20261015-ready-gated/sessions/01-mpq/warmup.json",
+  "profiles": [
+   {
+    "worker": 0,
+    "prompt_tokens": 16384,
+    "cached_tokens": 0,
+    "output_tokens": 45,
+    "ttft": 6.418965350836515,
+    "phase_timing": {
+     "perf_started_seconds": 3893604.48541635,
+     "perf_finished_seconds": 3893614.18908265,
+     "wall_started_ns": 1792055280729830676,
+     "wall_finished_ns": 1792055290433498372
+    }
+   },
+   {
+    "worker": 0,
+    "prompt_tokens": 32722,
+    "cached_tokens": 0,
+    "output_tokens": 44,
+    "ttft": 15.94919948419556,
+    "phase_timing": {
+     "perf_started_seconds": 3893614.37929664,
+     "perf_finished_seconds": 3893633.359838201,
+     "wall_started_ns": 1792055290623710983,
+     "wall_finished_ns": 1792055309604255079
+    }
+   },
+   {
+    "worker": 1,
+    "prompt_tokens": 16384,
+    "cached_tokens": 0,
+    "output_tokens": 45,
+    "ttft": 6.396430353168398,
+    "phase_timing": {
+     "perf_started_seconds": 3893604.449630628,
+     "perf_finished_seconds": 3893614.12231186,
+     "wall_started_ns": 1792055280694044974,
+     "wall_finished_ns": 1792055290366729210
+    }
+   },
+   {
+    "worker": 1,
+    "prompt_tokens": 32722,
+    "cached_tokens": 0,
+    "output_tokens": 44,
+    "ttft": 15.915390025824308,
+    "phase_timing": {
+     "perf_started_seconds": 3893614.381224756,
+     "perf_finished_seconds": 3893633.527909606,
+     "wall_started_ns": 1792055290625639137,
+     "wall_finished_ns": 1792055309772325649
+    }
+   }
+  ],
+  "all_12_profile_and_flush_start_times_after_dual_gate": true,
+  "interpretation": "16K/32K warmup resembles the old slow group. A different host/runtime and one ready-gated session do not establish a unique cause of the old variance.",
+  "all_four_16K_32K_identities_match_old_A1": true
+ },
+ "conclusion": "Worker service-speed differences existed before frontend routing. The startup readiness race is real and now gated; its correlation with speed groups is not unique causal proof. Old telemetry cannot uniquely attribute total variance to routing, kernels, hardware, or warmup.",
+ "limitations": [
+  "Requests store planned arrival, not actual wake/send timestamp. client_queue_seconds measures semaphore waiting only. Proxy clocks cannot prove actual request send/completion times.",
+  "Client (latency-ttft)/output_tokens approximates online frontend TPOT; exact frontend feedback timestamps and frame timing were not saved.",
+  "Worker logs have second precision and no per-request identifiers; request-to-batch mapping and exact MPQ group/allocator timing cannot be reconstructed.",
+  "Only final migration/replication counts were saved; per-event movement/key/cost vectors are absent. No causal attribution of 58 vs 110 migrations is proven.",
+  "Prefill new-token log totals quantify logged work, not an attributed eviction/retraction recomputation count. Active token usage excludes evictable capacity.",
+  "Input hash and planned arrivals are identical, but 124 output hashes differ, and dynamic batching/greedy numerical reproducibility is not guaranteed.",
+  "No continuous GPU utilization, SM/memory clocks, power, temperature, throttling, CPU load, affinity, NUMA placement, or per-kernel/collective timings were archived.",
+  "Same recorded launch/environment/server_info does not prove identical device/CPU runtime state or performance.",
+  "Existing cache mtimes are retrospective metadata, not an immutable before/after trace; absence of writes does not exclude other process-local/lazy initialization.",
+  "512/printed input-throughput reconstructs adjacent prefill-report wall-time gaps (rounded throughput), not individual GPU kernel durations. First interval after idle/flush is excluded; last 466-token chunk of profile3 is excluded.",
+  "Warmup overlap exactly matches observed slow/fast groups in these six worker sessions, but no controlled intervention proves that overlap caused persistent speed differences.",
+  "Only two Preble repetitions; cannot apportion the full end-to-end variance or prove a unique hardware/backend cause.",
+  "The legitimate EOS finish explains the 13 output-token difference, but full generated text/tokens were not archived, so its numerical cause cannot be recovered.",
+  "Ready marker guarantees successful builtin HTTP warmup and prior local TP initialization, not an additional post-warmup dist.barrier.",
+  "Gate log hashes cover the immutable prefix through completed_line_end_byte; running full logs are intentionally not hashed."
+ ],
+ "sha256": {
+  "reaudit-20261015/variance/environment-evidence.json": "fed56ab95db17800534eb9ae195da61041757b3834f6a43ebfc161ee33103dff",
+  "reaudit-20261015/variance/request-routing-variance.json": "166ab1b1e2878d3712257636b06640526bb52b0b0c04a8ba0928b5d20f00a75a",
+  "reaudit-20261015/variance/output-length-discrepancy.json": "e118b831634d7fc6920380231f3bf5ff6742fc0e5d6322f1f87efd8cbe028919",
+  "reaudit-20261015/variance/first-cold-prefill-log-evidence.json": "7e5505d410b1c0477b49f1a18192d600bddfa2fbffaf10d62b514f0460bde777",
+  "reaudit-20261015/variance/audit_environment.py": "2a05ad1acb1606105d12c66a7287ded4026624f628c3efce2dc3da72e381c94d",
+  "reaudit-20261015/variance/analyze_request_routing_variance.py": "d4488762781cb377bc1cb55a0c0694c3aa48e3ee682de9a3cc93d4be3a2d66e7",
+  "reaudit-20261015/variance/analyze_output_and_initial_prefill.py": "842ca389951ff8887972222d3fe10bebb1c14dc18b745793385583b8d8dc72eb",
+  "reference-runtime-235b-1727-20261015/preble-mpq-r1.4-rep1/requests.jsonl": "2370b843c10bc24cff969ae249bac44acb53399e9b5d2e0d20f23ffb05f107c6",
+  "reference-runtime-235b-1727-20261015/preble-mpq-r1.4-rep2/requests.jsonl": "bf6d96d3994e6d0c1c68ce8e9327957cc9dc75fa0f401497e7b380e48191f92c",
+  "/models/qwen3-235b-agentic/snapshots/56e16a623ffb2855ca901a65166a9170e99df127/config.json": "ad59a339665ee1c68cbff06ac72c9e59f5183ebfaf3698c98737e003a870e9e2",
+  "/models/qwen3-235b-agentic/snapshots/56e16a623ffb2855ca901a65166a9170e99df127/generation_config.json": "835fffe355c9438e7a25be099b3fccaa98350b83451f9fd2d99512e74f1ade48",
+  "/models/qwen3-235b-agentic/snapshots/56e16a623ffb2855ca901a65166a9170e99df127/tokenizer_config.json": "a5036bfb48523661f15d50c664e8dfc0e9b0b4c9a20eba3180782d52a1b94a8d",
+  "reference-runtime-235b-1727-20261015/sessions/01-mpq/worker0.log": "ee386e537d2751dcac9da600a720724bdd651008b27463e344461fe59d787fe3",
+  "reference-runtime-235b-1727-20261015/sessions/01-mpq/worker1.log": "037502777b50a777e82a25c2b80eab8a861f99f9ee313b5a06fecaa731af9f66",
+  "reference-runtime-235b-1727-20261015/sessions/02-lpm/worker0.log": "8568400813c277a8e116d8cc574c6f4d12b44a1ad983526c0ecbd5c33ee2a2c1",
+  "reference-runtime-235b-1727-20261015/sessions/02-lpm/worker1.log": "54e64e852f1f91b96d0cf9b8cabe684bc8d14615d2e6ffd1fb5771b8d6569666",
+  "reference-runtime-235b-1727-20261015/sessions/03-mpq/worker0.log": "ee90b65f89056b1b900ab21adff1d64a6da8a9ecca39e5ac4b674c53d128985d",
+  "reference-runtime-235b-1727-20261015/sessions/03-mpq/worker1.log": "8a55c08f93dfa9caad7ad10b2353cf57611d12f338f1382c90e76ca1687bf0c0",
+  "reference-runtime-validation-20261015/run_supplemental.py": "67374403ade16702540cc7b6df6662f5c5621c6aac0ab3e5336727a67b52b923",
+  "sglang-1727-preble-stage/python/sglang/srt/entrypoints/http_server.py": "f7051c57e9a568693add71ccdb41724c947f78b7bef3fa00abe499020ff2b3bf",
+  "sglang-1727-preble-stage/python/sglang/srt/managers/scheduler_components/metrics_reporter.py": "daa82f5b4ddc66e1af71ba487a085ec0d67fd095e173f93efa088e8d50401bb2",
+  "sglang-1727-preble-stage/python/sglang/srt/model_executor/runner/base_runner.py": "f21797f09d66b55934572114714ff43d37146902faae863ccc36fbfb9b128277",
+  "sglang-1727-preble-stage/python/sglang/srt/entrypoints/engine.py": "69b7afe3dc4e5028cff7c6997fde28b41f98aad2fc9376b3b054d2f970fa951d",
+  "sglang-1727-preble-stage/python/sglang/srt/managers/scheduler.py": "780f973a83535c53914d68f887c00ed750263df095fba6d9bf4f8db4d618373c",
+  "reaudit-runtime-235b-2296-20261015-ready-gated/sessions/01-mpq/workers-ready.json": "d63bf1e372726409dc8852e14480729169bac47d48b89b6ce015afc099812150",
+  "reaudit-runtime-235b-2296-20261015-ready-gated/sessions/01-mpq/warmup.json": "710c27611057b269069b1026805f3352b5f026a9af85fe597e59b05a6089f7fd",
+  "reference-1727-20261015/artifact/reference-trace/loogle-24-393-reference.jsonl": "c7b08adf0d9a9f5763ff26c7e7d2508020e3c5cb2ecc4a4ae0c531cecb50dc54"
+ }
+}

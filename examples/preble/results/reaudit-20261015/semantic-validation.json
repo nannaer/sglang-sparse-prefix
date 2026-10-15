@@ -1,0 +1,1619 @@
+{
+  "runtime_commit": "091d70e1e73955a2cd4f26bc5e9e7c9acf519db5",
+  "reference_commit": "1a35eae20c416f7062ca81775aab72890323fd97",
+  "environment": {
+    "host": "gpu-lg-cmc-h-h200-2296.host.h.pjlab.org.cn",
+    "container": "sglang_chenjiefei_ds4",
+    "executable": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/env/bin/python",
+    "python": "Python 3.13.13",
+    "utc": "2026-10-15T08:37:13.960413+00:00",
+    "scripts": [
+      "verify_candidate_order.py",
+      "verify_mpq_retract.py",
+      "verify_public_http_budget_alignment.py"
+    ]
+  },
+  "current_source_sha256": {
+    "python/sglang/launch_preble.py": "5a17f0d773f07a6da2aa2d9872c1552fcb3f5a77c19e7c5c4b1544181b7e694d",
+    "python/sglang/srt/routing/preble.py": "492a90289a06c58e95c00cd621276562cf737ff511fcf116e81b9158a5f3541a",
+    "python/sglang/srt/managers/schedule_batch.py": "16df0e46f3db73236b3655c5ebae324dd5b68601a3697cf11ec70316bb2b0de1"
+  },
+  "source_reports": {
+    "global-diff.json": "1e846ee79c7e0414f6c590904324d64d5a2a0e5f9fbf63a4dbaf06efb8d1aaa8",
+    "candidate-order-validation.json": "37d1a0eba5cadc3b2926f735a68b8cbc8a9cd6861c850bad25b002b08ae1b05a",
+    "mpq-retract-validation.json": "01d89ad2856ab059a4e9fd3e3136545f861f6cec595e2d66fc8db13e33aa9b2d",
+    "verify_http_feedback_timing.json": "d36d152af4ae054092aed8a87586694938daa53078b3c847e4765c9bf1b071b7",
+    "public-http-budget-alignment.json": "779987ec3c0e18a73c6f885e5b3e2424af178f65057a0862e989abc8f55388dc"
+  },
+  "checks": {
+    "global": {
+      "workers": [
+        2,
+        3,
+        4
+      ],
+      "eviction_settings": [
+        false,
+        true
+      ],
+      "seeds_per_setting": 6,
+      "traces": 36,
+      "phases_per_trace": 2,
+      "random_choice_steps": 13680,
+      "expiry_seconds_between_drained_phases": 200,
+      "select_calls": 9012,
+      "finish_attempts": 9012,
+      "successful_finishes": 9006,
+      "seeded_select_calls": 0,
+      "shared_finish_assertion_failures": 6
+    },
+    "candidate_order": {
+      "healthy": 960,
+      "partial": 1200,
+      "negative_control_detected": true
+    },
+    "mpq_retract": {
+      "passed": 1507,
+      "negative_controls_detected": 2,
+      "original_victim_order": 306,
+      "unchanged_paths": 1200,
+      "modern_last_request_guard": 1
+    },
+    "http_timing": {
+      "success": 24,
+      "cleanup": 7,
+      "negative_controls_detected": 24,
+      "omitted_stream": true
+    },
+    "http_budget": {
+      "normal": 6,
+      "negative_controls_detected": 6,
+      "actual_budget_controls": 2,
+      "error_cancel_idempotency": 6
+    }
+  },
+  "limits": [
+    "CPU source/AST and FastAPI transport execution; controlled clock/HTTP/allocator infrastructure; no GPU inference in these checks.",
+    "Global random replay retains 6 matched assertions from pinned source; 9006 successful finishes.",
+    "Modern physical KV allocator/chunk/speculative/multimodal combinations are not equivalent to the old runtime."
+  ],
+  "evidence_root": "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015",
+  "report_details": {
+    "global-diff.json": {
+      "reference_state_parity": true,
+      "all_workload_requests_successful": false,
+      "status": "matched_reference_with_shared_upstream_assertion_failures",
+      "method": {
+        "reference_classes": "AST extracted from pinned source, no old runtime dependencies imported",
+        "clock": "same UUID generation and fixed wall/datetime values per logical operation",
+        "healthy_pool": true,
+        "floating_point_normalization_decimal_places": 11,
+        "comparison": "selected worker, tree/ref/cache/evicted/allocated/depth/access state, histogram maps and timestamps, TPOT, TTFT, allocation and cost arrays"
+      },
+      "targeted_migration": [
+        {
+          "workers": 2,
+          "migrations": 1
+        },
+        {
+          "workers": 3,
+          "migrations": 1
+        },
+        {
+          "workers": 4,
+          "migrations": 1
+        }
+      ],
+      "targeted_replication": [
+        {
+          "workers": 2,
+          "replications": 1
+        },
+        {
+          "workers": 3,
+          "replications": 1
+        },
+        {
+          "workers": 4,
+          "replications": 1
+        }
+      ],
+      "a6000_regression_combinations": 50,
+      "partial_availability_transport_mapping_checks": 516,
+      "known_reference_behaviors_retained": [
+        "calculate_min_load_cost returns candidate-list position for complete healthy pool, even for exploitation subsets",
+        "histogram regrouping after some overlapping radix splits can leave finish important node absent and assert",
+        "virtual eviction can count duplicate parent heap entries while returning a unique victim set"
+      ],
+      "transport_extensions": [
+        "partial availability remaps candidate-list positions to actual worker ids",
+        "finish is idempotent and cancellation/error cleanup with zero output omits the success-only histogram assertion"
+      ],
+      "selected_shared_assertion": {
+        "tokens": [
+          4,
+          4,
+          4,
+          4,
+          101,
+          109,
+          105,
+          104
+        ],
+        "worker": 0,
+        "recent_replay": [
+          [
+            "select",
+            [
+              5,
+              5,
+              5,
+              5,
+              5,
+              5,
+              5,
+              107,
+              102,
+              100
+            ],
+            26
+          ],
+          [
+            "select",
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              103,
+              100,
+              102,
+              101
+            ],
+            15
+          ],
+          [
+            "select",
+            [
+              4,
+              4,
+              101,
+              103,
+              105,
+              108
+            ],
+            19
+          ],
+          [
+            "select",
+            [
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              102,
+              105,
+              104
+            ],
+            14
+          ],
+          [
+            "finish",
+            [
+              4,
+              4,
+              101,
+              103,
+              105,
+              108
+            ],
+            0
+          ],
+          [
+            "finish",
+            [
+              5,
+              5,
+              5,
+              5,
+              5,
+              5,
+              5,
+              107,
+              102,
+              100
+            ],
+            1
+          ],
+          [
+            "finish",
+            [
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              1,
+              103,
+              100,
+              102,
+              101
+            ],
+            1
+          ],
+          [
+            "finish",
+            [
+              3,
+              3,
+              3,
+              3,
+              3,
+              102
+            ],
+            1
+          ],
+          [
+            "finish",
+            [
+              4,
+              4,
+              4,
+              4,
+              4,
+              4,
+              102,
+              105,
+              104
+            ],
+            1
+          ],
+          [
+            "select",
+            [
+              3,
+              3,
+              3,
+              3,
+              3,
+              3,
+              3,
+              3,
+              105,
+              106,
+              109,
+              100
+            ],
+            10
+          ],
+          [
+            "finish",
+            [
+              3,
+              3,
+              3,
+              3,
+              3,
+              3,
+              3,
+              3,
+              105,
+              106,
+              109,
+              100
+            ],
+            1
+          ],
+          [
+            "finish",
+            [
+              4,
+              4,
+              4,
+              4,
+              101,
+              109,
+              105,
+              104
+            ],
+            0
+          ]
+        ]
+      }
+    },
+    "candidate-order-validation.json": {
+      "purpose": "Preserve original healthy-pool candidate set iteration; retain partial availability extension",
+      "source_sha256": {
+        "before": "fc57ef6ff4f54794b5fd0704fe8e10ef5a15f9a1084c65356447055efc68b370",
+        "fixed": "492a90289a06c58e95c00cd621276562cf737ff511fcf116e81b9158a5f3541a",
+        "reference": "712b88a5eeefae6aa4092299dd04204cc501457349c0236d9d453a55635e5c9e",
+        "script": "43a621369c70e7f9292534e595dee7387f2ec9e8f2c5681402d4a1ecbed4fcbc",
+        "loader_helper": "441f279b15e3ab1cfd2cb5dc2a2f4e785e6739c157aaa446dab8d48bcfc559ae"
+      },
+      "negative_control": {
+        "workers": 16,
+        "owner_union_order": [
+          12,
+          7,
+          15
+        ],
+        "original_owner_iteration": [
+          12,
+          15,
+          7
+        ],
+        "available": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "exploit": true,
+        "selection_candidates": [
+          12,
+          15,
+          7
+        ],
+        "actual_candidate_iteration": [
+          12,
+          7,
+          15
+        ],
+        "reference_worker": 2,
+        "actual_worker": 1,
+        "same": false
+      },
+      "same_case_after_fix": {
+        "workers": 16,
+        "owner_union_order": [
+          12,
+          7,
+          15
+        ],
+        "original_owner_iteration": [
+          12,
+          15,
+          7
+        ],
+        "available": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15
+        ],
+        "exploit": true,
+        "selection_candidates": [
+          12,
+          15,
+          7
+        ],
+        "actual_candidate_iteration": [
+          12,
+          15,
+          7
+        ],
+        "reference_worker": 2,
+        "actual_worker": 2,
+        "same": true
+      },
+      "full_pool_checks": 960,
+      "before_mismatches_in_full_pool_checks": 230,
+      "partial_pool_checks": 1200,
+      "partial_pool_preserved": true,
+      "limits": "CPU executes original and current select source; controlled sparse owner state and fixed costs. Does not validate GPU or all model/runtime combinations.",
+      "pass": true
+    },
+    "mpq-retract-validation.json": {
+      "method": "Unmodified production retract_decode ASTs; controlled CPU allocator/tensor/release/filter stubs; no GPU or model execution.",
+      "limitations": "Reference/modern memory-control paths intentionally differ; equal victim-order comparisons use the same requested victim count below the last-request guard. Full allocator release is stubbed. No performance claim.",
+      "source_sha256": {
+        "/mnt/nvme1n1/ml_research/chenjiefei/sglang-prefix-load-balancing/python/sglang/srt/managers/schedule_batch.py": "16df0e46f3db73236b3655c5ebae324dd5b68601a3697cf11ec70316bb2b0de1",
+        "/mnt/nvme1n1/ml_research/chenjiefei/preble-results/reaudit-20261015/schedule_batch-before-retract.py": "c995e03e6f8a2681813b3950dd72a29483c7c9a2aa286fbe41ba3901b753b741",
+        "/tmp/preble-source/python/sglang/srt/managers/router/infer_batch.py": "ac97fe81d607b4f3cc5cfa05e5fa8c7a24720cf6dcc4836778eaaa35f08c6b10"
+      },
+      "executed_ast_sha256": {
+        "current": "db8c5bde08ad22dd9faff73d724603092cb99f8614dfa6a660949bd248ece0c2",
+        "before": "70876018fe8a2ba5ea53e3b45567fadbee7493dd757d0a988c5a6b6cbf9191cc",
+        "reference": "bdfbb86945006d031bc46472a772a967b29ea57fcf11aaf976fc8cc9f8b982a3"
+      },
+      "passed": 1507,
+      "negative_controls_detected": 2,
+      "negative_controls": [
+        {
+          "name": "later_arrival_first",
+          "before": {
+            "victims": [
+              "early_long"
+            ],
+            "remaining": [
+              "late_short",
+              "middle"
+            ],
+            "aborted": []
+          },
+          "reference": {
+            "victims": [
+              "late_short"
+            ],
+            "remaining": [
+              "early_long",
+              "middle"
+            ],
+            "aborted": []
+          },
+          "detected": true
+        },
+        {
+          "name": "equal_arrival_larger_output_first",
+          "before": {
+            "victims": [
+              "short_output",
+              "mid_output"
+            ],
+            "remaining": [
+              "long_output"
+            ],
+            "aborted": []
+          },
+          "reference": {
+            "victims": [
+              "long_output",
+              "mid_output"
+            ],
+            "remaining": [
+              "short_output"
+            ],
+            "aborted": []
+          },
+          "detected": true
+        }
+      ],
+      "selected_checks": [
+        {
+          "name": "later_arrival_first",
+          "actual": {
+            "victims": [
+              "late_short"
+            ],
+            "remaining": [
+              "early_long",
+              "middle"
+            ],
+            "aborted": []
+          },
+          "reference": {
+            "victims": [
+              "late_short"
+            ],
+            "remaining": [
+              "early_long",
+              "middle"
+            ],
+            "aborted": []
+          }
+        },
+        {
+          "name": "equal_arrival_larger_output_first",
+          "actual": {
+            "victims": [
+              "long_output",
+              "mid_output"
+            ],
+            "remaining": [
+              "short_output"
+            ],
+            "aborted": []
+          },
+          "reference": {
+            "victims": [
+              "long_output",
+              "mid_output"
+            ],
+            "remaining": [
+              "short_output"
+            ],
+            "aborted": []
+          }
+        },
+        {
+          "name": "exact_ties_reverse_batch_order",
+          "actual": {
+            "victims": [
+              "3",
+              "2",
+              "1"
+            ],
+            "remaining": [
+              "0"
+            ],
+            "aborted": []
+          },
+          "reference": {
+            "victims": [
+              "3",
+              "2",
+              "1"
+            ],
+            "remaining": [
+              "0"
+            ],
+            "aborted": []
+          }
+        },
+        {
+          "name": "zero_created_fallback",
+          "actual": {
+            "victims": [
+              "b"
+            ],
+            "remaining": [
+              "c",
+              "a"
+            ],
+            "aborted": []
+          },
+          "reference": {
+            "victims": [
+              "b"
+            ],
+            "remaining": [
+              "c",
+              "a"
+            ],
+            "aborted": []
+          }
+        },
+        {
+          "name": "missing_created_fallback",
+          "actual": {
+            "victims": [
+              "b"
+            ],
+            "remaining": [
+              "c",
+              "a"
+            ],
+            "aborted": []
+          },
+          "reference": {
+            "victims": [
+              "b"
+            ],
+            "remaining": [
+              "c",
+              "a"
+            ],
+            "aborted": []
+          }
+        },
+        {
+          "name": "created_over_reverse_scheduler_receipt",
+          "actual": {
+            "victims": [
+              "b"
+            ],
+            "remaining": [
+              "a",
+              "c"
+            ],
+            "aborted": []
+          },
+          "reference": {
+            "victims": [
+              "b"
+            ],
+            "remaining": [
+              "a",
+              "c"
+            ],
+            "aborted": []
+          }
+        }
+      ]
+    },
+    "verify_http_feedback_timing.json": {
+      "method": "CPU unchanged-source FastAPI ASGI/StreamingResponse + fake HTTP/logical clock; no model/GPU inference",
+      "source_sha256": "5a17f0d773f07a6da2aa2d9872c1552fcb3f5a77c19e7c5c4b1544181b7e694d",
+      "reference_server_sha256": "23dbcaa5ff82e9593097a5ead4f4ca0030039c4c89780a106c642fd4358f36fb",
+      "successful_differential_scenarios": 24,
+      "negative_control_detected": 24,
+      "cleanup_error_scenarios": 7,
+      "default_stream_adaptation": {
+        "description": "Preble frontend omitted-stream now defaults True and matches original public feedback under client backpressure; explicit False remains covered by the differential matrix.",
+        "case_count": 1,
+        "matched_reference": true,
+        "current": {
+          "feedback": {
+            "output": 45,
+            "ttft": 1.2000000000000028,
+            "latency": 3.4000000000000057,
+            "tpot": 0.048888888888888954,
+            "applied_tpot": 0.048888888888888954
+          },
+          "end_clock": 120.6,
+          "reported_output_budget": 0,
+          "abort_calls": 0,
+          "close_calls": [
+            1
+          ],
+          "http_status": 200
+        },
+        "reference": {
+          "output": 45,
+          "ttft": 1.2000000000000028,
+          "latency": 3.4000000000000057,
+          "tpot": 0.048888888888888954,
+          "applied_tpot": 0.048888888888888954
+        },
+        "frozen_before_false_feedback": {
+          "output": 45,
+          "ttft": 1.0,
+          "latency": 3.0,
+          "tpot": 0.044444444444444446,
+          "applied_tpot": 0.044444444444444446
+        },
+        "before_false_negative_control_detected": true
+      },
+      "all_passed": true,
+      "selected_success_case": {
+        "case": {
+          "name": "n1-streamTrue-zeroFalse-lateFalse",
+          "output": 1,
+          "stream": true,
+          "first_count": 1,
+          "done_at": 3.01,
+          "backpressure": true,
+          "include_done": true,
+          "http_status": 200,
+          "open_error": false,
+          "close_delay": 7,
+          "omit_stream": false
+        },
+        "reference": {
+          "output": 1,
+          "ttft": 1.2000000000000028,
+          "latency": 3.200000000000003,
+          "tpot": 2.0,
+          "applied_tpot": null
+        },
+        "current": {
+          "feedback": {
+            "output": 1,
+            "ttft": 1.2000000000000028,
+            "latency": 3.200000000000003,
+            "tpot": 2.0,
+            "applied_tpot": null
+          },
+          "end_clock": 115.8,
+          "reported_output_budget": 0,
+          "abort_calls": 0,
+          "close_calls": [
+            1
+          ],
+          "http_status": 200
+        }
+      },
+      "selected_negative_case": {
+        "case": "n1-streamTrue-zeroFalse-lateFalse",
+        "before": {
+          "output": 1,
+          "ttft": 6.0,
+          "latency": 26.799999999999997,
+          "tpot": 20.799999999999997,
+          "applied_tpot": null
+        },
+        "reference": {
+          "output": 1,
+          "ttft": 1.2000000000000028,
+          "latency": 3.200000000000003,
+          "tpot": 2.0,
+          "applied_tpot": null
+        }
+      }
+    },
+    "public-http-budget-alignment.json": {
+      "execution": "dlh200-2 / sglang_chenjiefei_ds4; CPU actual FastAPI ASGI and both scheduler ASTs, controlled HTTP/time, no GPU inference",
+      "counts": {
+        "normal_public_completions": 6,
+        "negative_controls_detected": 6,
+        "actual_budget_controls": 2,
+        "error_cancel_idempotency": 6
+      },
+      "source_sha256": {
+        "frontend": "5a17f0d773f07a6da2aa2d9872c1552fcb3f5a77c19e7c5c4b1544181b7e694d",
+        "scheduler": "492a90289a06c58e95c00cd621276562cf737ff511fcf116e81b9158a5f3541a",
+        "before_frontend": "396b2686119c2e47b61a98e1916f36b553b702c6cf4c501ed4d5661fa73de397",
+        "reference_http": "23dbcaa5ff82e9593097a5ead4f4ca0030039c4c89780a106c642fd4358f36fb",
+        "reference_scheduler": "712b88a5eeefae6aa4092299dd04204cc501457349c0236d9d453a55635e5c9e",
+        "script": "9331135d055f6b6152629616fb3c93b62c3076a41e50876bdb0fb1ee2cd0ba80"
+      },
+      "normal_public_completions": [
+        {
+          "request": 1,
+          "budget": 45,
+          "public_reported_budget": 0,
+          "reference": {
+            "decode_ledger_per_worker": [
+              45
+            ],
+            "decode_ledger_per_node": [
+              45
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0248
+            ],
+            "actual_rebalance_cost": [
+              0
+            ],
+            "legacy_cost": [
+              4.499800000000001
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954
+              ]
+            ]
+          },
+          "fixed": {
+            "decode_ledger_per_worker": [
+              45
+            ],
+            "decode_ledger_per_node": [
+              45
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0248
+            ],
+            "actual_rebalance_cost": [
+              0
+            ],
+            "legacy_cost": [
+              4.499800000000001
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954
+              ]
+            ]
+          },
+          "negative_before_frontend": {
+            "decode_ledger_per_worker": [
+              0
+            ],
+            "decode_ledger_per_node": [
+              0
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0248
+            ],
+            "actual_rebalance_cost": [
+              0
+            ],
+            "legacy_cost": [
+              0.0248
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954
+              ]
+            ]
+          }
+        },
+        {
+          "request": 2,
+          "budget": 32,
+          "public_reported_budget": 0,
+          "reference": {
+            "decode_ledger_per_worker": [
+              77
+            ],
+            "decode_ledger_per_node": [
+              77
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0496
+            ],
+            "actual_rebalance_cost": [
+              0.0496
+            ],
+            "legacy_cost": [
+              5.343350000000006
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954,
+                0.06875000000000009
+              ]
+            ]
+          },
+          "fixed": {
+            "decode_ledger_per_worker": [
+              77
+            ],
+            "decode_ledger_per_node": [
+              77
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0496
+            ],
+            "actual_rebalance_cost": [
+              0.0496
+            ],
+            "legacy_cost": [
+              5.343350000000006
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954,
+                0.06875000000000009
+              ]
+            ]
+          },
+          "negative_before_frontend": {
+            "decode_ledger_per_worker": [
+              0
+            ],
+            "decode_ledger_per_node": [
+              0
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0496
+            ],
+            "actual_rebalance_cost": [
+              0.0496
+            ],
+            "legacy_cost": [
+              0.0496
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954,
+                0.06875000000000009
+              ]
+            ]
+          }
+        },
+        {
+          "request": 3,
+          "budget": 16,
+          "public_reported_budget": 0,
+          "reference": {
+            "decode_ledger_per_worker": [
+              93
+            ],
+            "decode_ledger_per_node": [
+              93
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0744
+            ],
+            "actual_rebalance_cost": [
+              0.0744
+            ],
+            "legacy_cost": [
+              9.665025000000012
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954,
+                0.06875000000000009,
+                0.13750000000000018
+              ]
+            ]
+          },
+          "fixed": {
+            "decode_ledger_per_worker": [
+              93
+            ],
+            "decode_ledger_per_node": [
+              93
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0744
+            ],
+            "actual_rebalance_cost": [
+              0.0744
+            ],
+            "legacy_cost": [
+              9.665025000000012
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954,
+                0.06875000000000009,
+                0.13750000000000018
+              ]
+            ]
+          },
+          "negative_before_frontend": {
+            "decode_ledger_per_worker": [
+              0
+            ],
+            "decode_ledger_per_node": [
+              0
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0744
+            ],
+            "actual_rebalance_cost": [
+              0.0744
+            ],
+            "legacy_cost": [
+              0.0744
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954,
+                0.06875000000000009,
+                0.13750000000000018
+              ]
+            ]
+          }
+        },
+        {
+          "request": 4,
+          "budget": 45,
+          "public_reported_budget": 0,
+          "reference": {
+            "decode_ledger_per_worker": [
+              138
+            ],
+            "decode_ledger_per_node": [
+              138
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0992
+            ],
+            "actual_rebalance_cost": [
+              0.0992
+            ],
+            "legacy_cost": [
+              9.586700000000011
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954,
+                0.06875000000000009,
+                0.13750000000000018,
+                0.048888888888888954
+              ]
+            ]
+          },
+          "fixed": {
+            "decode_ledger_per_worker": [
+              138
+            ],
+            "decode_ledger_per_node": [
+              138
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0992
+            ],
+            "actual_rebalance_cost": [
+              0.0992
+            ],
+            "legacy_cost": [
+              9.586700000000011
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954,
+                0.06875000000000009,
+                0.13750000000000018,
+                0.048888888888888954
+              ]
+            ]
+          },
+          "negative_before_frontend": {
+            "decode_ledger_per_worker": [
+              0
+            ],
+            "decode_ledger_per_node": [
+              0
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0992
+            ],
+            "actual_rebalance_cost": [
+              0.0992
+            ],
+            "legacy_cost": [
+              0.0992
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954,
+                0.06875000000000009,
+                0.13750000000000018,
+                0.048888888888888954
+              ]
+            ]
+          }
+        },
+        {
+          "request": 5,
+          "budget": 32,
+          "public_reported_budget": 0,
+          "reference": {
+            "decode_ledger_per_worker": [
+              170
+            ],
+            "decode_ledger_per_node": [
+              170
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.124
+            ],
+            "actual_rebalance_cost": [
+              0.124
+            ],
+            "legacy_cost": [
+              11.811500000000015
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954,
+                0.06875000000000009,
+                0.13750000000000018,
+                0.048888888888888954,
+                0.06875000000000009
+              ]
+            ]
+          },
+          "fixed": {
+            "decode_ledger_per_worker": [
+              170
+            ],
+            "decode_ledger_per_node": [
+              170
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.124
+            ],
+            "actual_rebalance_cost": [
+              0.124
+            ],
+            "legacy_cost": [
+              11.811500000000015
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954,
+                0.06875000000000009,
+                0.13750000000000018,
+                0.048888888888888954,
+                0.06875000000000009
+              ]
+            ]
+          },
+          "negative_before_frontend": {
+            "decode_ledger_per_worker": [
+              0
+            ],
+            "decode_ledger_per_node": [
+              0
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.124
+            ],
+            "actual_rebalance_cost": [
+              0.124
+            ],
+            "legacy_cost": [
+              0.124
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954,
+                0.06875000000000009,
+                0.13750000000000018,
+                0.048888888888888954,
+                0.06875000000000009
+              ]
+            ]
+          }
+        },
+        {
+          "request": 6,
+          "budget": 16,
+          "public_reported_budget": 0,
+          "reference": {
+            "decode_ledger_per_worker": [
+              186
+            ],
+            "decode_ledger_per_node": [
+              186
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.1488
+            ],
+            "actual_rebalance_cost": [
+              0.1488
+            ],
+            "legacy_cost": [
+              12.936300000000015
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954,
+                0.06875000000000009,
+                0.13750000000000018,
+                0.048888888888888954,
+                0.06875000000000009,
+                0.13750000000000018
+              ]
+            ]
+          },
+          "fixed": {
+            "decode_ledger_per_worker": [
+              186
+            ],
+            "decode_ledger_per_node": [
+              186
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.1488
+            ],
+            "actual_rebalance_cost": [
+              0.1488
+            ],
+            "legacy_cost": [
+              12.936300000000015
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954,
+                0.06875000000000009,
+                0.13750000000000018,
+                0.048888888888888954,
+                0.06875000000000009,
+                0.13750000000000018
+              ]
+            ]
+          },
+          "negative_before_frontend": {
+            "decode_ledger_per_worker": [
+              0
+            ],
+            "decode_ledger_per_node": [
+              0
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.1488
+            ],
+            "actual_rebalance_cost": [
+              0.1488
+            ],
+            "legacy_cost": [
+              0.1488
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954,
+                0.06875000000000009,
+                0.13750000000000018,
+                0.048888888888888954,
+                0.06875000000000009,
+                0.13750000000000018
+              ]
+            ]
+          }
+        }
+      ],
+      "actual_budget_controls": [
+        {
+          "reported_budget": null,
+          "final": {
+            "decode_ledger_per_worker": [
+              0
+            ],
+            "decode_ledger_per_node": [
+              0
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0248
+            ],
+            "actual_rebalance_cost": [
+              0
+            ],
+            "legacy_cost": [
+              0.0248
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.044444444444444446
+              ]
+            ]
+          }
+        },
+        {
+          "reported_budget": 45,
+          "final": {
+            "decode_ledger_per_worker": [
+              0
+            ],
+            "decode_ledger_per_node": [
+              0
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0248
+            ],
+            "actual_rebalance_cost": [
+              0
+            ],
+            "legacy_cost": [
+              0.0248
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.044444444444444446
+              ]
+            ]
+          }
+        }
+      ],
+      "error_cancel_idempotency": [
+        {
+          "case": "http-503",
+          "after": {
+            "decode_ledger_per_worker": [
+              0
+            ],
+            "decode_ledger_per_node": [
+              0
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0248
+            ],
+            "actual_rebalance_cost": [
+              0
+            ],
+            "legacy_cost": [
+              0.0248
+            ],
+            "tpot": [
+              [
+                0.15
+              ]
+            ]
+          },
+          "idempotent": true,
+          "abort_calls": 0
+        },
+        {
+          "case": "sse-error-done",
+          "after": {
+            "decode_ledger_per_worker": [
+              0
+            ],
+            "decode_ledger_per_node": [
+              0
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0248
+            ],
+            "actual_rebalance_cost": [
+              0
+            ],
+            "legacy_cost": [
+              0.0248
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954
+              ]
+            ]
+          },
+          "idempotent": true,
+          "abort_calls": 0
+        },
+        {
+          "case": "sse-abort-done",
+          "after": {
+            "decode_ledger_per_worker": [
+              0
+            ],
+            "decode_ledger_per_node": [
+              0
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0248
+            ],
+            "actual_rebalance_cost": [
+              0
+            ],
+            "legacy_cost": [
+              0.0248
+            ],
+            "tpot": [
+              [
+                0.15,
+                0.048888888888888954
+              ]
+            ]
+          },
+          "idempotent": true,
+          "abort_calls": 0
+        },
+        {
+          "case": "connect-failure",
+          "after": {
+            "decode_ledger_per_worker": [
+              0
+            ],
+            "decode_ledger_per_node": [
+              0
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0248
+            ],
+            "actual_rebalance_cost": [
+              0
+            ],
+            "legacy_cost": [
+              0.0248
+            ],
+            "tpot": [
+              [
+                0.15
+              ]
+            ]
+          },
+          "idempotent": true,
+          "abort_calls": 1
+        },
+        {
+          "case": "missing-DONE",
+          "after": {
+            "decode_ledger_per_worker": [
+              0
+            ],
+            "decode_ledger_per_node": [
+              0
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0248
+            ],
+            "actual_rebalance_cost": [
+              0
+            ],
+            "legacy_cost": [
+              0.0248
+            ],
+            "tpot": [
+              [
+                0.15
+              ]
+            ]
+          },
+          "idempotent": true,
+          "abort_calls": 1
+        },
+        {
+          "case": "cancel-after-first-frame",
+          "after": {
+            "decode_ledger_per_worker": [
+              0
+            ],
+            "decode_ledger_per_node": [
+              0
+            ],
+            "active": [
+              0
+            ],
+            "actual_routing_cost": [
+              0.0248
+            ],
+            "actual_rebalance_cost": [
+              0
+            ],
+            "legacy_cost": [
+              0.0248
+            ],
+            "tpot": [
+              [
+                0.15
+              ]
+            ]
+          },
+          "idempotent": true,
+          "abort_calls": 1
+        }
+      ],
+      "all_passed": true
+    }
+  },
+  "prior_validation": {
+    "path": "examples/preble/results/runtime-235b/validation.json",
+    "sha256": "a1cab87f463556bd2c74ed90c26f94d5b4028ca3d25d8254b5b24ebebaf2eb6e",
+    "integration_commit": "c773f3e5605eb3fe9a2d032c80f0e9def6dfc2d9",
+    "counts": {
+      "mpq_runtime_checks": 41,
+      "fifo_checks": 8,
+      "cancellation_checks": 41
+    },
+    "covered_sources_unchanged": {
+      "mpq": {
+        "python/sglang/srt/managers/schedule_policy.py": {
+          "whole_file_unchanged": true,
+          "sha256": "e6a5f01caf262bd774a0015479add06845d7bdd684022ddb45df788c8071fa38"
+        },
+        "python/sglang/srt/managers/scheduler.py": {
+          "whole_file_unchanged": true,
+          "sha256": "780f973a83535c53914d68f887c00ed750263df095fba6d9bf4f8db4d618373c"
+        }
+      },
+      "fifo": {
+        "python/sglang/srt/disaggregation/utils.py": {
+          "whole_file_unchanged": true,
+          "sha256": "6c3dd76f0ad56f30e79b36989da68d0740d206ed8759dd617887236830899a2a"
+        },
+        "python/sglang/srt/managers/schedule_batch.py": {
+          "whole_file_unchanged": false,
+          "covered_method": "Req.reset_for_retract",
+          "method_ast_unchanged": true,
+          "method_ast_sha256": "19baa2115630f0d7a886e9af6d11b202b64a66b951010c9e913f8b4ed96aa5d7",
+          "current_file_sha256": "16df0e46f3db73236b3655c5ebae324dd5b68601a3697cf11ec70316bb2b0de1"
+        },
+        "python/sglang/srt/managers/schedule_policy.py": {
+          "whole_file_unchanged": true,
+          "sha256": "e6a5f01caf262bd774a0015479add06845d7bdd684022ddb45df788c8071fa38"
+        },
+        "python/sglang/srt/managers/tokenizer_manager.py": {
+          "whole_file_unchanged": true,
+          "sha256": "f2c2bc1da72eb5587a0663cd2bf24fc2d57c63c2d74dec218029b849bd6a0711"
+        },
+        "python/sglang/srt/observability/req_time_stats.py": {
+          "whole_file_unchanged": true,
+          "sha256": "5487e638bbe6a83b990e8c72940586c20479e5c0317ee40bec68612826206f34"
+        },
+        "python/sglang/srt/observability/trace.py": {
+          "whole_file_unchanged": true,
+          "sha256": "7d988ebe910ad5ffad782bdd6461ef7361309592135b174ee139dc31979abfc2"
+        }
+      },
+      "cancellation": {
+        "python/sglang/srt/disaggregation/prefill.py": {
+          "whole_file_unchanged": true,
+          "sha256": "f5eb7f34489ca752e117e307c62908d3225bbf00ea4660602481ff64f6932639"
+        },
+        "python/sglang/srt/managers/schedule_policy.py": {
+          "whole_file_unchanged": true,
+          "sha256": "e6a5f01caf262bd774a0015479add06845d7bdd684022ddb45df788c8071fa38"
+        },
+        "python/sglang/srt/managers/scheduler.py": {
+          "whole_file_unchanged": true,
+          "sha256": "780f973a83535c53914d68f887c00ed750263df095fba6d9bf4f8db4d618373c"
+        }
+      }
+    }
+  }
+}
